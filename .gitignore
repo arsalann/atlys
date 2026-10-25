@@ -1,0 +1,46 @@
+# Local agent / scratch workspace — never commit
+.context/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+secrets.*
+credentials.*
+
+# Personal data, vaults, and exports
+*.db
+*.sqlite
+*.sqlite3
+*.realm
+*.vault
+exports/
+takeout*/
+
+# Logs and dumps
+*.log
+logs/
+*.dump
+
+# Build artifacts and binaries
+*.apk
+*.aab
+*.ipa
+build/
+dist/
+node_modules/
+__pycache__/
+.venv/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
