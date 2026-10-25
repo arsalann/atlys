@@ -37,11 +37,11 @@ jobs:
       - name: cargo clippy
         run: |
           unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
-          cargo clippy --workspace --all-targets --locked -- -D warnings
+          cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - name: cargo clippy (iOS target)
         run: |
           unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
-          cargo clippy -p atlys-ffi --target aarch64-apple-ios --locked -- -D warnings
+          cargo clippy -p atlys-ffi --target aarch64-apple-ios --all-features --locked -- -D warnings
 
   test:
     name: test (${{ matrix.os }})
@@ -64,7 +64,7 @@ jobs:
       - name: cargo test
         run: |
           unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
-          cargo test --workspace --locked
+          cargo test --workspace --all-features --locked
 
   deny:
     name: cargo deny

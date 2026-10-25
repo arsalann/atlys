@@ -8,12 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		011006418611C134030FC33F /* AtlysCollectors in Frameworks */ = {isa = PBXBuildFile; productRef = 3C01A7C03FE66E8050862C72 /* AtlysCollectors */; };
+		065C36296F07FAD189B3F076 /* SealedInboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8806E63F3A3515CCD3158E52 /* SealedInboxTests.swift */; };
+		0DF0B8D8ADCD9DBC32318626 /* AtlysCollectors in Frameworks */ = {isa = PBXBuildFile; productRef = E01767759FF0B61CE94898CD /* AtlysCollectors */; };
 		2B9CE47AD57ADCB74DB7FDDE /* AtlysApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */; };
+		2C03090E8052C5963E9A1165 /* AtlysCollectors in Frameworks */ = {isa = PBXBuildFile; productRef = 82990D95507D545600486665 /* AtlysCollectors */; };
+		2D23B16CC99F24E658A97FED /* Argon2Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8906102FB7A69852F6974077 /* Argon2Benchmark.swift */; };
+		39331AE248F3AC03BB1BB127 /* SpikePaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBDC948C07F5E9A6C1AC9E0 /* SpikePaths.swift */; };
+		45AFD781795708B2AE464C72 /* WakeLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B013B48C310A02F72BFDA13 /* WakeLog.swift */; };
+		4AEC2368EA806BBF1FAF7B64 /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = E4C6C6F8C50893BB1CF2DA21 /* AtlysCore */; };
 		51087E29C60ECF2A05DE09AF /* AtlysUI in Frameworks */ = {isa = PBXBuildFile; productRef = FBD5027A7E6FEE678B39A494 /* AtlysUI */; };
+		55B65A4556745C078F86529C /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9FDAC1678A9E6C76340344DF /* AtlysCore */; };
 		5912E21651D2E408A3CE77C4 /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = AB06F6A8BA21584C4C7BA182 /* AtlysCore */; };
+		8A38D090EBA35B28AA227CAB /* HealthSpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC3526EB059299579500450E /* HealthSpike.swift */; };
+		8EF763B0FABD10BB6F25181E /* LocationSpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1951058B902349906AAB2EF /* LocationSpike.swift */; };
+		90894BA339D6BB56D176E8FC /* SecureEnclaveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B1D946902D43F2ADF27413 /* SecureEnclaveTests.swift */; };
 		971A9D884076656E1EA87985 /* LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B147DF6771E25675A73FC6 /* LaunchTests.swift */; };
+		9DA67E31B0EC6FFEFD1902C8 /* AtlysSpikeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4227A7860E0A9E3AE29B8D /* AtlysSpikeApp.swift */; };
+		A0D609EC00A0151FC62FF6E7 /* SecureEnclaveSpike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221A20F35474F30DA311C1B9 /* SecureEnclaveSpike.swift */; };
 		C2D2B037934CB8F1B38D9DDF /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = D3FA8D782A3AD34E73A3E16B /* AtlysCore */; };
 		DFE354754FDCBCF86064EB58 /* AppSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */; };
+		E2E86D3C7F89226BEDBE7F26 /* CoreSpikeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8B2D997F9E0005354880E9 /* CoreSpikeTests.swift */; };
+		E89F3719FE8789EAC2314294 /* SpikeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429CB4CA3F2EDEA12EFF9656 /* SpikeViews.swift */; };
+		F58BC6E5076D34C78095229D /* SpikeVaultStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2C50C586E08DE2EDA0CAE7 /* SpikeVaultStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,23 +47,64 @@
 			remoteGlobalIDString = 2CFB3D6152C1ED8BA663E37D;
 			remoteInfo = Atlys;
 		};
+		D5EFD8D7DE35316AB1FEDFF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF19ADE59B2E16057CC5E981 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BC0179A8EF537D334C5FAB5;
+			remoteInfo = AtlysSpike;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B2C50C586E08DE2EDA0CAE7 /* SpikeVaultStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpikeVaultStore.swift; sourceTree = "<group>"; };
 		18C29419818EC4F74B59CE7B /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		1FBDC948C07F5E9A6C1AC9E0 /* SpikePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpikePaths.swift; sourceTree = "<group>"; };
+		221A20F35474F30DA311C1B9 /* SecureEnclaveSpike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveSpike.swift; sourceTree = "<group>"; };
 		2254FD346F5935DD4185C8D7 /* AtlysCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysCore; path = Packages/AtlysCore; sourceTree = SOURCE_ROOT; };
+		429CB4CA3F2EDEA12EFF9656 /* SpikeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpikeViews.swift; sourceTree = "<group>"; };
 		44995E2D4A4DCCB2BC2B7289 /* Atlys.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Atlys.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSmokeTests.swift; sourceTree = "<group>"; };
 		45B147DF6771E25675A73FC6 /* LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchTests.swift; sourceTree = "<group>"; };
 		4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtlysApp.swift; sourceTree = "<group>"; };
+		4E9D75AEA613463E3282514C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5B013B48C310A02F72BFDA13 /* WakeLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeLog.swift; sourceTree = "<group>"; };
+		5D8B2D997F9E0005354880E9 /* CoreSpikeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreSpikeTests.swift; sourceTree = "<group>"; };
+		69B1D946902D43F2ADF27413 /* SecureEnclaveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveTests.swift; sourceTree = "<group>"; };
+		8806E63F3A3515CCD3158E52 /* SealedInboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SealedInboxTests.swift; sourceTree = "<group>"; };
+		8906102FB7A69852F6974077 /* Argon2Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Argon2Benchmark.swift; sourceTree = "<group>"; };
+		9312D3EC6A779A78D6A90A04 /* AtlysSpike.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AtlysSpike.entitlements; sourceTree = "<group>"; };
 		A8686A42D7708880BE38E015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AtlysUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B38AB0F2AF665DC817017EFE /* AtlysSpikeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AtlysSpikeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF4227A7860E0A9E3AE29B8D /* AtlysSpikeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtlysSpikeApp.swift; sourceTree = "<group>"; };
 		C173C7D84E0E08EE772BEB99 /* AtlysCollectors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysCollectors; path = Packages/AtlysCollectors; sourceTree = SOURCE_ROOT; };
 		C4152DD23EAE24F3A0123EEE /* AtlysTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AtlysTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC3526EB059299579500450E /* HealthSpike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSpike.swift; sourceTree = "<group>"; };
+		D1951058B902349906AAB2EF /* LocationSpike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSpike.swift; sourceTree = "<group>"; };
 		D8F011E721C25D6ECF47433E /* AtlysUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysUI; path = Packages/AtlysUI; sourceTree = SOURCE_ROOT; };
+		F46FBD5E07A6003C9DB7BEF4 /* AtlysSpike.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AtlysSpike.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		130CFDC5871C5A389AB2BA5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55B65A4556745C078F86529C /* AtlysCore in Frameworks */,
+				2C03090E8052C5963E9A1165 /* AtlysCollectors in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55407DFDF5E1637E00756DC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AEC2368EA806BBF1FAF7B64 /* AtlysCore in Frameworks */,
+				0DF0B8D8ADCD9DBC32318626 /* AtlysCollectors in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0ED82E9D2B4DB3D3544AD4E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,6 +143,34 @@
 			path = Atlys;
 			sourceTree = "<group>";
 		};
+		2B3E7974E066EF3F1C9A09AA /* AtlysSpike */ = {
+			isa = PBXGroup;
+			children = (
+				8906102FB7A69852F6974077 /* Argon2Benchmark.swift */,
+				9312D3EC6A779A78D6A90A04 /* AtlysSpike.entitlements */,
+				BF4227A7860E0A9E3AE29B8D /* AtlysSpikeApp.swift */,
+				CC3526EB059299579500450E /* HealthSpike.swift */,
+				4E9D75AEA613463E3282514C /* Info.plist */,
+				D1951058B902349906AAB2EF /* LocationSpike.swift */,
+				221A20F35474F30DA311C1B9 /* SecureEnclaveSpike.swift */,
+				1FBDC948C07F5E9A6C1AC9E0 /* SpikePaths.swift */,
+				0B2C50C586E08DE2EDA0CAE7 /* SpikeVaultStore.swift */,
+				429CB4CA3F2EDEA12EFF9656 /* SpikeViews.swift */,
+				5B013B48C310A02F72BFDA13 /* WakeLog.swift */,
+			);
+			path = AtlysSpike;
+			sourceTree = "<group>";
+		};
+		468961FF6B9C242DBAF643F6 /* AtlysSpikeTests */ = {
+			isa = PBXGroup;
+			children = (
+				5D8B2D997F9E0005354880E9 /* CoreSpikeTests.swift */,
+				8806E63F3A3515CCD3158E52 /* SealedInboxTests.swift */,
+				69B1D946902D43F2ADF27413 /* SecureEnclaveTests.swift */,
+			);
+			path = AtlysSpikeTests;
+			sourceTree = "<group>";
+		};
 		63BA5AC6A0FB77C7D6EF300E = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +179,7 @@
 				A89DCF1E2286466BEBBA52E5 /* AtlysUITests */,
 				210A26C11BEB061D32590A29 /* Config */,
 				927C43709134E2D6D1FA59C2 /* Packages */,
+				7AD24F64265D262AAEDA80C8 /* Spike */,
 				EDF510200F81C5915AE0C951 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,6 +190,15 @@
 				450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */,
 			);
 			path = AtlysTests;
+			sourceTree = "<group>";
+		};
+		7AD24F64265D262AAEDA80C8 /* Spike */ = {
+			isa = PBXGroup;
+			children = (
+				2B3E7974E066EF3F1C9A09AA /* AtlysSpike */,
+				468961FF6B9C242DBAF643F6 /* AtlysSpikeTests */,
+			);
+			path = Spike;
 			sourceTree = "<group>";
 		};
 		927C43709134E2D6D1FA59C2 /* Packages */ = {
@@ -128,6 +223,8 @@
 			isa = PBXGroup;
 			children = (
 				44995E2D4A4DCCB2BC2B7289 /* Atlys.app */,
+				F46FBD5E07A6003C9DB7BEF4 /* AtlysSpike.app */,
+				B38AB0F2AF665DC817017EFE /* AtlysSpikeTests.xctest */,
 				C4152DD23EAE24F3A0123EEE /* AtlysTests.xctest */,
 				AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */,
 			);
@@ -158,6 +255,27 @@
 			productReference = 44995E2D4A4DCCB2BC2B7289 /* Atlys.app */;
 			productType = "com.apple.product-type.application";
 		};
+		397EAF549429B330862F5621 /* AtlysSpikeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A30ED96C83229AB22B74C04 /* Build configuration list for PBXNativeTarget "AtlysSpikeTests" */;
+			buildPhases = (
+				D74D734ACFEEC83247634330 /* Sources */,
+				130CFDC5871C5A389AB2BA5E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8DC23A608AAF1693C06B8FEB /* PBXTargetDependency */,
+			);
+			name = AtlysSpikeTests;
+			packageProductDependencies = (
+				9FDAC1678A9E6C76340344DF /* AtlysCore */,
+				82990D95507D545600486665 /* AtlysCollectors */,
+			);
+			productName = AtlysSpikeTests;
+			productReference = B38AB0F2AF665DC817017EFE /* AtlysSpikeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		64F037C300F8BF4578D3764A /* AtlysUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 77F3CBE370446227CACA5204 /* Build configuration list for PBXNativeTarget "AtlysUITests" */;
@@ -175,6 +293,26 @@
 			productName = AtlysUITests;
 			productReference = AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		7BC0179A8EF537D334C5FAB5 /* AtlysSpike */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DA2CE1CAF649B0576FA2613 /* Build configuration list for PBXNativeTarget "AtlysSpike" */;
+			buildPhases = (
+				4DE82A33E691727821ABEAA1 /* Sources */,
+				55407DFDF5E1637E00756DC9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AtlysSpike;
+			packageProductDependencies = (
+				E4C6C6F8C50893BB1CF2DA21 /* AtlysCore */,
+				E01767759FF0B61CE94898CD /* AtlysCollectors */,
+			);
+			productName = AtlysSpike;
+			productReference = F46FBD5E07A6003C9DB7BEF4 /* AtlysSpike.app */;
+			productType = "com.apple.product-type.application";
 		};
 		E558E5C2641809B6BE7D28E7 /* AtlysTests */ = {
 			isa = PBXNativeTarget;
@@ -209,10 +347,18 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					397EAF549429B330862F5621 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
 					64F037C300F8BF4578D3764A = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2CFB3D6152C1ED8BA663E37D;
+					};
+					7BC0179A8EF537D334C5FAB5 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 					E558E5C2641809B6BE7D28E7 = {
 						DevelopmentTeam = "";
@@ -242,11 +388,29 @@
 				2CFB3D6152C1ED8BA663E37D /* Atlys */,
 				E558E5C2641809B6BE7D28E7 /* AtlysTests */,
 				64F037C300F8BF4578D3764A /* AtlysUITests */,
+				7BC0179A8EF537D334C5FAB5 /* AtlysSpike */,
+				397EAF549429B330862F5621 /* AtlysSpikeTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4DE82A33E691727821ABEAA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D23B16CC99F24E658A97FED /* Argon2Benchmark.swift in Sources */,
+				9DA67E31B0EC6FFEFD1902C8 /* AtlysSpikeApp.swift in Sources */,
+				8A38D090EBA35B28AA227CAB /* HealthSpike.swift in Sources */,
+				8EF763B0FABD10BB6F25181E /* LocationSpike.swift in Sources */,
+				A0D609EC00A0151FC62FF6E7 /* SecureEnclaveSpike.swift in Sources */,
+				39331AE248F3AC03BB1BB127 /* SpikePaths.swift in Sources */,
+				F58BC6E5076D34C78095229D /* SpikeVaultStore.swift in Sources */,
+				E89F3719FE8789EAC2314294 /* SpikeViews.swift in Sources */,
+				45AFD781795708B2AE464C72 /* WakeLog.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6A47DBA0A7C1AF47F684E6C8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -263,6 +427,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D74D734ACFEEC83247634330 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2E86D3C7F89226BEDBE7F26 /* CoreSpikeTests.swift in Sources */,
+				065C36296F07FAD189B3F076 /* SealedInboxTests.swift in Sources */,
+				90894BA339D6BB56D176E8FC /* SecureEnclaveTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DF62C35E1E02A435620DD5A1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -274,6 +448,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8DC23A608AAF1693C06B8FEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BC0179A8EF537D334C5FAB5 /* AtlysSpike */;
+			targetProxy = D5EFD8D7DE35316AB1FEDFF5 /* PBXContainerItemProxy */;
+		};
 		9D843A17897D6DB77C8455AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2CFB3D6152C1ED8BA663E37D /* Atlys */;
@@ -287,6 +466,23 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		164CA64A133B869E05513651 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).spike.tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AtlysSpike.app/AtlysSpike";
+			};
+			name = Release;
+		};
 		216369EF11CF0F5A37310A29 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -320,6 +516,23 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Atlys.app/Atlys";
 			};
 			name = Debug;
+		};
+		413BE7426F44EBAFC8474141 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Spike/AtlysSpike/AtlysSpike.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Spike/AtlysSpike/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).spike";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
 		};
 		656B31E483A2E70C9EFB5ECE /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -416,6 +629,40 @@
 			};
 			name = Debug;
 		};
+		9746C96E526057AEB5C7CC27 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).spike.tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AtlysSpike.app/AtlysSpike";
+			};
+			name = Debug;
+		};
+		B7C9E246EA210AF9EB938913 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Spike/AtlysSpike/AtlysSpike.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Spike/AtlysSpike/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).spike";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		E759D05EF9273F5D0A8FBA9B /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 18C29419818EC4F74B59CE7B /* Shared.xcconfig */;
@@ -507,11 +754,29 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2DA2CE1CAF649B0576FA2613 /* Build configuration list for PBXNativeTarget "AtlysSpike" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7C9E246EA210AF9EB938913 /* Debug */,
+				413BE7426F44EBAFC8474141 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		51FB0593FE547BE91E2B62C4 /* Build configuration list for PBXNativeTarget "Atlys" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F96182C7061D28E666E9A7E4 /* Debug */,
 				656B31E483A2E70C9EFB5ECE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5A30ED96C83229AB22B74C04 /* Build configuration list for PBXNativeTarget "AtlysSpikeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9746C96E526057AEB5C7CC27 /* Debug */,
+				164CA64A133B869E05513651 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -565,11 +830,27 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AtlysCollectors;
 		};
+		82990D95507D545600486665 /* AtlysCollectors */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCollectors;
+		};
+		9FDAC1678A9E6C76340344DF /* AtlysCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCore;
+		};
 		AB06F6A8BA21584C4C7BA182 /* AtlysCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AtlysCore;
 		};
 		D3FA8D782A3AD34E73A3E16B /* AtlysCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCore;
+		};
+		E01767759FF0B61CE94898CD /* AtlysCollectors */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCollectors;
+		};
+		E4C6C6F8C50893BB1CF2DA21 /* AtlysCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AtlysCore;
 		};
