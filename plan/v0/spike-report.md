@@ -130,7 +130,7 @@ As a cross-check, the reference C CLI takes ~104 ms at 64 MiB/t=3 on the same ma
 - **m = 256 MiB, t = 3, p = 1** as the v0 default. This is ~0.3 s on an M4. The oldest iOS 18 iPhones (A12) are expected to land near the 1 s target, but **that is an estimate, not a measurement**.
 - Use **fixed parameters, not per-device calibration at vault creation.** A vault created on a fast phone must still unlock in reasonable time after a restore onto an older phone. Parameters stay in the header and can be raised later.
 - Adjustment rule after the device run: if the oldest supported iPhone takes more than 1.5 s, use m = 192 MiB. If it takes less than 0.7 s, use t = 4.
-- Keep `Argon2Params::OWASP_MINIMUM` (19 MiB, t = 2) as the floor accepted from a header. Keep the existing caps (1 GiB, t ≤ 64, p ≤ 16), so a tampered header can't hang or exhaust memory.
+- Keep `Argon2Params::OWASP_MINIMUM` (19 MiB, t = 2) as the floor accepted from a header. Keep the existing caps (1 GiB, t ≤ 64, p ≤ 16), so a tampered header can't hang or exhaust memory. *Superseded by RFC-0002:* the accepted range is now 19–256 MiB, t = 2–4, p = 1, because the old caps together allowed too much unauthenticated work (`Argon2Params::validate`).
 - p = 1. The `argon2` crate's `parallel` feature (rayon) could use two performance cores, but it adds a dependency and helps attackers equally. Not worth it for v0.
 
 **Risk.** A 256 MiB allocation in the foreground is well within iOS limits on 3 GB+ devices, but it must be verified on the oldest device. The Argon2 tab can include 384 MiB to probe headroom.

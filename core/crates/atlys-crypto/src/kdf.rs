@@ -22,31 +22,42 @@ pub struct Argon2Params {
 }
 
 impl Argon2Params {
-    /// The v0 starting point from `plan/v0/01-account-setup.md`:
-    /// m = 64 MiB, t = 3, p = 1. Calibrated in M0 (see `plan/v0/spike-report.md`).
+    /// Proposed parameters for new vaults (RFC-0002): m = 256 MiB, t = 3,
+    /// p = 1. Pending measurement on the oldest supported iPhone.
+    pub const V1_CREATE: Self = Self {
+        memory_kib: 256 * 1024,
+        iterations: 3,
+        parallelism: 1,
+    };
+
+    /// The M0 benchmark baseline (m = 64 MiB, t = 3, p = 1). Not an approved
+    /// production default; see `plan/v0/spike-report.md`.
     pub const V0_DEFAULT: Self = Self {
         memory_kib: 64 * 1024,
         iterations: 3,
         parallelism: 1,
     };
 
-    /// The OWASP minimum recommendation for Argon2id: m = 19 MiB, t = 2, p = 1.
-    /// Parameters weaker than this are rejected.
+    /// The weakest accepted parameters, the OWASP minimum for Argon2id:
+    /// m = 19 MiB, t = 2, p = 1.
     pub const OWASP_MINIMUM: Self = Self {
         memory_kib: 19 * 1024,
         iterations: 2,
         parallelism: 1,
     };
 
-    /// Upper bounds, so a tampered vault header cannot make unlock exhaust
-    /// memory or hang the app. Generous enough for future increases.
-    pub const MAX_MEMORY_KIB: u32 = 1024 * 1024;
+    /// Upper bound on memory cost (256 MiB). With the other caps this bounds
+    /// the work a tampered vault header can demand before the password is
+    /// checked. Raising it requires device measurements and an RFC revision.
+    pub const MAX_MEMORY_KIB: u32 = 256 * 1024;
     /// Upper bound on iterations.
-    pub const MAX_ITERATIONS: u32 = 64;
-    /// Upper bound on parallelism.
-    pub const MAX_PARALLELISM: u32 = 16;
+    pub const MAX_ITERATIONS: u32 = 4;
+    /// Required parallelism: v1 vaults use exactly one lane.
+    pub const PARALLELISM: u32 = 1;
 
-    /// Checks that the parameters are within the accepted range.
+    /// Checks the parameters against the RFC-0002 accepted range
+    /// (19456–262144 KiB, 2–4 iterations, exactly 1 lane). Call before
+    /// allocating memory or running Argon2.
     pub fn validate(&self) -> Result<()> {
         let min = Self::OWASP_MINIMUM;
         if self.memory_kib < min.memory_kib || self.memory_kib > Self::MAX_MEMORY_KIB {
@@ -55,7 +66,7 @@ impl Argon2Params {
         if self.iterations < min.iterations || self.iterations > Self::MAX_ITERATIONS {
             return Err(CryptoError::InvalidParams("iteration count out of range"));
         }
-        if self.parallelism < min.parallelism || self.parallelism > Self::MAX_PARALLELISM {
+        if self.parallelism != Self::PARALLELISM {
             return Err(CryptoError::InvalidParams("parallelism out of range"));
         }
         Ok(())
@@ -64,8 +75,8 @@ impl Argon2Params {
 
 /// Derives a 256-bit key from a password with Argon2id (version 0x13).
 ///
-/// Rejects parameters below [`Argon2Params::OWASP_MINIMUM`]. Use
-/// [`derive_key_unchecked`] only for benchmarks.
+/// Rejects parameters outside the accepted range (see
+/// [`Argon2Params::validate`]). Use [`derive_key_unchecked`] only for benchmarks.
 pub fn derive_key(
     password: &[u8],
     salt: &[u8; SALT_LEN],
@@ -75,9 +86,9 @@ pub fn derive_key(
     derive_key_unchecked(password, salt, params)
 }
 
-/// Like [`derive_key`] but without the minimum-strength check, for
-/// calibration benchmarks that measure weak settings. Never use it to protect
-/// a vault.
+/// Like [`derive_key`] but without the range check, for calibration
+/// benchmarks that measure settings outside the accepted range. Never use it
+/// to protect or unlock a vault.
 pub fn derive_key_unchecked(
     password: &[u8],
     salt: &[u8; SALT_LEN],
@@ -151,6 +162,47 @@ mod tests {
             huge.validate(),
             Err(CryptoError::InvalidParams("memory cost out of range"))
         );
-        assert!(Argon2Params::V0_DEFAULT.validate().is_ok());
+    }
+
+    #[test]
+    fn accepted_range_matches_rfc_0002() {
+        let ok = |memory_kib, iterations, parallelism| {
+            Argon2Params {
+                memory_kib,
+                iterations,
+                parallelism,
+            }
+            .validate()
+            .is_ok()
+        };
+        assert!(ok(19_456, 2, 1));
+        assert!(ok(262_144, 4, 1));
+        assert!(!ok(19_455, 2, 1));
+        assert!(!ok(262_145, 2, 1));
+        assert!(!ok(65_536, 1, 1));
+        assert!(!ok(65_536, 5, 1));
+        assert!(!ok(65_536, 3, 0));
+        assert!(!ok(65_536, 3, 2));
+        for params in [
+            Argon2Params::V1_CREATE,
+            Argon2Params::V0_DEFAULT,
+            Argon2Params::OWASP_MINIMUM,
+        ] {
+            assert!(params.validate().is_ok(), "{params:?}");
+        }
+    }
+
+    #[test]
+    fn out_of_range_params_fail_before_running_argon2() {
+        // 4 GiB would take seconds and exhaust memory if it ran; the check
+        // must reject it immediately.
+        let start = std::time::Instant::now();
+        let huge = Argon2Params {
+            memory_kib: u32::MAX,
+            iterations: u32::MAX,
+            parallelism: 1,
+        };
+        assert!(derive_key(b"pw", KAT_SALT, huge).is_err());
+        assert!(start.elapsed() < std::time::Duration::from_millis(100));
     }
 }

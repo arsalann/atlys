@@ -7,14 +7,16 @@
 //! | --- | --- | --- |
 //! | Master password stretching | Argon2id (RFC 9106) | [`kdf`] |
 //! | Subkey derivation | HKDF-SHA256 (RFC 5869) | [`hkdf`] |
+//! | Vault header authentication | HMAC-SHA256 (RFC 2104) | [`mac`] |
 //! | Envelopes, blobs | XChaCha20-Poly1305 | [`aead`] |
 //! | Write-only ingest inbox | HPKE base mode, X25519 + HKDF-SHA256 + ChaCha20-Poly1305 (RFC 9180) | [`hpke`] |
 //!
 //! Key material lives in types that zeroize on drop ([`SecretKey`],
 //! [`hpke::IngestPrivateKey`]) and never implement `Debug` with their contents.
 //!
-//! Formats, labels, and parameters are provisional until RFC-0002 (vault
-//! format and key hierarchy) is merged in milestone M1.
+//! Labels, framing, and parameter ranges follow RFC-0002 (vault format and key
+//! hierarchy, `spec/rfcs/0002-vault-format.md`). Its public test vectors live
+//! in `spec/vault/v1/vectors.json` and are checked by `tests/`.
 
 #![forbid(unsafe_code)]
 
@@ -22,6 +24,7 @@ pub mod aead;
 pub mod hkdf;
 pub mod hpke;
 pub mod kdf;
+pub mod mac;
 mod secret;
 
 pub use secret::{KEY_LEN, SecretKey, random_bytes};
