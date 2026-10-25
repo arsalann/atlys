@@ -1,8 +1,8 @@
 # RFC-0002: Vault format and key hierarchy
 
-Status: **Proposed**. Implements the design step for M1.1; acceptance requires
-review and merge. This document does not claim that the M0 spike implements the
-product format. Device calibration and biometric tests remain open.
+Status: **Accepted** (2026-10-26, PR #6). This is the design step for M1.1.
+The M0 spike does not implement the product format. Device calibration and
+biometric tests remain open.
 
 ## Scope
 
@@ -255,17 +255,23 @@ recovery unlock and a newly enrolled biometric envelope.
 ## Vectors and implementation gates
 
 [`../vault/v1/vectors.json`](../vault/v1/vectors.json) contains public synthetic
-HKDF outputs, header-MAC framing, and envelope/inbox context bytes. Regenerate
-with `python3 scripts/vault-format-vectors.py`; `--check` verifies the committed
-fixture with Python's independent HMAC/HKDF implementation. The minimal MAC
+HKDF outputs, header-MAC framing, envelope/inbox context bytes, and fixed-nonce
+password, recovery, and ingest envelopes. Regenerate with
+`python3 scripts/vault-format-vectors.py`; `--check` verifies the committed
+fixture with Python's independent HMAC/HKDF implementation and a pure-Python
+XChaCha20-Poly1305 that first checks itself against RFC 8439 section 2.8.2 and
+draft-irtf-cfrg-xchacha-03 vectors. The password envelope's KEK stands in for an
+Argon2id output. The minimal MAC
 payload is deliberately not a valid complete vault header. The synthetic P-256
 salt fixture tests HKDF only, not point validation or ECDH.
 
-Rust tests consume the HKDF fixture. Existing primitive known-answer tests cover
-Argon2id against its reference C implementation and HPKE against RFC 9180
-Appendix A.2.1; property tests cover AEAD tampering. M1.2/1.3 must add complete
-fixed-nonce envelope/header/inbox interoperability fixtures and parser tests
-before claiming product-format conformance. This RFC does not introduce a
+Rust tests check the HKDF subkeys and the header MAC against the fixture, and
+open each envelope with the fixture's KEK and AAD, rejecting every single-bit
+change. Existing primitive known-answer tests cover Argon2id against its
+reference C implementation and HPKE against RFC 9180 Appendix A.2.1; property
+tests cover AEAD tampering. M1.3 must add complete header and sealed inbox v2
+interoperability fixtures and parser tests before claiming product-format
+conformance. This RFC does not introduce a
 production deterministic-nonce API.
 
 Acceptance of this design does not finish M1. The implementation must test wrong

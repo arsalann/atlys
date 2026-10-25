@@ -130,7 +130,7 @@ As a cross-check, the reference C CLI takes ~104 ms at 64 MiB/t=3 on the same ma
 - **m = 256 MiB, t = 3, p = 1** as the v0 default. This is ~0.3 s on an M4. The oldest iOS 18 iPhones (A12) are expected to land near the 1 s target, but **that is an estimate, not a measurement**.
 - Use **fixed parameters, not per-device calibration at vault creation.** A vault created on a fast phone must still unlock in reasonable time after a restore onto an older phone. Parameters stay in the header and can be raised later.
 - Adjustment rule after the device run: if the oldest supported iPhone takes more than 1.5 s, use m = 192 MiB. If it takes less than 0.7 s, use t = 4.
-- Keep `Argon2Params::OWASP_MINIMUM` (19 MiB, t = 2) as the floor accepted from a header. Keep the existing caps (1 GiB, t ≤ 64, p ≤ 16), so a tampered header can't hang or exhaust memory.
+- Keep `Argon2Params::OWASP_MINIMUM` (19 MiB, t = 2) as the floor accepted from a header. Keep the existing caps (1 GiB, t ≤ 64, p ≤ 16), so a tampered header can't hang or exhaust memory. *Superseded by RFC-0002:* the accepted range is now 19–256 MiB, t = 2–4, p = 1, because the old caps together allowed too much unauthenticated work (`Argon2Params::validate`).
 - p = 1. The `argon2` crate's `parallel` feature (rayon) could use two performance cores, but it adds a dependency and helps attackers equally. Not worth it for v0.
 
 **Risk.** A 256 MiB allocation in the foreground is well within iOS limits on 3 GB+ devices, but it must be verified on the oldest device. The Argon2 tab can include 384 MiB to probe headroom.
@@ -269,7 +269,7 @@ Record results in a follow-up PR to this report, as summaries. Do not commit exp
 - [x] Repository settings: **private vulnerability reporting** enabled during merge review (2026-10-26).
 - [ ] Replace the `security@<project-domain>` and `conduct@<project-domain>` placeholders.
 - [ ] Test on an **iOS 18.x** Simulator runtime in CI. So far it has run on iOS 26.5 (CI) and iOS 27.0 (local) only, with an iOS 18.0 deployment target.
-- [x] RFC-0002 inputs from this report: vault ID in HPKE `info`, the inbox quarantine rule, envelope storage location, `cipher_memory_security`, and SQLCipher log level. Captured in [RFC-0002](../../spec/rfcs/0002-vault-format.md) (proposed); it narrows the accepted Argon2id range below the spike caps.
+- [x] RFC-0002 inputs from this report: vault ID in HPKE `info`, the inbox quarantine rule, envelope storage location, `cipher_memory_security`, and SQLCipher log level. Captured in [RFC-0002](../../spec/rfcs/0002-vault-format.md) (accepted); it narrows the accepted Argon2id range below the spike caps.
 - [ ] Before M1 features: delete `apps/ios/Spike/`, the `AtlysSpike` targets, and the `spike` feature.
 
 ## Recommended start for M1
