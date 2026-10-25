@@ -6,6 +6,8 @@ Concrete tasks per milestone, each with exit criteria. Every milestone ends with
 
 Goal: remove the technical unknowns before building features.
 
+Status (2026-10-25): simulator and CI phase done; device phase pending an Apple Developer account. Results: [spike-report.md](spike-report.md).
+
 | # | Task | Exit criteria |
 | --- | --- | --- |
 | 0.1 | Repo scaffolding: `core/` Rust workspace, `apps/ios/` Xcode project, `spec/adm/v0/`, `scripts/` | `cargo build` and an empty app build locally and in CI |
@@ -82,8 +84,10 @@ Goal: remove the technical unknowns before building features.
 | --- | --- | --- |
 | Background wakes are rarer than expected (iOS throttling) | Gaps in data | Catch up on every wake; Motion's 7-day buffer; clear status on the Sources screen; measured in M0.8 |
 | HealthKit locked while the phone is locked | Delayed health data | Defer and resume on unlock (by design) |
-| SQLCipher build friction on iOS | Schedule slip | Resolved in M0.3; SQLite3MultipleCiphers as fallback |
+| SQLCipher build friction on iOS | Schedule slip | **Resolved in M0.3:** builds with CommonCrypto and no configuration. SQLite3MultipleCiphers remains the fallback |
+| First SQLCipher open in a process is slow (~1.3 s on the Simulator, ms afterwards) | Slow first unlock | Measure on device in M0; if real, warm the core while the lock screen shows |
+| Simulator can't verify Data Protection, biometric Secure Enclave keys, visits, or (without a team) HealthKit | False confidence from green CI | Device test steps in the spike report; protection tests are strict on devices |
 | App Review pushback on "Always" location or HealthKit use | Launch delay | Plain purpose strings, review notes, no continuous GPS in v0 |
 | Weak master passwords | Vault brute-forceable if the device is stolen | Strength enforcement + Argon2id; recovery phrase is high entropy |
 | Users lose password and recovery phrase | Permanent data loss | Clear onboarding warning, mandatory phrase confirmation, encrypted export reminder |
-| Apple Developer account and entitlements | Blocks device testing and TestFlight | Set up during M0 |
+| Apple Developer account and entitlements | Blocks device testing and TestFlight | Set up during M0. Still open: blocks the M0 device phase, and HealthKit even on the Simulator |

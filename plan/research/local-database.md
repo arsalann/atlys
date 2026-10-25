@@ -75,6 +75,8 @@ The on-device database sits inside the Rust vault core and must:
 
 ## To validate in the spike
 
+> **M0 result (2026-10-25):** on iOS, `rusqlite` + `bundled-sqlcipher` builds through UniFFI with Apple **CommonCrypto** as the provider, so no OpenSSL is needed. Raw-key open, wrong-key rejection, and no plaintext on disk are verified on the Simulator. Android is not yet tried; there the options are vendored OpenSSL or the libtomcrypt provider bundled in `sqlcipher-src`. See [../v0/spike-report.md](../v0/spike-report.md#03-sqlcipher-via-rusqlite).
+
 - `rusqlite` + `bundled-sqlcipher-vendored-openssl` builds for iOS and Android targets through UniFFI.
 - Insert and query throughput with 5M synthetic records on a mid-range Android phone.
 - FTS5 search latency inside an encrypted database.

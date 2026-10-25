@@ -32,7 +32,7 @@ final class SpikeAppDelegate: NSObject, UIApplicationDelegate {
         LocationSpike.shared.start(relaunchedForLocation: launchOptions?[.location] != nil)
         // HealthKit requires observer queries to be registered before
         // didFinishLaunching returns for background deliveries to arrive.
-        Task { await HealthSpike.shared.registerObserver() }
+        HealthSpike.shared.registerObserver()
         return true
     }
 }

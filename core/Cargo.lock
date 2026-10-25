@@ -111,6 +111,7 @@ dependencies = [
  "hpke",
  "proptest",
  "sha2",
+ "subtle",
  "thiserror",
  "zeroize",
 ]

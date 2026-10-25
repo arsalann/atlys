@@ -35,6 +35,8 @@ Before changing `AGENTS.md`, show the proposed change and ask a maintainer to re
 - **Never commit credentials, signing keys, or service config files.** The pre-2021 Atlys codebase committed Android keystores, Firebase config, and hard-coded server IPs. That is unacceptable in a public repository.
 - **Atlys (this project) is not Atlys the visa startup.** This project descends from Atlys Networks (founded 2019, personal data management). A separate, unrelated visa-application company founded in 2021 also uses the name "Atlys". Never mix up their history, funding, products, or news in docs or research. Verify which company a source refers to before citing it.
 - **Check platform limits against the latest OS release before calling something impossible.** An early v0 draft said iOS screen time could not be exported, which missed the iOS 26.4 entitlement that allows it in the EU. Platform rules change every release, so state the version and region a limit applies to.
+- **A green Simulator run is not evidence for device-only security behavior.** The iOS Simulator does not enforce Data Protection classes (they read back as nil), cannot create biometry-bound Secure Enclave keys, never delivers location visits, and drops entitlements such as HealthKit without a signing team. Mark such checks as device-only and list the manual steps instead of reporting them as verified.
+- **Commit with an identity that is safe to publish.** A DCO `Signed-off-by` line and the commit author put an email address into public history permanently. Use the contributor's GitHub `noreply` address unless they have chosen otherwise.
 
 ## 5. Project orientation
 

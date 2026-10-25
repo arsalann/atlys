@@ -1,5 +1,7 @@
 //! Password-based key derivation with Argon2id (RFC 9106).
 
+use zeroize::Zeroizing;
+
 use argon2::{Algorithm, Argon2, Params, Version};
 
 use crate::{CryptoError, KEY_LEN, Result, SecretKey};
@@ -89,11 +91,11 @@ pub fn derive_key_unchecked(
     )
     .map_err(|_| CryptoError::InvalidParams("rejected by argon2"))?;
     let argon = Argon2::new(Algorithm::Argon2id, Version::V0x13, argon_params);
-    let mut out = [0u8; KEY_LEN];
+    let mut out = Zeroizing::new([0u8; KEY_LEN]);
     argon
-        .hash_password_into(password, salt, &mut out)
+        .hash_password_into(password, salt, &mut *out)
         .map_err(|_| CryptoError::Internal)?;
-    Ok(SecretKey::from_bytes(out))
+    SecretKey::try_from_slice(&out[..])
 }
 
 #[cfg(test)]
