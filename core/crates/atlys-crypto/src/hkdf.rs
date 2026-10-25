@@ -21,7 +21,8 @@ impl Label {
     }
 }
 
-/// Labels for keys derived from the vault key. Provisional until RFC-0002.
+/// Labels for keys derived from the vault key, as specified in RFC-0002
+/// (`spec/rfcs/0002-vault-format.md`).
 pub mod labels {
     use super::Label;
 
