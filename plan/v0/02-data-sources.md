@@ -77,11 +77,11 @@ There is no permission prompt. The value is modest (charging habits, time-zone c
 
 ## Screen time and app usage
 
-There is no single answer: it depends on region, OS version, and device.
+**Not in v0.** There is no single answer: it depends on region, OS version, and device. The legal background is in [../research/regulation.md](../research/regulation.md#known-portability-gaps).
 
 | Path | What you get | Who it works for | Status |
 | --- | --- | --- | --- |
-| **App & website usage entitlement** (`com.apple.developer.family-controls.app-and-website-usage`, `DeviceActivityData.activityData(filteredBy:using:)`, iOS 26.4+) | Real per-app and per-website usage data readable by the app | **Customers only in the EU** (EU device + EU Apple Account); development works anywhere. Needs Apple's entitlement approval and user consent. **Only one app at a time** can hold this access. | Best option where available. Target v0.1 behind a feature check. |
+| **App & website usage entitlement** (`com.apple.developer.family-controls.app-and-website-usage`, `DeviceActivityData.activityData(filteredBy:using:)`, iOS 26.4+) | Real per-app and per-website usage data readable by the app | **Customers only in the EU** (EU device + EU Apple Account); development works anywhere. Needs Apple's entitlement approval and user consent. **Only one app at a time** can hold this access. | Best option where available. Reported by developers but **not yet confirmed in Apple's documentation**: confirm with Apple, then target v0.1 behind a feature check. |
 | Standard Screen Time API (`DeviceActivityReport`) | Usage can be *displayed* inside a sandboxed extension, but not stored or exported | Everyone | Not usable for a vault. Apple confirmed this is intended. |
 | `DeviceActivityMonitor` thresholds | "Used app X (or all apps) for at least N minutes today" callbacks. A ladder of thresholds approximates totals. | Everyone (Family Controls entitlement) | Coarse, and developers report premature or unreliable callbacks on iOS 17 and 26. Experimental only. |
 | **Mac connector** (Phase 2) | Per-app usage from the Mac's Screen Time stores (`knowledgeC.db`, Biome), including iPhone usage synced through "Share across devices" | Users with a Mac and Full Disk Access granted | Undocumented and changes between macOS versions, but widely used by existing tools. Treat as best-effort. |

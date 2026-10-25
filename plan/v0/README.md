@@ -1,6 +1,6 @@
 # v0: iOS app, local vault, on-device data
 
-Status: Draft plan (2026-10-25).
+Status: **Final** (2026-10-25). Changes from here on go through PRs that update these docs.
 
 The first shippable Atlys. A simple iPhone app that sets up an encrypted vault protected by a master password, then quietly collects the user's own on-device data (location visits, motion, health, and device telemetry) into that vault. No accounts, no servers, no network.
 
@@ -9,6 +9,7 @@ The first shippable Atlys. A simple iPhone app that sets up an encrypted vault p
 | [01-account-setup.md](01-account-setup.md) | Onboarding, master password, recovery key, Face ID, lock/unlock, key hierarchy |
 | [02-data-sources.md](02-data-sources.md) | The v0 collectors: what each collects, permissions, background behavior, iOS limits |
 | [03-ios-app.md](03-ios-app.md) | App architecture, Rust core over UniFFI, the write-only ingest inbox, screens, build, CI, testing |
+| [04-work-breakdown.md](04-work-breakdown.md) | Tasks and exit criteria per milestone, and the risk register |
 
 ## Goals
 
@@ -37,15 +38,17 @@ The first shippable Atlys. A simple iPhone app that sets up an encrypted vault p
 
 ## Milestones
 
+Task-level detail: [04-work-breakdown.md](04-work-breakdown.md).
+
 | # | Milestone | Outcome |
 | --- | --- | --- |
-| M0 | **Spike** (1–2 weeks) | The Rust core builds for iOS. SQLCipher opens with a raw key on a device. UniFFI bindings work from Swift. An HPKE-sealed inbox file round-trips. Argon2id is benchmarked on the oldest supported iPhone. |
+| M0 | **Spike** (1–2 weeks; results recorded in `spike-report.md`) | The Rust core builds for iOS. SQLCipher opens with a raw key on a device. UniFFI bindings work from Swift. An HPKE-sealed inbox file round-trips. Argon2id is benchmarked on the oldest supported iPhone. |
 | M1 | **Vault + onboarding** | Create vault, master password, recovery key, Face ID, lock/unlock, change password, recover, delete vault |
 | M2 | **Collectors** | HealthKit, location visits, motion activity, and device telemetry write to the sealed inbox, including in the background. Merge on unlock. |
 | M3 | **App UI** | Today, Timeline, Sources, Explorer, and Settings screens; encrypted backup and JSON export |
 | M4 | **Hardening + TestFlight** | Tests, battery profiling, security review of the RFC, accessibility, App Store privacy details, TestFlight beta |
 
-## Decisions in this plan (to confirm)
+## Decisions
 
 | Topic | Recommendation |
 | --- | --- |

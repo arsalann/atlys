@@ -19,7 +19,7 @@ Milestones are scoped by outcome, not date. Each phase should be usable on its o
 
 ## Phase 1: v0, iOS app with local vault and on-device data
 
-Detailed plan: [v0/](v0/README.md).
+Detailed plan: [v0/](v0/README.md) (final). Tasks: [v0/04-work-breakdown.md](v0/04-work-breakdown.md).
 
 - [ ] M0 spike: Rust core on iOS, SQLCipher raw key, UniFFI, HPKE sealed inbox, Argon2id benchmark
 - [ ] M1 vault + onboarding: master password, recovery phrase, Face ID, lock/unlock, change password, recovery
