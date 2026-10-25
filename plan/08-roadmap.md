@@ -17,20 +17,25 @@ Milestones are scoped by outcome, not date. Each phase should be usable on its o
 - [ ] RFC-0002: Vault format and key hierarchy
 - [ ] RFC-0003: Connector protocol and manifest
 
-## Phase 1: Local vault + first connectors (developer preview)
+## Phase 1: v0, iOS app with local vault and on-device data
 
-- [ ] `core`: encrypted local vault (create, unlock, write, query), recovery key
-- [ ] `cli`: `atlys init`, `atlys import <connector> <file>`, `atlys query`, `atlys export`
-- [ ] Connectors: Google Takeout (location + Chrome history), Apple Health export (`export.zip`), Spotify extended history
+Detailed plan: [v0/](v0/README.md).
+
+- [ ] M0 spike: Rust core on iOS, SQLCipher raw key, UniFFI, HPKE sealed inbox, Argon2id benchmark
+- [ ] M1 vault + onboarding: master password, recovery phrase, Face ID, lock/unlock, change password, recovery
+- [ ] M2 collectors: HealthKit, location visits, motion activity, device telemetry; background collection through the sealed inbox
+- [ ] M3 app UI: Today, Timeline, Sources, Explorer, Settings; encrypted backup and JSON export
+- [ ] M4 hardening: tests, battery profiling, crypto RFC review, TestFlight beta
+
+## Phase 2: Agent access + more sources
+
+- [ ] `cli` and desktop app (Tauri) on the same Rust core: open an exported or synced vault
 - [ ] `mcp`: local stdio MCP server, read-only, with grant scopes and an audit log
-- [ ] Demo: "Ask your agent about your own year" on a synthetic dataset
-
-## Phase 2: Mobile collectors
-
-- [ ] Android app: Health Connect, location, usage stats, calendar → local vault
-- [ ] iOS app: HealthKit, location, calendar → local vault
-- [ ] Vault explorer UI (the successor to the legacy raw data browser)
-- [ ] Device-to-device sync (local network / BYO folder)
+- [ ] Export importers (TypeScript connectors): Apple Health `export.zip`, Google Takeout, Spotify extended history
+- [ ] iOS v0.1 sources: calendar, contacts, photo metadata
+- [ ] Android app: Health Connect, location, usage stats (screen time), calendar
+- [ ] Device-to-device sync (local network / shared folder)
+- [ ] Demo: "Ask your agent about your own year"
 
 ## Phase 3: Storage options + sync
 

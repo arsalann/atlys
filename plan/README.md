@@ -14,6 +14,7 @@ Working notes for the relaunch of Atlys as an open source personal data vault an
 | [08-roadmap.md](08-roadmap.md) | Phased milestones |
 | [09-open-questions.md](09-open-questions.md) | Decisions still to be made |
 | [10-ideas-backlog.md](10-ideas-backlog.md) | Brainstorm parking lot: ideas not yet scheduled |
+| [v0/](v0/README.md) | **v0 plan:** iOS app, account setup, on-device data sources |
 | [research/](research/README.md) | Landscape: related projects, standards, regulation, technology options |
 
 ## One-paragraph summary

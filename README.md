@@ -42,8 +42,8 @@ See [plan/03-architecture.md](plan/03-architecture.md) for the full design.
 | Phase | Focus |
 | --- | --- |
 | 0 | Foundations: plan, specs (RFCs), community and security files, CI |
-| 1 | Local encrypted vault, CLI, first export importers, local MCP server |
-| 2 | Mobile apps with on-device collectors (health, location, usage) |
+| 1 | **v0:** iOS app with an encrypted local vault and on-device data (health, location, motion, device) |
+| 2 | Desktop app and CLI, local MCP server for AI agents, export importers, Android app |
 | 3 | Bring-your-own storage, E2EE multi-device sync, desktop app, security audit |
 | 4 | Connector SDKs and registry, Access API, data and deletion requests, managed vault beta |
 | 5 | Spec v1.0 and third-party adoption as a standard |
