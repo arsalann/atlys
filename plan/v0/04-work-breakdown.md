@@ -23,6 +23,10 @@ Status (2026-10-25): simulator and CI phase done; device phase pending an Apple 
 
 ## M1: Vault and onboarding
 
+Task 1.1 design: [RFC-0002](../../spec/rfcs/0002-vault-format.md) (proposed),
+with committed synthetic derivation/framing vectors. Product-format implementation
+and the M0 device checks remain pending.
+
 | # | Task | Exit criteria |
 | --- | --- | --- |
 | 1.1 | **RFC-0002: vault format and key hierarchy** (header, envelopes, HKDF labels, inbox format, versioning) | RFC merged; test vectors committed |

@@ -48,7 +48,7 @@ ingest PUBLIC key (stored in plaintext) ──▶ used by background collectors 
 
 | Item | v0 value | Notes |
 | --- | --- | --- |
-| KDF | Argon2id, **m = 256 MiB, t = 3, p = 1** (proposed in M0; confirm on the oldest supported iPhone) | M0 found the original starting point (64 MiB, t = 3) takes only ~70 ms on current Apple silicon, far below the ~1 s target, so memory cost goes up first. Parameters are fixed rather than calibrated per device, so a vault restored onto an older phone still unlocks in reasonable time. Headers below the OWASP minimum (19 MiB, t = 2, p = 1) or above sanity caps are rejected. Parameters are stored in the header so they can be raised later. See [spike-report.md](spike-report.md#06-argon2id-calibration). |
+| KDF | Argon2id, **m = 256 MiB, t = 3, p = 1** (proposed in M0; confirm on the oldest supported iPhone) | M0 found the original starting point (64 MiB, t = 3) takes only ~70 ms on current Apple silicon, far below the ~1 s target, so memory cost goes up first. Parameters are fixed rather than calibrated per device, so a vault restored onto an older phone still unlocks in reasonable time. Headers outside the accepted range (19–256 MiB, t = 2–4, p = 1; see [RFC-0002](../../spec/rfcs/0002-vault-format.md#password-kdf-and-resource-policy)) are rejected before running Argon2. Parameters are stored in the header so they can be raised later. See [spike-report.md](spike-report.md#06-argon2id-calibration). |
 | Salt | 16 random bytes per vault | |
 | AEAD | XChaCha20-Poly1305 | Envelopes, blobs, and inbox payloads |
 | Ingest sealing | HPKE (RFC 9180), X25519 + HKDF-SHA256 + ChaCha20-Poly1305 | Done in the Rust core so it is one implementation on every platform |
@@ -64,7 +64,7 @@ ingest PUBLIC key (stored in plaintext) ──▶ used by background collectors 
 | `vault/vault.db` | SQLCipher database: records, sources, collector state, audit log | Yes (SQLCipher, raw key) | Complete |
 | `vault/blobs/` | Large attachments (unused in v0, reserved) | Yes | Complete |
 | `inbox/*.sealed` | New data from collectors, waiting to be merged | Yes (HPKE to the ingest public key) | Complete Until First User Authentication, so background collection works while the phone is locked |
-| Keychain | Secure Enclave key reference for Face ID | Hardware-protected | `ThisDeviceOnly` |
+| Keychain | Secure Enclave key reference and device envelope for Face ID | Hardware-protected | `ThisDeviceOnly` |
 
 The header MAC (keyed from the vault key) detects tampering such as a parameter downgrade after unlock. Before unlock, the AEAD envelopes already reject tampered ciphertext.
 
