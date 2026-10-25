@@ -1,0 +1,85 @@
+name: ios
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned so the generated project is byte-for-byte reproducible.
+  XCODEGEN_VERSION: "2.46.0"
+  XCODEGEN_SHA256: "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+
+jobs:
+  build-and-test:
+    name: XCFramework + simulator tests
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
+      - name: Install Rust toolchain (core/rust-toolchain.toml)
+        working-directory: core
+        run: rustup toolchain install
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: core
+
+      - name: Build Rust core XCFramework
+        run: scripts/build-ios-core.sh
+
+      - name: Install XcodeGen ${{ env.XCODEGEN_VERSION }}
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          echo "${XCODEGEN_SHA256}  $RUNNER_TEMP/xcodegen.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen"
+          echo "$RUNNER_TEMP/xcodegen/xcodegen/bin" >> "$GITHUB_PATH"
+
+      - name: Check Atlys.xcodeproj matches project.yml
+        working-directory: apps/ios
+        run: |
+          xcodegen generate --quiet
+          git diff --exit-code -- . ':!Packages' || {
+            echo "::error::Atlys.xcodeproj is out of date. Run 'cd apps/ios && xcodegen generate' and commit."
+            exit 1
+          }
+
+      - name: Build for device (unsigned)
+        working-directory: apps/ios
+        run: |
+          xcodebuild build -project Atlys.xcodeproj -scheme Atlys \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify || exit "${PIPESTATUS[0]}"
+
+      - name: Test on iOS Simulator
+        working-directory: apps/ios
+        run: |
+          DEST="$(../../scripts/ios-sim-destination.sh)"
+          echo "destination: $DEST"
+          xcodebuild test -project Atlys.xcodeproj -scheme Atlys \
+            -destination "$DEST" \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            -resultBundlePath "$RUNNER_TEMP/Atlys.xcresult" | xcbeautify || exit "${PIPESTATUS[0]}"
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: xcresult
+          path: ${{ runner.temp }}/Atlys.xcresult
+          retention-days: 7

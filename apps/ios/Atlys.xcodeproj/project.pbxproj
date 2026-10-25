@@ -1,0 +1,583 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		011006418611C134030FC33F /* AtlysCollectors in Frameworks */ = {isa = PBXBuildFile; productRef = 3C01A7C03FE66E8050862C72 /* AtlysCollectors */; };
+		2B9CE47AD57ADCB74DB7FDDE /* AtlysApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */; };
+		51087E29C60ECF2A05DE09AF /* AtlysUI in Frameworks */ = {isa = PBXBuildFile; productRef = FBD5027A7E6FEE678B39A494 /* AtlysUI */; };
+		5912E21651D2E408A3CE77C4 /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = AB06F6A8BA21584C4C7BA182 /* AtlysCore */; };
+		971A9D884076656E1EA87985 /* LaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B147DF6771E25675A73FC6 /* LaunchTests.swift */; };
+		C2D2B037934CB8F1B38D9DDF /* AtlysCore in Frameworks */ = {isa = PBXBuildFile; productRef = D3FA8D782A3AD34E73A3E16B /* AtlysCore */; };
+		DFE354754FDCBCF86064EB58 /* AppSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4AFF5D05B995F708B7C8ACA8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF19ADE59B2E16057CC5E981 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2CFB3D6152C1ED8BA663E37D;
+			remoteInfo = Atlys;
+		};
+		6C3FA1C81DE4FDEB865549CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF19ADE59B2E16057CC5E981 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2CFB3D6152C1ED8BA663E37D;
+			remoteInfo = Atlys;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		18C29419818EC4F74B59CE7B /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		2254FD346F5935DD4185C8D7 /* AtlysCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysCore; path = Packages/AtlysCore; sourceTree = SOURCE_ROOT; };
+		44995E2D4A4DCCB2BC2B7289 /* Atlys.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Atlys.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSmokeTests.swift; sourceTree = "<group>"; };
+		45B147DF6771E25675A73FC6 /* LaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchTests.swift; sourceTree = "<group>"; };
+		4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtlysApp.swift; sourceTree = "<group>"; };
+		A8686A42D7708880BE38E015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AtlysUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C173C7D84E0E08EE772BEB99 /* AtlysCollectors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysCollectors; path = Packages/AtlysCollectors; sourceTree = SOURCE_ROOT; };
+		C4152DD23EAE24F3A0123EEE /* AtlysTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AtlysTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8F011E721C25D6ECF47433E /* AtlysUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AtlysUI; path = Packages/AtlysUI; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C0ED82E9D2B4DB3D3544AD4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5912E21651D2E408A3CE77C4 /* AtlysCore in Frameworks */,
+				011006418611C134030FC33F /* AtlysCollectors in Frameworks */,
+				51087E29C60ECF2A05DE09AF /* AtlysUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE80F10C6C7A04BA50699B08 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2D2B037934CB8F1B38D9DDF /* AtlysCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		210A26C11BEB061D32590A29 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				18C29419818EC4F74B59CE7B /* Shared.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		29FCCA2CBF2CE774E695204A /* Atlys */ = {
+			isa = PBXGroup;
+			children = (
+				4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */,
+				A8686A42D7708880BE38E015 /* Info.plist */,
+			);
+			path = Atlys;
+			sourceTree = "<group>";
+		};
+		63BA5AC6A0FB77C7D6EF300E = {
+			isa = PBXGroup;
+			children = (
+				29FCCA2CBF2CE774E695204A /* Atlys */,
+				73FCB105C97A60E7787FC5B9 /* AtlysTests */,
+				A89DCF1E2286466BEBBA52E5 /* AtlysUITests */,
+				210A26C11BEB061D32590A29 /* Config */,
+				927C43709134E2D6D1FA59C2 /* Packages */,
+				EDF510200F81C5915AE0C951 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		73FCB105C97A60E7787FC5B9 /* AtlysTests */ = {
+			isa = PBXGroup;
+			children = (
+				450A4A2558F9A825461A0BB9 /* AppSmokeTests.swift */,
+			);
+			path = AtlysTests;
+			sourceTree = "<group>";
+		};
+		927C43709134E2D6D1FA59C2 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C173C7D84E0E08EE772BEB99 /* AtlysCollectors */,
+				2254FD346F5935DD4185C8D7 /* AtlysCore */,
+				D8F011E721C25D6ECF47433E /* AtlysUI */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		A89DCF1E2286466BEBBA52E5 /* AtlysUITests */ = {
+			isa = PBXGroup;
+			children = (
+				45B147DF6771E25675A73FC6 /* LaunchTests.swift */,
+			);
+			path = AtlysUITests;
+			sourceTree = "<group>";
+		};
+		EDF510200F81C5915AE0C951 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				44995E2D4A4DCCB2BC2B7289 /* Atlys.app */,
+				C4152DD23EAE24F3A0123EEE /* AtlysTests.xctest */,
+				AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2CFB3D6152C1ED8BA663E37D /* Atlys */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51FB0593FE547BE91E2B62C4 /* Build configuration list for PBXNativeTarget "Atlys" */;
+			buildPhases = (
+				6A47DBA0A7C1AF47F684E6C8 /* Sources */,
+				C0ED82E9D2B4DB3D3544AD4E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Atlys;
+			packageProductDependencies = (
+				AB06F6A8BA21584C4C7BA182 /* AtlysCore */,
+				3C01A7C03FE66E8050862C72 /* AtlysCollectors */,
+				FBD5027A7E6FEE678B39A494 /* AtlysUI */,
+			);
+			productName = Atlys;
+			productReference = 44995E2D4A4DCCB2BC2B7289 /* Atlys.app */;
+			productType = "com.apple.product-type.application";
+		};
+		64F037C300F8BF4578D3764A /* AtlysUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77F3CBE370446227CACA5204 /* Build configuration list for PBXNativeTarget "AtlysUITests" */;
+			buildPhases = (
+				DF62C35E1E02A435620DD5A1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D843A17897D6DB77C8455AA /* PBXTargetDependency */,
+			);
+			name = AtlysUITests;
+			packageProductDependencies = (
+			);
+			productName = AtlysUITests;
+			productReference = AE33C25DD5F42312E76B16B2 /* AtlysUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		E558E5C2641809B6BE7D28E7 /* AtlysTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E89422B6EF36B24353056A38 /* Build configuration list for PBXNativeTarget "AtlysTests" */;
+			buildPhases = (
+				A18D5F31E6145722290E3182 /* Sources */,
+				DE80F10C6C7A04BA50699B08 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2D747831A3D83FD54128E67 /* PBXTargetDependency */,
+			);
+			name = AtlysTests;
+			packageProductDependencies = (
+				D3FA8D782A3AD34E73A3E16B /* AtlysCore */,
+			);
+			productName = AtlysTests;
+			productReference = C4152DD23EAE24F3A0123EEE /* AtlysTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EF19ADE59B2E16057CC5E981 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2CFB3D6152C1ED8BA663E37D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					64F037C300F8BF4578D3764A = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 2CFB3D6152C1ED8BA663E37D;
+					};
+					E558E5C2641809B6BE7D28E7 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 6BCC1FD2ED1E00BBDE8375E8 /* Build configuration list for PBXProject "Atlys" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 63BA5AC6A0FB77C7D6EF300E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9016A40F27BA5CB1FF9B053C /* XCLocalSwiftPackageReference "Packages/AtlysCollectors" */,
+				684C13278688D68649449212 /* XCLocalSwiftPackageReference "Packages/AtlysCore" */,
+				C2217AC5354DC776A8A55C93 /* XCLocalSwiftPackageReference "Packages/AtlysUI" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EDF510200F81C5915AE0C951 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2CFB3D6152C1ED8BA663E37D /* Atlys */,
+				E558E5C2641809B6BE7D28E7 /* AtlysTests */,
+				64F037C300F8BF4578D3764A /* AtlysUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6A47DBA0A7C1AF47F684E6C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B9CE47AD57ADCB74DB7FDDE /* AtlysApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A18D5F31E6145722290E3182 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DFE354754FDCBCF86064EB58 /* AppSmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF62C35E1E02A435620DD5A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				971A9D884076656E1EA87985 /* LaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9D843A17897D6DB77C8455AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2CFB3D6152C1ED8BA663E37D /* Atlys */;
+			targetProxy = 4AFF5D05B995F708B7C8ACA8 /* PBXContainerItemProxy */;
+		};
+		C2D747831A3D83FD54128E67 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2CFB3D6152C1ED8BA663E37D /* Atlys */;
+			targetProxy = 6C3FA1C81DE4FDEB865549CC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		216369EF11CF0F5A37310A29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Atlys.app/Atlys";
+			};
+			name = Release;
+		};
+		40D3CE1962AE1E7E7CE6CB19 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Atlys.app/Atlys";
+			};
+			name = Debug;
+		};
+		656B31E483A2E70C9EFB5ECE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Atlys/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).app";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		7E9791730A31CC32CD3B44A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).uitests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Atlys;
+			};
+			name = Debug;
+		};
+		8CECC481E44F8AEBF8ED466C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18C29419818EC4F74B59CE7B /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E759D05EF9273F5D0A8FBA9B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18C29419818EC4F74B59CE7B /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F96182C7061D28E666E9A7E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Atlys/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).app";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FE85E3C9B9E906DC664B5D44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ATLYS_BUNDLE_ID_PREFIX).uitests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Atlys;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		51FB0593FE547BE91E2B62C4 /* Build configuration list for PBXNativeTarget "Atlys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96182C7061D28E666E9A7E4 /* Debug */,
+				656B31E483A2E70C9EFB5ECE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6BCC1FD2ED1E00BBDE8375E8 /* Build configuration list for PBXProject "Atlys" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8CECC481E44F8AEBF8ED466C /* Debug */,
+				E759D05EF9273F5D0A8FBA9B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		77F3CBE370446227CACA5204 /* Build configuration list for PBXNativeTarget "AtlysUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7E9791730A31CC32CD3B44A4 /* Debug */,
+				FE85E3C9B9E906DC664B5D44 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E89422B6EF36B24353056A38 /* Build configuration list for PBXNativeTarget "AtlysTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40D3CE1962AE1E7E7CE6CB19 /* Debug */,
+				216369EF11CF0F5A37310A29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		684C13278688D68649449212 /* XCLocalSwiftPackageReference "Packages/AtlysCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AtlysCore;
+		};
+		9016A40F27BA5CB1FF9B053C /* XCLocalSwiftPackageReference "Packages/AtlysCollectors" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AtlysCollectors;
+		};
+		C2217AC5354DC776A8A55C93 /* XCLocalSwiftPackageReference "Packages/AtlysUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/AtlysUI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3C01A7C03FE66E8050862C72 /* AtlysCollectors */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCollectors;
+		};
+		AB06F6A8BA21584C4C7BA182 /* AtlysCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCore;
+		};
+		D3FA8D782A3AD34E73A3E16B /* AtlysCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysCore;
+		};
+		FBD5027A7E6FEE678B39A494 /* AtlysUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AtlysUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = EF19ADE59B2E16057CC5E981 /* Project object */;
+}

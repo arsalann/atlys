@@ -1,0 +1,6 @@
+[bindings.swift]
+# The generated Swift file becomes the `AtlysCore` module and imports the C
+# header from the `AtlysCoreFFI` XCFramework (see scripts/build-ios-core.sh).
+module_name = "AtlysCore"
+ffi_module_name = "AtlysCoreFFI"
+ffi_module_filename = "AtlysCoreFFI"

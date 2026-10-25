@@ -2,7 +2,7 @@
 
 **An open source personal data vault and protocol. Own a private copy of your digital life, and connect it to your own AI.**
 
-> **Status: early planning.** There is no usable software yet. The project is being re-founded as open source. Read the [plan](plan/README.md) and join the discussion.
+> **Status: pre-alpha.** Implementation of the [v0 iOS app](plan/v0/README.md) has started (milestone M0, the technical spike). There is no usable software yet. Read the [plan](plan/README.md) and join the discussion.
 
 ---
 
@@ -68,6 +68,10 @@ Rationale and open items: [plan/09-open-questions.md](plan/09-open-questions.md)
 | --- | --- |
 | [`plan/`](plan/README.md) | Vision, architecture, data model, security, governance, roadmap, open questions |
 | [`plan/research/`](plan/research/README.md) | Landscape of related projects, standards, regulation, and technology options |
+| [`core/`](core/) | Rust workspace: `atlys-crypto`, `atlys-vault`, `atlys-adm`, `atlys-ffi` (UniFFI) |
+| [`apps/ios/`](apps/ios/) | SwiftUI app (iOS 18+) and its local Swift packages |
+| [`spec/`](spec/) | Specifications, starting with the Atlys Data Model JSON Schemas |
+| [`scripts/`](scripts/) | Build and CI helpers, including `build-ios-core.sh` |
 | [`AGENTS.md`](AGENTS.md) | Rules for AI coding agents and contributors working in this repo |
 
 ## History
@@ -78,7 +82,7 @@ Atlys started in 2019 as a privacy-focused mobile app built by **Atlys Networks*
 
 ## Contributing
 
-The project is in its planning phase, and feedback on the [plan](plan/README.md) and [open questions](plan/09-open-questions.md) is the most valuable contribution right now. Contribution guidelines, a code of conduct, and a security policy will be added shortly.
+Feedback on the [plan](plan/README.md) and [open questions](plan/09-open-questions.md) is the most valuable contribution right now. To build the code, see [CONTRIBUTING.md](CONTRIBUTING.md). Please follow the [Code of Conduct](CODE_OF_CONDUCT.md), and report security problems privately as described in [SECURITY.md](SECURITY.md).
 
 **Never include real personal data, credentials, or secrets in issues, pull requests, or commits.**
 
