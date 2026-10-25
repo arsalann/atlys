@@ -1,0 +1,3 @@
+# Exceptions for scripts/check-no-network.sh, one per line: `path:pattern`.
+# The hit must start with `path:` and contain `pattern`. Every entry needs a
+# comment above it explaining why it is not a network request.

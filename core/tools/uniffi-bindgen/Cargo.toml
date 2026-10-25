@@ -1,0 +1,12 @@
+[package]
+name = "uniffi-bindgen"
+description = "Pinned uniffi-bindgen CLI used by scripts/build-ios-core.sh"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[dependencies]
+uniffi = { workspace = true, features = ["cli"] }

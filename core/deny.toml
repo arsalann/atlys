@@ -1,0 +1,71 @@
+# cargo-deny policy for the Atlys core. Run with `cargo deny check` from core/.
+# https://embarkstudios.github.io/cargo-deny/
+
+[graph]
+# The platforms the core ships on today, plus the CI host.
+targets = [
+    "aarch64-apple-ios",
+    "aarch64-apple-ios-sim",
+    "aarch64-apple-darwin",
+    "x86_64-unknown-linux-gnu",
+]
+
+[advisories]
+yanked = "deny"
+# Every ignored advisory needs a comment explaining why it does not apply.
+ignore = [
+    # basic-toml is unmaintained. It reaches us only through askama, the
+    # template engine uniffi_bindgen uses at build time to generate bindings.
+    # It is not linked into the shipped library. Drop once uniffi moves off it.
+    { id = "RUSTSEC-2026-0374", reason = "build-time only (uniffi_bindgen -> askama)" },
+]
+
+[licenses]
+# Permissive licenses compatible with Apache-2.0 distribution.
+allow = [
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.9
+unused-allowed-license = "allow"
+
+[[licenses.exceptions]]
+# The SQLCipher amalgamation: MIT (crate) + BSD-3-Clause (SQLCipher) + SQLite's
+# public-domain blessing + libtomcrypt (public domain / WTFPL). libtomcrypt is
+# shipped as source but not compiled on Apple targets, which use CommonCrypto.
+crate = "sqlcipher-src"
+allow = ["blessing", "WTFPL"]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+# Workspace crates depend on each other by path and are never published.
+allow-wildcard-paths = true
+deny = [
+    # v0 makes zero network requests. Keep HTTP and TLS stacks out of the
+    # core entirely. Revisit per crate when the desktop/MCP layer arrives.
+    { crate = "reqwest", reason = "no network access in the core" },
+    { crate = "hyper", reason = "no network access in the core" },
+    { crate = "ureq", reason = "no network access in the core" },
+    { crate = "curl", reason = "no network access in the core" },
+    { crate = "curl-sys", reason = "no network access in the core" },
+    { crate = "isahc", reason = "no network access in the core" },
+    { crate = "native-tls", reason = "no network access in the core" },
+    { crate = "rustls", reason = "no network access in the core" },
+    # SQLCipher uses Apple CommonCrypto on iOS (see plan/v0/spike-report.md).
+    # Vendored OpenSSL must not sneak back in through a feature flag.
+    { crate = "openssl-sys", reason = "SQLCipher uses CommonCrypto on Apple platforms" },
+    { crate = "openssl-src", reason = "SQLCipher uses CommonCrypto on Apple platforms" },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

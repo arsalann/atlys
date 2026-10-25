@@ -1,0 +1,77 @@
+# XcodeGen spec for Atlys.xcodeproj. Edit this file, not the .xcodeproj:
+#   cd apps/ios && xcodegen generate
+# CI fails if the committed project is out of date with this spec.
+name: Atlys
+options:
+  deploymentTarget:
+    iOS: "18.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+configFiles:
+  Debug: Config/Shared.xcconfig
+  Release: Config/Shared.xcconfig
+packages:
+  AtlysCore:
+    path: Packages/AtlysCore
+  AtlysCollectors:
+    path: Packages/AtlysCollectors
+  AtlysUI:
+    path: Packages/AtlysUI
+targets:
+  Atlys:
+    type: application
+    platform: iOS
+    sources: [Atlys]
+    info:
+      path: Atlys/Info.plist
+      properties:
+        CFBundleDisplayName: Atlys
+        CFBundleShortVersionString: "0.0.1"
+        CFBundleVersion: "1"
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(ATLYS_BUNDLE_ID_PREFIX).app
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - package: AtlysCore
+      - package: AtlysCollectors
+      - package: AtlysUI
+  AtlysTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [AtlysTests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(ATLYS_BUNDLE_ID_PREFIX).tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Atlys
+      - package: AtlysCore
+  AtlysUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [AtlysUITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(ATLYS_BUNDLE_ID_PREFIX).uitests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Atlys
+schemes:
+  Atlys:
+    build:
+      targets:
+        Atlys: all
+    test:
+      gatherCoverageData: false
+      targets:
+        - AtlysTests
+        - AtlysUITests
+        - package: AtlysCore/AtlysCoreTests
+        - package: AtlysCollectors/AtlysCollectorsTests

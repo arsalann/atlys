@@ -1,0 +1,26 @@
+[package]
+name = "atlys-ffi"
+description = "UniFFI bindings that expose the Atlys core to Swift (and later Kotlin)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["lib", "staticlib"]
+name = "atlys_ffi"
+
+[dependencies]
+atlys-adm.workspace = true
+atlys-crypto.workspace = true
+atlys-vault.workspace = true
+thiserror.workspace = true
+uniffi.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

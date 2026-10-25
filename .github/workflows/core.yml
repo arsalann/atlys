@@ -1,0 +1,80 @@
+name: core
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+defaults:
+  run:
+    working-directory: core
+
+jobs:
+  lint:
+    name: fmt + clippy
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install toolchain (core/rust-toolchain.toml)
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: core
+      - run: cargo fmt --all --check
+      - name: cargo clippy
+        run: |
+          unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: cargo clippy (iOS target)
+        run: |
+          unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
+          cargo clippy -p atlys-ffi --target aarch64-apple-ios --locked -- -D warnings
+
+  test:
+    name: test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # macOS exercises SQLCipher's CommonCrypto provider (the one iOS uses).
+        # Linux exercises the OpenSSL provider that Android and desktop will use.
+        os: [macos-26, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install toolchain (core/rust-toolchain.toml)
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: core
+      - name: cargo test
+        run: |
+          unset OPENSSL_DIR OPENSSL_LIB_DIR OPENSSL_INCLUDE_DIR
+          cargo test --workspace --locked
+
+  deny:
+    name: cargo deny
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+        with:
+          manifest-path: core/Cargo.toml
+          command: check
+          arguments: --all-features

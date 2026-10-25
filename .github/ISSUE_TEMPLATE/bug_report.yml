@@ -1,0 +1,56 @@
+name: Bug report
+description: Something doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Do not include real personal data** (health records, locations, account details) or secrets. Describe the data instead, or use synthetic examples.
+        Security problems go through private reporting (see SECURITY.md), not here.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - iOS app
+        - Rust core
+        - Spec / data model
+        - Build / CI
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Device or simulator, iOS version, Xcode version, commit or build number.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Redact anything personal before pasting.
+      render: text
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: This issue contains no real personal data and no secrets.
+          required: true

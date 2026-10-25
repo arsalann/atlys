@@ -44,3 +44,21 @@ __pycache__/
 .idea/
 .vscode/
 *.swp
+
+# Rust
+core/target/
+
+# iOS: build outputs from scripts/build-ios-core.sh
+apps/ios/Packages/AtlysCore/AtlysCoreFFI.xcframework/
+apps/ios/Packages/AtlysCore/Sources/AtlysCore/Generated/
+
+# iOS: local signing settings (team ID, bundle ID prefix). See Local.xcconfig.example.
+apps/ios/Config/Local.xcconfig
+
+# Xcode / SwiftPM
+xcuserdata/
+*.xcuserstate
+DerivedData/
+.build/
+.swiftpm/
+*.xcresult

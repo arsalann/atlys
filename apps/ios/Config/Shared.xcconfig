@@ -1,0 +1,22 @@
+// Build settings shared by every target. Committed.
+//
+// Machine- or account-specific values (signing team, bundle ID prefix) go in
+// Local.xcconfig, which is gitignored. Copy Local.xcconfig.example to start.
+
+// Placeholder prefix. Override in Local.xcconfig with an identifier you own.
+ATLYS_BUNDLE_ID_PREFIX = org.example.atlys
+
+// Unsigned by default: simulator builds and CI need no Apple account.
+DEVELOPMENT_TEAM =
+CODE_SIGN_STYLE = Automatic
+
+IPHONEOS_DEPLOYMENT_TARGET = 18.0
+SWIFT_VERSION = 6.0
+SWIFT_STRICT_CONCURRENCY = complete
+SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
+GCC_TREAT_WARNINGS_AS_ERRORS = YES
+ENABLE_USER_SCRIPT_SANDBOXING = YES
+LOCALIZATION_PREFERS_STRING_CATALOGS = YES
+
+// Must stay last so local values win.
+#include? "Local.xcconfig"
