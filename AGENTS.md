@@ -36,11 +36,13 @@ Before changing `AGENTS.md`, show the proposed change and ask a maintainer to re
 - **Atlys (this project) is not Atlys the visa startup.** This project descends from Atlys Networks (founded 2019, personal data management). A separate, unrelated visa-application company founded in 2021 also uses the name "Atlys". Never mix up their history, funding, products, or news in docs or research. Verify which company a source refers to before citing it.
 - **Check platform limits against the latest OS release before calling something impossible.** An early v0 draft said iOS screen time could not be exported, which missed the iOS 26.4 entitlement that allows it in the EU. Platform rules change every release, so state the version and region a limit applies to.
 - **A green Simulator run is not evidence for device-only security behavior.** The iOS Simulator does not enforce Data Protection classes (they read back as nil), cannot create biometry-bound Secure Enclave keys, never delivers location visits, and drops entitlements such as HealthKit without a signing team. Mark such checks as device-only and list the manual steps instead of reporting them as verified.
+- **Keep the plan, the docs, and the handoff file current with every change.** Update [`plan/v0/handoff.md`](plan/v0/handoff.md), the work breakdown, and any affected docs in the same commit as the change, and push often. Work can be interrupted at any point, and the next person or agent must be able to resume from the repository alone.
 - **Commit with an identity that is safe to publish.** A DCO `Signed-off-by` line and the commit author put an email address into public history permanently. Use the contributor's GitHub `noreply` address unless they have chosen otherwise.
 
 ## 5. Project orientation
 
 - `plan/`: vision, architecture, roadmap, and open questions. Read [`plan/README.md`](plan/README.md) first.
 - `plan/research/`: landscape research on related projects, standards, and regulation.
-- No application code exists yet. Follow the proposed monorepo layout in [`plan/03-architecture.md`](plan/03-architecture.md) when adding it.
+- Current implementation state, work in progress, and the next step: [`plan/v0/handoff.md`](plan/v0/handoff.md). Read it first when resuming work.
+- `core/`: Rust workspace (crypto, vault, data model, FFI). `apps/ios/`: the iOS app. `spec/`: data model schemas, RFCs (`spec/rfcs/`), and format test vectors. Layout follows [`plan/03-architecture.md`](plan/03-architecture.md).
 - Decisions and their status are tracked in [`plan/09-open-questions.md`](plan/09-open-questions.md).
