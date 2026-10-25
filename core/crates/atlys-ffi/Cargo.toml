@@ -12,12 +12,19 @@ publish.workspace = true
 crate-type = ["lib", "staticlib"]
 name = "atlys_ffi"
 
+[features]
+# Throwaway M0 spike API (benchmarks, self-tests, test-only key handling).
+# Must not ship: remove before M1 feature work. See src/spike.rs.
+spike = []
+
 [dependencies]
 atlys-adm.workspace = true
 atlys-crypto.workspace = true
 atlys-vault.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
 uniffi.workspace = true
+zeroize.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true
