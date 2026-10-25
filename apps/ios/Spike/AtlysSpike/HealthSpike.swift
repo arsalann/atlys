@@ -24,11 +24,11 @@ final class HealthSpike: Sendable {
         let share: Set<HKSampleType> = []
         #endif
         try await store.requestAuthorization(toShare: share, read: [stepType])
-        await registerObserver()
+        registerObserver()
     }
 
     /// Must run early in every launch so background deliveries are handled.
-    func registerObserver() async {
+    func registerObserver() {
         guard isAvailable else { return }
         let query = HKObserverQuery(sampleType: stepType, predicate: nil) { _, completion, error in
             let done = UncheckedSendable(completion)
@@ -43,10 +43,12 @@ final class HealthSpike: Sendable {
             }
         }
         store.execute(query)
-        do {
-            try await store.enableBackgroundDelivery(for: stepType, frequency: .immediate)
-        } catch {
-            await MainActor.run { WakeLog.record("health-bg-delivery", outcome: "enable failed: \(error)") }
+        Task {
+            do {
+                try await store.enableBackgroundDelivery(for: stepType, frequency: .immediate)
+            } catch {
+                await MainActor.run { WakeLog.record("health-bg-delivery", outcome: "enable failed: \(error)") }
+            }
         }
     }
 

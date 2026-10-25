@@ -3,6 +3,8 @@
 //! Every derived key has its own fixed, versioned label, so keys for different
 //! purposes are independent even though they come from the same vault key.
 
+use zeroize::Zeroizing;
+
 use hkdf::Hkdf;
 use sha2::Sha256;
 
@@ -61,10 +63,10 @@ pub fn derive_from_shared_secret(
 
 fn derive(salt: Option<&[u8]>, ikm: &[u8], label: Label) -> Result<SecretKey> {
     let hk = Hkdf::<Sha256>::new(salt, ikm);
-    let mut okm = [0u8; KEY_LEN];
-    hk.expand(label.as_bytes(), &mut okm)
+    let mut okm = Zeroizing::new([0u8; KEY_LEN]);
+    hk.expand(label.as_bytes(), &mut *okm)
         .map_err(|_| CryptoError::Internal)?;
-    Ok(SecretKey::from_bytes(okm))
+    SecretKey::try_from_slice(&okm[..])
 }
 
 #[cfg(test)]

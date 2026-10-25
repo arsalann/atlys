@@ -1,5 +1,7 @@
 use core::fmt;
 
+use subtle::ConstantTimeEq;
+
 use zeroize::{Zeroize, ZeroizeOnDrop};
 
 use crate::{CryptoError, Result};
@@ -42,14 +44,7 @@ impl SecretKey {
 
     /// Constant-time equality check.
     pub fn ct_eq(&self, other: &Self) -> bool {
-        // Fold all byte differences together so the comparison time does not
-        // depend on where the first difference is.
-        let diff = self
-            .0
-            .iter()
-            .zip(other.0.iter())
-            .fold(0u8, |acc, (a, b)| acc | (a ^ b));
-        core::hint::black_box(diff) == 0
+        bool::from(self.0.ct_eq(&other.0))
     }
 }
 
@@ -84,6 +79,16 @@ mod tests {
         let b = SecretKey::generate().unwrap();
         assert!(!a.ct_eq(&b));
         assert!(a.ct_eq(&SecretKey::from_bytes(*a.expose_secret())));
+    }
+
+    #[test]
+    fn comparison_rejects_a_difference_at_every_position() {
+        let key = SecretKey::from_bytes([0x5A; KEY_LEN]);
+        for i in 0..KEY_LEN {
+            let mut different = [0x5A; KEY_LEN];
+            different[i] ^= 1;
+            assert!(!key.ct_eq(&SecretKey::from_bytes(different)));
+        }
     }
 
     #[test]

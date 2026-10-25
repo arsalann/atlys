@@ -91,7 +91,7 @@ The first-call cost is one-time per process. Its cause is not yet isolated (like
 - RFC 9180 Appendix A.2.1 known-answer test.
 - Swift seals through `IngestSealer` (public key only), and Rust opens with the private key.
 - Tampered files, files sealed to another vault, and malformed records are rejected. Rejected files are left in place.
-- Property tests flip every bit to confirm tamper rejection.
+- Property tests sample ciphertext bit flips to confirm tamper rejection; deterministic inbox tests also cover header and encapsulated-key positions.
 - **An inbox file built entirely with Apple CryptoKit's HPKE (`Curve25519_SHA256_ChachaPoly`) opens in Rust**, and flipping the suite byte in the authenticated header is rejected. Two independent implementations agree on the format, so a native-only writer remains possible later if ever needed.
 
 **Decision.** Keep sealing in Rust, as planned (one implementation everywhere). The interop test stays as a guard.
@@ -266,7 +266,7 @@ Record results in a follow-up PR to this report, as summaries. Do not commit exp
 ## Follow-ups
 
 - [ ] **Device phase** of 0.3, 0.6, 0.7, 0.8 (steps above). Final Argon2id parameters go into [01-account-setup.md](01-account-setup.md).
-- [ ] Repository settings: enable **private vulnerability reporting** (`SECURITY.md` depends on it).
+- [x] Repository settings: **private vulnerability reporting** enabled during merge review (2026-10-26).
 - [ ] Replace the `security@<project-domain>` and `conduct@<project-domain>` placeholders.
 - [ ] Test on an **iOS 18.x** Simulator runtime in CI. So far it has run on iOS 26.5 (CI) and iOS 27.0 (local) only, with an iOS 18.0 deployment target.
 - [ ] RFC-0002 inputs from this report: vault ID in HPKE `info`, the inbox quarantine rule, envelope storage location, `cipher_memory_security`, and SQLCipher log level.
