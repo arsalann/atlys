@@ -10,6 +10,7 @@ The first shippable Atlys. A simple iPhone app that sets up an encrypted vault p
 | [02-data-sources.md](02-data-sources.md) | The v0 collectors: what each collects, permissions, background behavior, iOS limits |
 | [03-ios-app.md](03-ios-app.md) | App architecture, Rust core over UniFFI, the write-only ingest inbox, screens, build, CI, testing |
 | [04-work-breakdown.md](04-work-breakdown.md) | Tasks and exit criteria per milestone, and the risk register |
+| [handoff.md](handoff.md) | Current implementation state, work in progress, and the next step. Read first when resuming |
 | [spike-report.md](spike-report.md) | M0 spike results and decisions: SQLCipher, UniFFI, sealed inbox, Argon2id, Secure Enclave, background collection |
 
 ## Goals

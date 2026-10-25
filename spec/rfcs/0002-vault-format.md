@@ -1,8 +1,8 @@
 # RFC-0002: Vault format and key hierarchy
 
-Status: **Proposed**. Implements the design step for M1.1; acceptance requires
-review and merge. This document does not claim that the M0 spike implements the
-product format. Device calibration and biometric tests remain open.
+Status: **Accepted** (2026-10-26, PR #6). This is the design step for M1.1.
+The M0 spike does not implement the product format. Device calibration and
+biometric tests remain open.
 
 ## Scope
 

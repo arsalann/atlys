@@ -269,7 +269,7 @@ Record results in a follow-up PR to this report, as summaries. Do not commit exp
 - [x] Repository settings: **private vulnerability reporting** enabled during merge review (2026-10-26).
 - [ ] Replace the `security@<project-domain>` and `conduct@<project-domain>` placeholders.
 - [ ] Test on an **iOS 18.x** Simulator runtime in CI. So far it has run on iOS 26.5 (CI) and iOS 27.0 (local) only, with an iOS 18.0 deployment target.
-- [x] RFC-0002 inputs from this report: vault ID in HPKE `info`, the inbox quarantine rule, envelope storage location, `cipher_memory_security`, and SQLCipher log level. Captured in [RFC-0002](../../spec/rfcs/0002-vault-format.md) (proposed); it narrows the accepted Argon2id range below the spike caps.
+- [x] RFC-0002 inputs from this report: vault ID in HPKE `info`, the inbox quarantine rule, envelope storage location, `cipher_memory_security`, and SQLCipher log level. Captured in [RFC-0002](../../spec/rfcs/0002-vault-format.md) (accepted); it narrows the accepted Argon2id range below the spike caps.
 - [ ] Before M1 features: delete `apps/ios/Spike/`, the `AtlysSpike` targets, and the `spike` feature.
 
 ## Recommended start for M1
