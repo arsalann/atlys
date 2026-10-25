@@ -29,7 +29,7 @@ Welcome ─▶ How Atlys works ─▶ Create master password ─▶ Confirm pass
 master password ─Argon2id(salt, params)─▶ master key ─┐
                                                        ├─ unwraps ─▶ VAULT KEY (random 256-bit)
 recovery phrase (256-bit) ─HKDF─▶ recovery key ───────┤
-Secure Enclave key (Face ID) ─ECIES─▶ ────────────────┘
+Secure Enclave key (Face ID) ─ECDH+HKDF─▶ ────────────┘
                                                          │ HKDF with distinct labels
               ┌──────────────────────────┬───────────────┼──────────────────────┐
               ▼                          ▼               ▼                      ▼
@@ -48,13 +48,13 @@ ingest PUBLIC key (stored in plaintext) ──▶ used by background collectors 
 
 | Item | v0 value | Notes |
 | --- | --- | --- |
-| KDF | Argon2id, **m = 64 MiB, t = 3, p = 1** (starting point) | Above the OWASP minimum (19 MiB, t = 2, p = 1). Calibrate in M0 to about 1 s on the oldest supported iPhone. Parameters are stored in the header so they can be raised later. |
+| KDF | Argon2id, **m = 256 MiB, t = 3, p = 1** (proposed in M0; confirm on the oldest supported iPhone) | M0 found the original starting point (64 MiB, t = 3) takes only ~70 ms on current Apple silicon, far below the ~1 s target, so memory cost goes up first. Parameters are fixed rather than calibrated per device, so a vault restored onto an older phone still unlocks in reasonable time. Headers below the OWASP minimum (19 MiB, t = 2, p = 1) or above sanity caps are rejected. Parameters are stored in the header so they can be raised later. See [spike-report.md](spike-report.md#06-argon2id-calibration). |
 | Salt | 16 random bytes per vault | |
 | AEAD | XChaCha20-Poly1305 | Envelopes, blobs, and inbox payloads |
 | Ingest sealing | HPKE (RFC 9180), X25519 + HKDF-SHA256 + ChaCha20-Poly1305 | Done in the Rust core so it is one implementation on every platform |
 | Recovery phrase | 256 bits of entropy shown as 24 words from the BIP-39 English wordlist | High entropy, so HKDF suffices (no Argon2 needed) |
-| Face ID envelope | Vault key encrypted to a Secure Enclave P-256 key; access control `biometryCurrentSet`, `ThisDeviceOnly` | Invalidated automatically if biometrics change; never included in backups |
-| Memory hygiene | Keys held only in Rust, zeroized on lock (`zeroize`) | Swift never sees raw key bytes |
+| Face ID envelope | Secure Enclave P-256 key (access control `biometryCurrentSet`, `ThisDeviceOnly`). Swift performs only the ECDH; Rust derives a KEK with HKDF-SHA256 and wraps the vault key with XChaCha20-Poly1305 | Invalidated automatically if biometrics change; never included in backups. The vault key never enters Swift. See [spike-report.md](spike-report.md#07-secure-enclave-wrap-of-the-vault-key). |
+| Memory hygiene | Keys held only in Rust, zeroized on lock (`zeroize`) | Swift never sees raw key bytes (for Face ID it sees only an ECDH shared secret that is useless without the envelope) |
 
 ## Files on disk
 
