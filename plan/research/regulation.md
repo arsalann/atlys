@@ -28,3 +28,24 @@
 2. Tag records with **legal-origin metadata** (for example, "came from HealthKit") so policy restrictions can be enforced on sharing.
 3. Maintain a community **directory of company privacy contacts and DSAR procedures** as an open dataset, similar to datarequests.org.
 4. "Sell your data" features need separate legal review (consumer protection, data-broker registration laws, app store policy).
+
+## Known portability gaps
+
+Cases where users can *see* their own data but cannot get a usable copy. They are tracked here because they shape the roadmap and are useful evidence for regulators and portability advocates.
+
+### iOS Screen Time (as of 2026-10)
+
+- **What users can do:** view per-app and per-website usage in Settings → Screen Time.
+- **What they can't do (outside the EU):** export it, or authorize another app (such as Atlys) to read it. The standard Screen Time API only displays data inside a sandboxed extension; Apple has described the export block as intended behavior.
+- **EU exception:** developers report an iOS 26.4+ entitlement (`com.apple.developer.family-controls.app-and-website-usage`) that lets an approved app read usage data, for customers with an EU device and an EU Apple Account. Only one app at a time can hold this access. *Not yet confirmed against Apple's documentation; verify before relying on it.*
+- **Why it's likely lawful elsewhere:**
+  - GDPR and CCPA access rights apply to data a company holds as controller. Apple states Screen Time is processed on device and synced end-to-end encrypted, so it arguably holds nothing to return. Whether a device maker is a controller for on-device processing is unsettled.
+  - The EU Data Act's connected-product rights exclude devices primarily designed to display, record, or transmit content. The legislative drafts list smartphones, tablets, and PCs as examples (recital 15; confirm the final text).
+  - No US law requires an operating system to provide export tools or developer APIs.
+- **Where the law pushes back:** iOS is a DMA core platform service. DMA Art. 6(9) requires gatekeepers to give users and authorized third parties free, effective, continuous, real-time portability of data generated through the user's activity. Usage logs fit that description, and EU portability guidance treats observed data such as activity logs as "provided by" the user. The EU-only availability of the iOS 26.4 access suggests DMA compliance (inference, not confirmed by Apple or the Commission). Whether a one-app-at-a-time limit is "effective" portability is an open question.
+- **Atlys response:**
+  1. v0: no screen time on iOS; documented in [../v0/02-data-sources.md](../v0/02-data-sources.md#screen-time-and-app-usage).
+  2. v0.1: the EU entitlement path, after confirming it with Apple.
+  3. Phase 2: a Mac connector that reads the Mac's Screen Time stores (including synced iPhone usage), plus full support on Android.
+  4. Ongoing: send GDPR access and portability requests for Screen Time data and record the responses (see the "portability gaps tracker" idea in [../10-ideas-backlog.md](../10-ideas-backlog.md)).
+

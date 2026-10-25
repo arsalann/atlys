@@ -15,6 +15,7 @@ Brainstorm parking lot. Nothing here is committed. Ideas move into the roadmap t
 - **Digital footprint inventory:** discover which services hold your data, from email receipts, password-manager exports, and OAuth grants, and build an `account.*` map with links to export/delete pages.
 - **Privacy score / exposure report:** breach exposure (HIBP), data-broker presence, and app permissions, combined.
 - **"Memory" for agents:** a writable `note.*` namespace where an agent stores what it learned about you, kept in *your* vault instead of the vendor's memory feature.
+- **Portability gaps tracker:** a public, community-maintained list of data that platforms let users see but not export (starting with iOS Screen Time), with the GDPR/CCPA requests sent and the responses received. Useful evidence for regulators and the Data Transfer Initiative.
 - **Portable AI context:** export your vault-derived profile as context for any assistant, matching DTI's push for AI personal-data portability.
 - **Local LLM bundle:** an optional one-click local model (llama.cpp/Ollama) for a fully offline assistant.
 - **Household / family vaults:** shared collections with per-member keys.
