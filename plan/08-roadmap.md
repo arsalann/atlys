@@ -32,7 +32,8 @@ Detailed plan: [v0/](v0/README.md).
 - [ ] `cli` and desktop app (Tauri) on the same Rust core: open an exported or synced vault
 - [ ] `mcp`: local stdio MCP server, read-only, with grant scopes and an audit log
 - [ ] Export importers (TypeScript connectors): Apple Health `export.zip`, Google Takeout, Spotify extended history
-- [ ] iOS v0.1 sources: calendar, contacts, photo metadata
+- [ ] iOS v0.1 sources: calendar, contacts, photo metadata, and screen time for EU users (iOS 26.4+ app-and-website-usage entitlement)
+- [ ] Mac connector: Screen Time stores (Mac + synced iPhone usage), with Full Disk Access
 - [ ] Android app: Health Connect, location, usage stats (screen time), calendar
 - [ ] Device-to-device sync (local network / shared folder)
 - [ ] Demo: "Ask your agent about your own year"

@@ -23,7 +23,7 @@ The set of possible sources is unbounded. The strategy is to start with sources 
 | Photos metadata (not pixels, by default) | Both | On-device | `media.photo` (time, place, people tags) |
 | Manual counters / journal | All | Manual | `custom.counter`, `note` |
 
-> **iOS note:** Apple's Screen Time API only displays usage inside a sandboxed report extension, so apps can't export per-app usage. Screen time is Android-only for now. Health and location are well supported on both. The v0 iOS collectors are detailed in [v0/02-data-sources.md](v0/02-data-sources.md).
+> **iOS note:** exportable per-app screen time on iOS is limited to EU users on iOS 26.4+ with Apple's app-and-website-usage entitlement. Elsewhere, Screen Time data can only be displayed, not stored. A Mac connector can read synced iPhone usage, and Android exposes it fully. Health and location are well supported on both. The v0 iOS collectors are detailed in [v0/02-data-sources.md](v0/02-data-sources.md).
 
 ## Phase 2: exports ("takeout") and portability APIs
 

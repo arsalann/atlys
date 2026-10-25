@@ -54,7 +54,7 @@ The first shippable Atlys. A simple iPhone app that sets up an encrypted vault p
 | Rust ↔ Swift | UniFFI-generated bindings, shipped as an XCFramework inside a local Swift package |
 | Background writes while the vault is locked | A **write-only sealed inbox** (see [03-ios-app.md](03-ios-app.md#the-write-only-ingest-inbox)) |
 | Continuous GPS tracking | **Not in v0.** Visits and significant location changes only. A "detailed tracking" mode can come later. |
-| Screen time | **Not possible on iOS.** Apple's Screen Time API doesn't let apps export usage data (see [02-data-sources.md](02-data-sources.md)). Planned for Android instead. |
+| Screen time | **Not in v0.** Exportable per-app usage on iOS exists only for EU users on iOS 26.4+ with a special Apple entitlement. Plan: v0.1 for EU users, a Mac connector, and Android (see [02-data-sources.md](02-data-sources.md#screen-time-and-app-usage)). |
 
 ## Prerequisites outside the repo
 
