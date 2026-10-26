@@ -25,8 +25,10 @@ Status (2026-10-25): simulator and CI phase done; device phase pending an Apple 
 
 Status (2026-10-26): 1.1 done ([RFC-0002](../../spec/rfcs/0002-vault-format.md)
 accepted, vectors committed). 1.2 done (`atlys-crypto` matches RFC-0002).
-1.3a done pending review (Rust vault format and lifecycle, integration tests);
-1.3b (FFI and Swift on the product vault) next. Current state and next steps:
+1.3–1.7 implemented: the Atlys app creates, locks, unlocks (password or
+Face ID), recovers, and deletes a vault; XCUITest covers onboarding in the
+Simulator. The M1 exit (on a real device) needs the device checklist in
+[handoff.md](handoff.md#device-checklist). Current state and next steps:
 [handoff.md](handoff.md).
 
 | # | Task | Exit criteria |

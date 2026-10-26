@@ -31,9 +31,21 @@ Last updated: 2026-10-26
 - [x] **1.6 Lock**: lock screen (password, Face ID, forgot password → recovery), auto-lock timeout, lock on device lock, app-switcher privacy cover.
 - [x] **1.7 Settings**: change password, regenerate recovery phrase, Face ID toggle, auto-lock, delete vault (fresh authentication).
 - [x] Tests: Rust unit/integration, Swift FFI round trip, XCUITest onboarding → lock → unlock in the Simulator.
-- [ ] Docs (work breakdown, 03-ios-app, spike report) and this file. Open PR.
+- [x] Docs (work breakdown, 03-ios-app) and this file. Open PR.
 
-Device-only checks after this lands (cannot be verified in the Simulator): Face ID prompt and invalidation, Data Protection classes, Argon2id timing at 256 MiB.
+### Device checklist
+
+The Simulator cannot verify these (see AGENTS.md). Run them on a real iPhone with a signed build of the **Atlys** scheme (`scripts/build-ios-core.sh` first) and record results here:
+
+1. Fresh install: complete onboarding and enable Face ID. Note how long "Create vault" takes (Argon2id, 256 MiB, t = 3).
+2. Lock, then unlock with Face ID. Cancel the Face ID prompt: the password field still works. Note password unlock time.
+3. In iOS Settings, add an alternate appearance (or reset Face ID). Atlys must refuse Face ID unlock and fall back to the password; turning the toggle off and on in Atlys Settings re-enrolls.
+4. Auto-lock: set "After 1 minute", leave the app for over a minute, return: locked. Lock the phone while Atlys is open: locked on return.
+5. The app switcher shows the privacy cover, not vault contents.
+6. "Forgot password?": recover with the written phrase and a new password; the old password no longer works.
+7. Settings → New recovery phrase: the old phrase stops working.
+8. Delete vault with the password: the app returns to the welcome screen; reinstall-free relaunch shows onboarding.
+9. Data Protection: with a development build, check that `vault/vault.db` reads back as `complete` and the container as `completeUntilFirstUserAuthentication`.
 
 ## Next steps after M1
 
