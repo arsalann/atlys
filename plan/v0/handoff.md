@@ -29,8 +29,8 @@ Last updated: 2026-10-26
   - [x] `envelope`: password/recovery/ingest wraps with RFC-0002 AAD; device envelope v2 (vault ID bound, AAD over bytes 0..147).
   - [x] `inbox`: sealed inbox v2 (vault ID in HPKE info and AAD), padding and bucket checks, bounded reads, symlink rejection, exclusive temp + rename + parent sync, quarantine with reason codes, unsupported versions left pending.
   - [x] `store`: `create` vs `open` (never create on unlock), `cipher_memory_security`, quiet SQLCipher logging, reject newer schema, release the connection even if checkpoint fails.
-  - [~] `vault`: (module written with unit-level coverage via the other modules; integration tests next) create (temp sibling dir, atomic publish), unlock with password / device envelope, recover (requires a new password), lock, change password, regenerate recovery, enable/disable device envelope, delete (fresh authentication). Durable header replacement.
-  - [ ] Integration tests: every flow, wrong credentials, every header field mutation, tampered envelopes, vault-ID substitution, KDF bounds, missing database, crash leftovers.
+  - [x] `vault`: create (temp sibling dir, atomic publish), unlock with password / device envelope, recover (requires a new password), lock, change password, regenerate recovery, enable/disable device envelope, delete (fresh authentication). Durable header replacement.
+  - [x] Integration tests (`crates/atlys-vault/tests/lifecycle.rs`, 19 tests): every flow, wrong credentials, every header field mutation, tampered envelopes, vault-ID substitution, KDF bounds, missing database, crash leftovers.
   - [ ] Docs: RFC cross-references, `03-ios-app.md` API, work breakdown, this file. Open PR.
 - **1.3b (next):** FFI `Vault` object replacing `SpikeVault`, `IngestSealer` writing inbox v2 (takes the vault ID), Swift `InboxLocation` and CryptoKit interop test on v2, delete `atlys_vault::m0`. Header and inbox v2 interop fixtures in `spec/vault/v1/vectors.json`.
 

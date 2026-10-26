@@ -74,7 +74,8 @@ impl Store {
         conn.execute_batch(
             "PRAGMA cipher_compatibility = 4;
              PRAGMA cipher_page_size = 4096;
-             PRAGMA cipher_memory_security = ON;",
+             PRAGMA cipher_memory_security = ON;
+             PRAGMA cipher_log_level = NONE;",
         )
         .map_err(storage)?;
         // The first read decrypts page 1 and fails if the key is wrong.
@@ -323,6 +324,12 @@ mod tests {
             .query_row("PRAGMA cipher_memory_security", [], |r| r.get(0))
             .unwrap();
         assert_eq!(on, "1");
+        // Expected wrong-key failures must not be logged by SQLCipher.
+        let level: String = store
+            .conn
+            .query_row("PRAGMA cipher_log_level", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(level, "NONE");
     }
 
     fn contains(haystack: &[u8], needle: &[u8]) -> bool {
