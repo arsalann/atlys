@@ -18,11 +18,11 @@ Last updated: 2026-10-26
 | M1.1 RFC-0002 | **Done.** [RFC-0002](../../spec/rfcs/0002-vault-format.md) accepted and merged (PR #6) with synthetic vectors. |
 | M1.2 `atlys-crypto` | **Done.** PR #7 merged: RFC-0002 Argon2id range, header MAC, envelope vectors. |
 | M1.3a vault format (Rust) | **Done.** PR #8 merged. |
-| M1.3b – M1.7 first working app | **In progress**, see below. |
+| M1.3b – M1.7 first working app | **Done, in review**: PR #9. Device checklist pending. |
 
 ## In progress
 
-**First working version of the app: M1.3b – M1.7.** Branch `arsalann/m1-app`, one PR, one commit per step. Goal (M1 exit): create, lock, unlock, recover, and delete a vault on a real iPhone.
+**First working version of the app: M1.3b – M1.7.** PR #9, branch `arsalann/m1-app`. All items below are done; awaiting review, CI, and the device checklist. Goal (M1 exit): create, lock, unlock, recover, and delete a vault on a real iPhone.
 
 - [x] **1.4 Rust**: `atlys_vault::password` (zxcvbn score >= 3 and >= 12 characters, enforced on create, change, and recover) and `atlys_vault::recovery` (BIP-39 English 24-word phrase from 32 bytes of entropy, checksum validated, wordlist hash checked).
 - [x] **1.3b FFI**: export `VaultSession` and vault functions over UniFFI (create, unlock with password or device envelope, recover, change password, regenerate recovery, device envelope, lock, delete, password strength, phrase validation). `IngestSealer.open(vaultRoot)` writes inbox v2. The spike keeps M0 formats through a separate `SpikeSealer`; the spike app stays until the device phase is done (it is the device test tool).
