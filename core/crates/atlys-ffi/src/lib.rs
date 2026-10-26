@@ -9,7 +9,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use atlys_adm::Batch;
 use atlys_crypto::hpke::IngestPublicKey;
 use atlys_vault::VaultError;
-use atlys_vault::inbox::InboxWriter;
+use atlys_vault::m0::inbox::InboxWriter;
 
 #[cfg(feature = "spike")]
 pub mod spike;
@@ -47,8 +47,23 @@ impl From<VaultError> for AtlysError {
         use atlys_crypto::CryptoError;
         match err {
             VaultError::WrongKeyOrCorrupt
+            | VaultError::WrongCredentials
+            | VaultError::IntegrityFailure
             | VaultError::InvalidInboxFile(_)
             | VaultError::Crypto(CryptoError::Decrypt) => Self::WrongKeyOrTampered,
+            // Coarse mapping until the product vault is exported (M1.3b).
+            VaultError::InvalidHeader(m) | VaultError::WeakPassword(m) => {
+                Self::InvalidInput { message: m.into() }
+            }
+            e @ (VaultError::UnsupportedVersion
+            | VaultError::UnsupportedSchema
+            | VaultError::NoVault
+            | VaultError::VaultExists
+            | VaultError::MissingDatabase
+            | VaultError::PartialDeletion
+            | VaultError::InboxFull) => Self::Storage {
+                message: e.to_string(),
+            },
             VaultError::Crypto(CryptoError::InvalidInput(m) | CryptoError::InvalidParams(m)) => {
                 Self::InvalidInput { message: m.into() }
             }
@@ -179,7 +194,7 @@ pub(crate) fn now_ms() -> i64 {
 #[cfg(test)]
 mod tests {
     use atlys_crypto::hpke::IngestKeyPair;
-    use atlys_vault::inbox;
+    use atlys_vault::m0::inbox;
 
     use super::*;
 

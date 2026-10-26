@@ -139,6 +139,7 @@ dependencies = [
  "atlys-adm",
  "atlys-crypto",
  "rusqlite",
+ "serde",
  "serde_json",
  "tempfile",
  "thiserror",

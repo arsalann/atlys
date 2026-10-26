@@ -14,8 +14,8 @@ use std::time::Instant;
 use atlys_crypto::hpke::{IngestKeyPair, IngestPrivateKey};
 use atlys_crypto::kdf::{Argon2Params, derive_key_unchecked};
 use atlys_crypto::{SecretKey, random_bytes};
+use atlys_vault::m0::{envelope, inbox};
 use atlys_vault::store::Store;
-use atlys_vault::{envelope, inbox};
 use zeroize::Zeroizing;
 
 use crate::AtlysError;
@@ -59,7 +59,7 @@ pub fn spike_sqlcipher_self_test(dir: String) -> Result<SqlcipherReport, AtlysEr
     remove_db(&path);
 
     let key = SecretKey::generate()?;
-    let store = Store::open(&path, &key)?;
+    let store = Store::create(&path, &key)?;
     let info = store.cipher_info()?;
     store.put_meta("probe", MARKER)?;
     store.close()?;

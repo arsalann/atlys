@@ -2,12 +2,14 @@
 //!
 //! SQLCipher is always opened in **raw-key mode**: the 256-bit key comes from
 //! the Atlys key hierarchy (HKDF from the vault key), never from a password,
-//! so SQLCipher's own PBKDF2 stretching is skipped.
+//! so SQLCipher's own PBKDF2 stretching is skipped. Settings follow RFC-0002
+//! "Database and durable lifecycle": SQLCipher 4 format with 4096-byte pages,
+//! memory security on, WAL, foreign keys, and secure deletion.
 
 use std::path::Path;
 
 use atlys_crypto::SecretKey;
-use rusqlite::{Connection, ErrorCode, OptionalExtension, params};
+use rusqlite::{Connection, ErrorCode, OpenFlags, OptionalExtension, params};
 use zeroize::Zeroizing;
 
 use crate::{Result, VaultError};
@@ -35,13 +37,46 @@ pub struct Store {
 }
 
 impl Store {
-    /// Opens (or creates) the database at `path` with a raw 256-bit key.
+    /// Creates a new database at `path`. Fails if a file already exists.
+    pub fn create(path: &Path, key: &SecretKey) -> Result<Self> {
+        if path.symlink_metadata().is_ok() {
+            return Err(VaultError::VaultExists);
+        }
+        let flags = OpenFlags::SQLITE_OPEN_READ_WRITE
+            | OpenFlags::SQLITE_OPEN_CREATE
+            | OpenFlags::SQLITE_OPEN_NO_MUTEX;
+        Self::connect(
+            Connection::open_with_flags(path, flags).map_err(storage)?,
+            key,
+        )
+    }
+
+    /// Opens an existing database at `path` with a raw 256-bit key. Never
+    /// creates one: a missing file is [`VaultError::MissingDatabase`].
     ///
     /// Fails with [`VaultError::WrongKeyOrCorrupt`] if the key does not match
-    /// or the file is not a SQLCipher database.
+    /// or the file is not a SQLCipher database, and with
+    /// [`VaultError::UnsupportedSchema`] if a newer version wrote it.
     pub fn open(path: &Path, key: &SecretKey) -> Result<Self> {
-        let conn = Connection::open(path).map_err(storage)?;
+        if path.symlink_metadata().is_err() {
+            return Err(VaultError::MissingDatabase);
+        }
+        let flags = OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX;
+        Self::connect(
+            Connection::open_with_flags(path, flags).map_err(storage)?,
+            key,
+        )
+    }
+
+    fn connect(conn: Connection, key: &SecretKey) -> Result<Self> {
         apply_key(&conn, key)?;
+        // Format and security settings must precede the first read.
+        conn.execute_batch(
+            "PRAGMA cipher_compatibility = 4;
+             PRAGMA cipher_page_size = 4096;
+             PRAGMA cipher_memory_security = ON;",
+        )
+        .map_err(storage)?;
         // The first read decrypts page 1 and fails if the key is wrong.
         conn.query_row("SELECT count(*) FROM sqlite_master", [], |r| {
             r.get::<_, i64>(0)
@@ -99,11 +134,21 @@ impl Store {
     }
 
     /// Flushes the write-ahead log into the main file and closes the database.
+    /// The connection is released even if the checkpoint fails.
     pub fn close(self) -> Result<()> {
-        self.conn
+        let checkpoint = self
+            .conn
             .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
-            .map_err(storage)?;
-        self.conn.close().map_err(|(_, e)| storage(e))
+            .map_err(storage);
+        let closed = self.conn.close().map_err(|(_, e)| storage(e));
+        checkpoint.and(closed)
+    }
+
+    /// The schema version stored in the database.
+    pub fn schema_version(&self) -> Result<i64> {
+        self.conn
+            .query_row("PRAGMA user_version", [], |r| r.get(0))
+            .map_err(storage)
     }
 
     fn migrate(&self) -> Result<()> {
@@ -111,6 +156,9 @@ impl Store {
             .conn
             .query_row("PRAGMA user_version", [], |r| r.get(0))
             .map_err(storage)?;
+        if version > SCHEMA_VERSION {
+            return Err(VaultError::UnsupportedSchema);
+        }
         if version < 1 {
             // Placeholder schema. The record tables arrive with RFC-0001/0002.
             self.conn
@@ -167,7 +215,7 @@ mod tests {
     fn write_close_reopen_read() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("vault.db");
-        let store = Store::open(&path, &key(1)).unwrap();
+        let store = Store::create(&path, &key(1)).unwrap();
         store.put_meta("probe", MARKER).unwrap();
         store.close().unwrap();
 
@@ -180,7 +228,7 @@ mod tests {
     fn wrong_key_is_rejected() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("vault.db");
-        Store::open(&path, &key(1)).unwrap().close().unwrap();
+        Store::create(&path, &key(1)).unwrap().close().unwrap();
         let err = Store::open(&path, &key(2)).unwrap_err();
         assert!(matches!(err, VaultError::WrongKeyOrCorrupt), "{err:?}");
     }
@@ -200,7 +248,7 @@ mod tests {
     fn file_is_unreadable_without_the_key() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("vault.db");
-        let store = Store::open(&path, &key(1)).unwrap();
+        let store = Store::create(&path, &key(1)).unwrap();
         store.put_meta("probe", MARKER).unwrap();
         // Inspect the WAL before checkpointing, then the main file after.
         let wal = fs::read(dir.path().join("vault.db-wal")).unwrap_or_default();
@@ -226,11 +274,55 @@ mod tests {
     #[test]
     fn reports_cipher_provider() {
         let dir = tempfile::tempdir().unwrap();
-        let store = Store::open(&dir.path().join("vault.db"), &key(1)).unwrap();
+        let store = Store::create(&dir.path().join("vault.db"), &key(1)).unwrap();
         let info = store.cipher_info().unwrap();
         assert!(info.cipher_version.starts_with('4'), "{info:?}");
         #[cfg(target_vendor = "apple")]
         assert_eq!(info.provider, "commoncrypto");
+    }
+
+    #[test]
+    fn open_never_creates_and_create_never_overwrites() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("vault.db");
+        assert!(matches!(
+            Store::open(&path, &key(1)).unwrap_err(),
+            VaultError::MissingDatabase
+        ));
+        assert!(!path.exists());
+        Store::create(&path, &key(1)).unwrap().close().unwrap();
+        assert!(matches!(
+            Store::create(&path, &key(1)).unwrap_err(),
+            VaultError::VaultExists
+        ));
+    }
+
+    #[test]
+    fn newer_schema_is_rejected() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("vault.db");
+        let store = Store::create(&path, &key(1)).unwrap();
+        assert_eq!(store.schema_version().unwrap(), SCHEMA_VERSION);
+        store
+            .conn
+            .execute_batch(&format!("PRAGMA user_version = {};", SCHEMA_VERSION + 1))
+            .unwrap();
+        store.close().unwrap();
+        assert!(matches!(
+            Store::open(&path, &key(1)).unwrap_err(),
+            VaultError::UnsupportedSchema
+        ));
+    }
+
+    #[test]
+    fn memory_security_is_enabled() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::create(&dir.path().join("vault.db"), &key(1)).unwrap();
+        let on: String = store
+            .conn
+            .query_row("PRAGMA cipher_memory_security", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(on, "1");
     }
 
     fn contains(haystack: &[u8], needle: &[u8]) -> bool {
