@@ -305,8 +305,15 @@ impl UnlockedVault {
     ) -> Result<()> {
         password::check_new(new_password)?;
         params.validate()?;
+        self.verify_password(current)?;
+        self.set_password(new_password, params)
+    }
+
+    /// Checks the master password afresh (Argon2id), for actions that need
+    /// recent authentication such as deleting the vault.
+    pub fn verify_password(&self, password: &[u8]) -> Result<()> {
         let h = &self.header;
-        let kek = derive_password_kek(current, &h.kdf)?;
+        let kek = derive_password_kek(password, &h.kdf)?;
         let key = envelope::unwrap(
             &kek,
             &h.password_envelope,
@@ -315,7 +322,7 @@ impl UnlockedVault {
         if !key.ct_eq(&self.vault_key) {
             return Err(VaultError::WrongCredentials);
         }
-        self.set_password(new_password, params)
+        Ok(())
     }
 
     /// Replaces the recovery envelope. The old phrase stops working.
