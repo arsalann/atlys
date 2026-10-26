@@ -2,11 +2,13 @@ import XCTest
 
 final class LaunchTests: XCTestCase {
     @MainActor
-    func testLaunchShowsCoreVersion() {
+    func testFreshLaunchShowsWelcomeWithCoreVersion() {
         let app = XCUIApplication()
+        app.launchArguments = ["-AtlysResetForUITests"]
         app.launch()
+        XCTAssertTrue(app.buttons["onboarding-start"].waitForExistence(timeout: 10))
         let version = app.staticTexts["core-version"]
-        XCTAssertTrue(version.waitForExistence(timeout: 10))
+        XCTAssertTrue(version.exists)
         XCTAssertTrue(version.label.hasPrefix("core "))
     }
 }

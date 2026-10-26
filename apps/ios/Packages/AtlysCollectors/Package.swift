@@ -15,7 +15,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "AtlysCollectors", dependencies: ["AtlysCore"]),
-        .testTarget(name: "AtlysCollectorsTests", dependencies: ["AtlysCollectors"]),
+        .testTarget(name: "AtlysCollectorsTests", dependencies: ["AtlysCollectors", "AtlysCore"]),
     ],
     swiftLanguageModes: [.v6]
 )

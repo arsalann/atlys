@@ -17,6 +17,12 @@ public struct InboxLocation: Sendable, Equatable {
         self.url = url
     }
 
+    /// The inbox of the vault in `vaultRoot` (`<vaultRoot>/inbox`, the layout
+    /// the Rust core uses).
+    public init(vaultRoot: URL) {
+        self.url = vaultRoot.appending(path: "inbox", directoryHint: .isDirectory)
+    }
+
     /// `Application Support/inbox` in the app's container.
     public static func applicationSupport(fileManager: FileManager = .default) throws -> InboxLocation {
         let base = try fileManager.url(
@@ -40,8 +46,9 @@ public struct InboxLocation: Sendable, Equatable {
         return names.filter { $0.hasSuffix(".sealed") }.count
     }
 
-    /// A sealer that writes into this inbox using only the ingest public key.
-    public func sealer(ingestPublicKey: Data) throws -> IngestSealer {
-        try IngestSealer(inboxDir: url.path(percentEncoded: false), ingestPublicKey: ingestPublicKey)
+    /// A sealer for the vault that owns this inbox. It reads only the vault ID
+    /// and ingest public key from the header, so it works while locked.
+    public func sealer() throws -> IngestSealer {
+        try IngestSealer.open(vaultRoot: url.deletingLastPathComponent().path(percentEncoded: false))
     }
 }

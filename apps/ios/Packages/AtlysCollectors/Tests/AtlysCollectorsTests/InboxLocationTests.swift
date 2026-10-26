@@ -1,4 +1,5 @@
 import AtlysCollectors
+import AtlysCore
 import Foundation
 import Testing
 
@@ -24,10 +25,16 @@ struct InboxLocationTests {
         #expect(inbox.pendingCount() == 0)
     }
 
-    @Test("A malformed ingest public key is rejected")
-    func rejectsBadPublicKey() throws {
+    @Test("A sealer needs a vault")
+    func sealerNeedsVault() throws {
         let inbox = temporaryInbox()
         try inbox.prepare()
-        #expect(throws: (any Error).self) { try inbox.sealer(ingestPublicKey: Data(count: 5)) }
+        #expect(throws: AtlysError.NoVault) { try inbox.sealer() }
+    }
+
+    @Test("The vault-root initializer uses the core's layout")
+    func vaultRootLayout() {
+        let root = URL(filePath: "/tmp/atlys-root", directoryHint: .isDirectory)
+        #expect(InboxLocation(vaultRoot: root).url.lastPathComponent == "inbox")
     }
 }

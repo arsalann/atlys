@@ -34,6 +34,7 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSFaceIDUsageDescription: Face ID unlocks your vault without typing your master password.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(ATLYS_BUNDLE_ID_PREFIX).app
@@ -63,7 +64,8 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Atlys
-  # Throwaway M0 spike app (apps/ios/Spike/README.md). Delete before M1 features.
+  # Throwaway M0 spike app (apps/ios/Spike/README.md). Kept as the device test
+  # tool until the M0 device phase is done, then deleted.
   AtlysSpike:
     type: application
     platform: iOS
