@@ -24,7 +24,7 @@ Last updated: 2026-10-26
 
 **First working version of the app: M1.3b – M1.7.** Branch `arsalann/m1-app`, one PR, one commit per step. Goal (M1 exit): create, lock, unlock, recover, and delete a vault on a real iPhone.
 
-- [ ] **1.4 Rust**: `atlys_vault::password` (zxcvbn score >= 3 and >= 12 characters, enforced on create, change, and recover) and `atlys_vault::recovery` (BIP-39 English 24-word phrase from 32 bytes of entropy, checksum validated, wordlist hash checked).
+- [x] **1.4 Rust**: `atlys_vault::password` (zxcvbn score >= 3 and >= 12 characters, enforced on create, change, and recover) and `atlys_vault::recovery` (BIP-39 English 24-word phrase from 32 bytes of entropy, checksum validated, wordlist hash checked).
 - [ ] **1.3b FFI**: export `VaultSession` and vault functions over UniFFI (create, unlock with password or device envelope, recover, change password, regenerate recovery, device envelope, lock, delete, password strength, phrase validation). `IngestSealer.open(vaultRoot)` writes inbox v2. The spike keeps M0 formats through a separate `SpikeSealer`; the spike app stays until the device phase is done (it is the device test tool).
 - [ ] **Swift core layer** (`AtlysCore`): `VaultLocation` (container paths, file protection), `BiometricUnlock` (Secure Enclave key + device envelope in the Keychain, scoped by vault ID), `AppModel` state machine.
 - [ ] **1.5 Onboarding UI**: welcome, how it works, password with strength meter, confirm, recovery phrase (show, confirm 3 words), Face ID.

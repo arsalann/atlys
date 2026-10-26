@@ -121,12 +121,19 @@ fn weak_passwords_are_rejected_for_new_passwords_only() {
         Vault::create(&paths, &[0xff; 20], PARAMS),
         Err(VaultError::WeakPassword(_))
     ));
-    // Twelve scalar values, more bytes.
-    let (mut vault, recovery) = Vault::create(&paths, "ééééééééééé1".as_bytes(), PARAMS).unwrap();
     assert!(matches!(
-        vault.change_password("ééééééééééé1".as_bytes(), b"too short", PARAMS),
+        Vault::create(&paths, b"password1234", PARAMS),
         Err(VaultError::WeakPassword(_))
     ));
+    // Non-ASCII passphrases are fine.
+    let unicode = "café über naïve ångström".as_bytes();
+    let (mut vault, recovery) = Vault::create(&paths, unicode, PARAMS).unwrap();
+    for weak in [&b"too short"[..], b"password1234"] {
+        assert!(matches!(
+            vault.change_password(unicode, weak, PARAMS),
+            Err(VaultError::WeakPassword(_))
+        ));
+    }
     vault.lock().unwrap();
     assert!(matches!(
         Vault::recover(&paths, &recovery, b"short", PARAMS),
@@ -463,4 +470,15 @@ fn unsupported_header_version_asks_for_an_update() {
         unlock(&paths, PASSWORD),
         Err(VaultError::UnsupportedVersion)
     ));
+}
+
+#[test]
+fn recovery_phrase_round_trips_through_the_vault() {
+    let (_dir, paths) = setup();
+    let (vault, recovery) = create(&paths);
+    let words = recovery.to_phrase();
+    assert_eq!(words.len(), 24);
+    vault.lock().unwrap();
+    let typed = RecoverySecret::from_phrase(&words).unwrap();
+    Vault::recover(&paths, &typed, NEW_PASSWORD, PARAMS).unwrap();
 }

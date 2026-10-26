@@ -9,6 +9,8 @@
 //! | [`inbox`] | Sealed inbox version 2 and quarantine |
 //! | [`store`] | The SQLCipher database |
 //! | [`vault`] | Create, unlock, recover, lock, change credentials, delete |
+//! | [`password`] | New-password policy and strength feedback (zxcvbn) |
+//! | [`recovery`] | 24-word recovery phrase (BIP-39 English wordlist) |
 //!
 //! [`m0`] holds the throwaway spike formats until the FFI moves to the product
 //! vault.
@@ -21,6 +23,8 @@ pub mod header;
 mod hex;
 pub mod inbox;
 pub mod m0;
+pub mod password;
+pub mod recovery;
 pub mod store;
 mod ulid;
 pub mod vault;
@@ -29,7 +33,8 @@ use atlys_adm::AdmError;
 use atlys_crypto::CryptoError;
 
 pub use header::VaultId;
-pub use vault::{RecoverySecret, UnlockedVault, Vault, VaultPaths};
+pub use recovery::RecoverySecret;
+pub use vault::{UnlockedVault, Vault, VaultPaths};
 
 /// Errors from vault operations. Messages never include keys or record contents.
 #[derive(Debug, thiserror::Error)]
@@ -66,6 +71,10 @@ pub enum VaultError {
     /// The new password does not meet the strength policy.
     #[error("password does not meet the strength policy: {0}")]
     WeakPassword(&'static str),
+    /// The recovery phrase has the wrong length, an unknown word, or a bad
+    /// checksum.
+    #[error("invalid recovery phrase")]
+    InvalidRecoveryPhrase,
     /// Deleting the vault removed some files but not all. Retrying is safe.
     #[error("vault deletion incomplete; retry")]
     PartialDeletion,

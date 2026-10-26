@@ -55,6 +55,9 @@ impl From<VaultError> for AtlysError {
             VaultError::InvalidHeader(m) | VaultError::WeakPassword(m) => {
                 Self::InvalidInput { message: m.into() }
             }
+            VaultError::InvalidRecoveryPhrase => Self::InvalidInput {
+                message: "invalid recovery phrase".into(),
+            },
             e @ (VaultError::UnsupportedVersion
             | VaultError::UnsupportedSchema
             | VaultError::NoVault
