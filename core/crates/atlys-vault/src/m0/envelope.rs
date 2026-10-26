@@ -1,6 +1,7 @@
 //! Key envelopes: encrypted copies of the vault key, one per unlock method.
 //!
-//! Provisional until RFC-0002. This module currently holds the Secure Enclave
+//! M0 format, superseded by the RFC-0002 device envelope (version 2) in
+//! [`crate::envelope`]. This module holds the Secure Enclave
 //! (Face ID) envelope explored in M0 task 0.7.
 //!
 //! ## Secure Enclave envelope

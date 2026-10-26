@@ -29,7 +29,7 @@
 
 **The solution:** asymmetric "sealed box" writes.
 
-1. When the vault is created, the core generates an **X25519 ingest keypair**. The **public** key goes in the vault header in plaintext. The **private** key is stored only inside the vault, wrapped by the vault key.
+1. When the vault is created, the core generates an **X25519 ingest keypair**. The **public** key goes in the vault header in plaintext. The **private** key is stored only as an envelope in the header, wrapped by a subkey of the vault key. Formats: [RFC-0002](../../spec/rfcs/0002-vault-format.md).
 2. Collectors serialize a batch of ADM records and call `IngestSealer.seal(batch)`. The core encrypts it with **HPKE** to the public key and writes `inbox/<ulid>.sealed`. The collector can *add* data but can't *read* anything, including its own previous batches.
 3. On unlock, `VaultSession.mergeInbox()` decrypts each file with the private key, validates and dedupes the records, inserts them into SQLCipher in one transaction, then deletes the file.
 4. Inbox files use the file protection class *Complete Until First User Authentication*, so writes succeed while the phone is locked (after the first unlock since boot). `vault.db` uses *Complete* and is never touched by background code.
@@ -43,26 +43,28 @@ This pattern carries over to Android, desktop, and connectors: anything that pro
 ## Rust ↔ Swift boundary (UniFFI)
 
 ```text
-// Sketch, not final API
+// Sketch of the FFI. The Rust side exists in atlys_vault::vault (M1.3);
+// the UniFFI export arrives in M1.3b. Merge, query, and export are M2/M3.
 object Vault {
   create(dir, password) -> (VaultSession, RecoveryPhrase)
   unlockWithPassword(dir, password) -> VaultSession
-  unlockWithRecovery(dir, phrase) -> VaultSession
-  unlockWithSecureEnclave(dir, sharedSecret) -> VaultSession  // ECDH output from the Secure Enclave
+  unlockWithDevice(dir, deviceEnvelope, sharedSecret) -> VaultSession  // ECDH output from the Secure Enclave
+  recover(dir, phrase, newPassword) -> VaultSession  // recovery always sets a new password
   passwordStrength(password) -> Strength
 }
 object VaultSession {               // exists only while unlocked
   mergeInbox() -> MergeReport
   query(filter) -> [Record]         // by type, time range, source; paginated
   dailySummary(date) -> Summary
-  changePassword(old, new)
+  changePassword(current, new)
   regenerateRecovery() -> RecoveryPhrase
   exportEncrypted(dest) / exportJson(dest)
-  secureEnclaveEnvelope(sharedSecret, ephemeralPub, enclavePub) -> Bytes  // Rust wraps; key stays in Rust
+  deviceEnvelope(sharedSecret, ephemeralPub, enclavePub) -> Bytes  // Rust wraps; Swift stores it in the Keychain
+  delete()                          // only from a fresh unlock
   lock()
 }
 object IngestSealer {               // only needs the public key; safe in background
-  open(dir) -> IngestSealer
+  open(dir) -> IngestSealer         // reads vault ID and ingest key from the unverified header
   seal(collector, records: [RecordDraft]) -> fileName
 }
 ```

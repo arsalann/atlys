@@ -5,7 +5,7 @@
 //! key, so background code can add data but never read it. See
 //! `plan/v0/03-ios-app.md#the-write-only-ingest-inbox`.
 //!
-//! File format (provisional until RFC-0002):
+//! M0 file format (version 1, superseded by RFC-0002 inbox version 2):
 //!
 //! ```text
 //! offset  size  field
