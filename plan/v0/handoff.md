@@ -17,33 +17,33 @@ Last updated: 2026-10-26
 | M0 spike | Simulator and CI phase done. Device phase blocked on an Apple Developer account ([spike-report.md](spike-report.md#follow-ups)). |
 | M1.1 RFC-0002 | **Done.** [RFC-0002](../../spec/rfcs/0002-vault-format.md) accepted and merged (PR #6) with synthetic vectors. |
 | M1.2 `atlys-crypto` | **Done.** PR #7 merged: RFC-0002 Argon2id range, header MAC, envelope vectors. |
-| M1.3 `atlys-vault` | **1.3a in review** (PR #8); 1.3b next. |
-| M1.4 – M1.7 | Not started. |
+| M1.3a vault format (Rust) | **Done.** PR #8 merged. |
+| M1.3b – M1.7 first working app | **In progress**, see below. |
 
 ## In progress
 
-**Task 1.3: `atlys-vault` product format and lifecycle.** Split into two PRs:
+**First working version of the app: M1.3b – M1.7.** Branch `arsalann/m1-app`, one PR, one commit per step. Goal (M1 exit): create, lock, unlock, recover, and delete a vault on a real iPhone.
 
-- **1.3a: PR #8, branch `arsalann/m1-vault-lifecycle`. Done, awaiting review and CI. Rust only.** The Swift app and FFI keep using the M0 formats until 1.3b, so the M0 inbox and Secure Enclave envelope move to `atlys_vault::m0` unchanged.
-  - [x] `header`: strict two-layer JSON (64 KiB limit, lowercase hex, no unknown/duplicate fields, exact versions), encode/parse, MAC verify before trust.
-  - [x] `envelope`: password/recovery/ingest wraps with RFC-0002 AAD; device envelope v2 (vault ID bound, AAD over bytes 0..147).
-  - [x] `inbox`: sealed inbox v2 (vault ID in HPKE info and AAD), padding and bucket checks, bounded reads, symlink rejection, exclusive temp + rename + parent sync, quarantine with reason codes, unsupported versions left pending.
-  - [x] `store`: `create` vs `open` (never create on unlock), `cipher_memory_security`, quiet SQLCipher logging, reject newer schema, release the connection even if checkpoint fails.
-  - [x] `vault`: create (temp sibling dir, atomic publish), unlock with password / device envelope, recover (requires a new password), lock, change password, regenerate recovery, enable/disable device envelope, delete (fresh authentication). Durable header replacement.
-  - [x] Integration tests (`crates/atlys-vault/tests/lifecycle.rs`, 19 tests): every flow, wrong credentials, every header field mutation, tampered envelopes, vault-ID substitution, KDF bounds, missing database, crash leftovers.
-  - [x] Docs: RFC cross-references, `03-ios-app.md` API, work breakdown, this file. Open PR.
-- **1.3b (next, after #8 merges; new branch from `main`):** FFI `Vault` object replacing `SpikeVault`, `IngestSealer` writing inbox v2 (takes the vault ID), Swift `InboxLocation` and CryptoKit interop test on v2, delete `atlys_vault::m0`. Header and inbox v2 interop fixtures in `spec/vault/v1/vectors.json`.
+- [ ] **1.4 Rust**: `atlys_vault::password` (zxcvbn score >= 3 and >= 12 characters, enforced on create, change, and recover) and `atlys_vault::recovery` (BIP-39 English 24-word phrase from 32 bytes of entropy, checksum validated, wordlist hash checked).
+- [ ] **1.3b FFI**: export `VaultSession` and vault functions over UniFFI (create, unlock with password or device envelope, recover, change password, regenerate recovery, device envelope, lock, delete, password strength, phrase validation). `IngestSealer.open(vaultRoot)` writes inbox v2. The spike keeps M0 formats through a separate `SpikeSealer`; the spike app stays until the device phase is done (it is the device test tool).
+- [ ] **Swift core layer** (`AtlysCore`): `VaultLocation` (container paths, file protection), `BiometricUnlock` (Secure Enclave key + device envelope in the Keychain, scoped by vault ID), `AppModel` state machine.
+- [ ] **1.5 Onboarding UI**: welcome, how it works, password with strength meter, confirm, recovery phrase (show, confirm 3 words), Face ID.
+- [ ] **1.6 Lock**: lock screen (password, Face ID, forgot password → recovery), auto-lock timeout, lock on device lock, app-switcher privacy cover.
+- [ ] **1.7 Settings**: change password, regenerate recovery phrase, Face ID toggle, auto-lock, delete vault (fresh authentication).
+- [ ] Tests: Rust unit/integration, Swift FFI round trip, XCUITest onboarding → lock → unlock in the Simulator. Docs and this file. Open PR.
 
-## Next steps after 1.3
+Device-only checks after this lands (cannot be verified in the Simulator): Face ID prompt and invalidation, Data Protection classes, Argon2id timing at 256 MiB.
 
-1. **1.4**: zxcvbn check and BIP-39 24-word phrase (1.3 takes the 32-byte recovery entropy directly and enforces only the 12-character minimum).
-2. **1.5 – 1.7**: iOS onboarding, lock, settings.
+## Next steps after M1
+
+1. M0 device phase on a real iPhone, then delete the spike app, the `spike` feature, and `atlys_vault::m0`.
+2. M2: RFC-0001 data model, inbox merge, collectors.
 
 ## Blockers and open items
 
 - Apple Developer account: blocks M0 device phase, final Argon2id parameters, Face ID invalidation and Data Protection checks, and HealthKit even on the Simulator.
 - `security@` and `conduct@` contact placeholders still need a project domain.
-- Remove `apps/ios/Spike/`, the `AtlysSpike` targets, and the `spike` feature before M1 features land in the app.
+- Remove `apps/ios/Spike/`, the `AtlysSpike` targets, the `spike` feature, and `atlys_vault::m0` once the M0 device phase is done. Kept until then because the spike app is the device test tool.
 
 ## Checks
 
