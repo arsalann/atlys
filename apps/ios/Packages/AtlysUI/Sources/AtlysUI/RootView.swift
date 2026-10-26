@@ -1,27 +1,42 @@
 import AtlysCore
 import SwiftUI
 
-/// Placeholder root screen until onboarding lands in M1.
+/// Chooses the screen for the current app phase and applies the lock policy
+/// on scene changes.
 public struct RootView: View {
-    private let info = coreInfo()
+    @State private var model: AppModel
+    @Environment(\.scenePhase) private var scenePhase
 
-    public init() {}
+    public init(model: AppModel = .live()) {
+        _model = State(initialValue: model)
+    }
 
     public var body: some View {
-        VStack(spacing: 12) {
-            Text("Atlys")
-                .font(.largeTitle.bold())
-            Text("Your data, on your device.")
-                .foregroundStyle(.secondary)
-            Text(info.displayVersion)
-                .font(.footnote.monospaced())
-                .foregroundStyle(.tertiary)
-                .accessibilityIdentifier("core-version")
+        ZStack {
+            switch model.phase {
+            case .launching:
+                ProgressView()
+            case .onboarding:
+                OnboardingFlow(model: model)
+            case .locked:
+                LockView(model: model)
+            case .unlocked:
+                HomeView(model: model)
+            case .failed(let message):
+                ContentUnavailableView("Atlys can't start", systemImage: "exclamationmark.triangle",
+                                       description: Text(message))
+            }
+            if scenePhase != .active && model.phase == .unlocked {
+                PrivacyCover()
+            }
         }
-        .padding()
+        .onAppear { model.start() }
+        .onChange(of: scenePhase) { _, phase in
+            switch phase {
+            case .background: model.sceneDidEnterBackground()
+            case .active: model.sceneDidBecomeActive()
+            default: break
+            }
+        }
     }
-}
-
-#Preview {
-    RootView()
 }

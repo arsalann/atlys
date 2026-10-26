@@ -2,17 +2,21 @@
 //!
 //! Everything exported here becomes part of the Swift `AtlysCore` module. Keep
 //! the surface small: Swift owns platform concerns, Rust owns data and keys.
+//! Vault keys never cross this boundary; for Face ID, Swift passes only the
+//! Secure Enclave ECDH shared secret.
 
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use atlys_adm::Batch;
-use atlys_crypto::hpke::IngestPublicKey;
-use atlys_vault::VaultError;
-use atlys_vault::m0::inbox::InboxWriter;
+use atlys_vault::inbox::InboxWriter;
+use atlys_vault::{Vault, VaultError, VaultPaths};
 
 #[cfg(feature = "spike")]
 pub mod spike;
+mod vault;
+
+pub use vault::*;
 
 uniffi::setup_scaffolding!();
 
@@ -25,6 +29,34 @@ pub enum AtlysError {
         /// What was wrong.
         message: String,
     },
+    /// The password, recovery phrase, or Face ID key did not unlock the vault.
+    #[error("wrong password or recovery phrase")]
+    WrongCredentials,
+    /// The vault metadata failed its integrity check after unlocking.
+    #[error("vault integrity check failed")]
+    IntegrityFailure,
+    /// The new password does not meet the strength policy.
+    #[error("password too weak: {message}")]
+    WeakPassword {
+        /// Why it was rejected.
+        message: String,
+    },
+    /// The recovery phrase has the wrong length, an unknown word, or a bad
+    /// checksum.
+    #[error("invalid recovery phrase")]
+    InvalidRecoveryPhrase,
+    /// No vault exists at the given location.
+    #[error("no vault found")]
+    NoVault,
+    /// A vault already exists at the given location.
+    #[error("a vault already exists")]
+    VaultExists,
+    /// The vault was written by a newer version of Atlys.
+    #[error("this vault needs a newer version of Atlys")]
+    UpdateRequired,
+    /// The session was already locked.
+    #[error("the vault is locked")]
+    Locked,
     /// The key is wrong or the data was tampered with.
     #[error("wrong key or tampered data")]
     WrongKeyOrTampered,
@@ -46,28 +78,26 @@ impl From<VaultError> for AtlysError {
     fn from(err: VaultError) -> Self {
         use atlys_crypto::CryptoError;
         match err {
+            VaultError::WrongCredentials => Self::WrongCredentials,
+            VaultError::IntegrityFailure => Self::IntegrityFailure,
+            VaultError::WeakPassword(m) => Self::WeakPassword { message: m.into() },
+            VaultError::InvalidRecoveryPhrase => Self::InvalidRecoveryPhrase,
+            VaultError::NoVault => Self::NoVault,
+            VaultError::VaultExists => Self::VaultExists,
+            VaultError::UnsupportedVersion | VaultError::UnsupportedSchema => Self::UpdateRequired,
             VaultError::WrongKeyOrCorrupt
-            | VaultError::WrongCredentials
-            | VaultError::IntegrityFailure
             | VaultError::InvalidInboxFile(_)
             | VaultError::Crypto(CryptoError::Decrypt) => Self::WrongKeyOrTampered,
-            // Coarse mapping until the product vault is exported (M1.3b).
-            VaultError::InvalidHeader(m) | VaultError::WeakPassword(m) => {
-                Self::InvalidInput { message: m.into() }
-            }
-            e @ (VaultError::UnsupportedVersion
-            | VaultError::UnsupportedSchema
-            | VaultError::NoVault
-            | VaultError::VaultExists
-            | VaultError::MissingDatabase
-            | VaultError::PartialDeletion
-            | VaultError::InboxFull) => Self::Storage {
-                message: e.to_string(),
-            },
-            VaultError::Crypto(CryptoError::InvalidInput(m) | CryptoError::InvalidParams(m)) => {
+            VaultError::InvalidHeader(m)
+            | VaultError::Crypto(CryptoError::InvalidInput(m) | CryptoError::InvalidParams(m)) => {
                 Self::InvalidInput { message: m.into() }
             }
             VaultError::Adm(e) => Self::InvalidInput {
+                message: e.to_string(),
+            },
+            e @ (VaultError::MissingDatabase
+            | VaultError::PartialDeletion
+            | VaultError::InboxFull) => Self::Storage {
                 message: e.to_string(),
             },
             VaultError::Storage(m) => Self::Storage { message: m },
@@ -84,6 +114,14 @@ impl From<VaultError> for AtlysError {
 impl From<atlys_crypto::CryptoError> for AtlysError {
     fn from(err: atlys_crypto::CryptoError) -> Self {
         VaultError::from(err).into()
+    }
+}
+
+impl From<atlys_adm::AdmError> for AtlysError {
+    fn from(err: atlys_adm::AdmError) -> Self {
+        Self::InvalidInput {
+            message: err.to_string(),
+        }
     }
 }
 
@@ -143,8 +181,16 @@ impl TryFrom<RecordDraft> for atlys_adm::RecordDraft {
     }
 }
 
-/// Seals collector output into the inbox. Holds only the ingest **public**
-/// key, so it is safe to use in the background while the vault is locked.
+pub(crate) fn drafts(records: Vec<RecordDraft>) -> Result<Vec<atlys_adm::RecordDraft>, AtlysError> {
+    records
+        .into_iter()
+        .map(atlys_adm::RecordDraft::try_from)
+        .collect()
+}
+
+/// Seals collector output into the vault's inbox (format version 2). Holds
+/// only the vault ID and ingest **public** key from the header, so it is safe
+/// to use in the background while the vault is locked.
 #[derive(Debug, uniffi::Object)]
 pub struct IngestSealer {
     writer: InboxWriter,
@@ -152,35 +198,22 @@ pub struct IngestSealer {
 
 #[uniffi::export]
 impl IngestSealer {
-    /// Creates a sealer that writes into `inbox_dir`.
+    /// Creates a sealer for the vault in `vault_root`.
     #[uniffi::constructor]
-    pub fn new(inbox_dir: String, ingest_public_key: Vec<u8>) -> Result<Arc<Self>, AtlysError> {
-        let public_key = IngestPublicKey::from_bytes(&ingest_public_key)?;
+    pub fn open(vault_root: String) -> Result<Arc<Self>, AtlysError> {
         Ok(Arc::new(Self {
-            writer: InboxWriter::new(inbox_dir, public_key)?,
+            writer: Vault::inbox_writer(&VaultPaths::new(vault_root))?,
         }))
     }
 
     /// Validates and seals one batch. Returns the new file's name.
     pub fn seal(&self, collector: String, records: Vec<RecordDraft>) -> Result<String, AtlysError> {
-        let records = records
-            .into_iter()
-            .map(atlys_adm::RecordDraft::try_from)
-            .collect::<Result<Vec<_>, _>>()?;
-        let batch = Batch::new(collector, now_ms(), records)?;
+        let batch = Batch::new(collector, now_ms(), drafts(records)?)?;
         let path = self.writer.write(&batch)?;
         Ok(path
             .file_name()
             .map(|n| n.to_string_lossy().into_owned())
             .unwrap_or_default())
-    }
-}
-
-impl From<atlys_adm::AdmError> for AtlysError {
-    fn from(err: atlys_adm::AdmError) -> Self {
-        Self::InvalidInput {
-            message: err.to_string(),
-        }
     }
 }
 
@@ -193,9 +226,6 @@ pub(crate) fn now_ms() -> i64 {
 
 #[cfg(test)]
 mod tests {
-    use atlys_crypto::hpke::IngestKeyPair;
-    use atlys_vault::m0::inbox;
-
     use super::*;
 
     #[test]
@@ -206,61 +236,11 @@ mod tests {
     }
 
     #[test]
-    fn sealer_writes_files_only_the_private_key_opens() {
-        let dir = tempfile::tempdir().unwrap();
-        let kp = IngestKeyPair::generate();
-        let sealer = IngestSealer::new(
-            dir.path().to_string_lossy().into(),
-            kp.public.to_bytes().to_vec(),
-        )
-        .unwrap();
-        let name = sealer
-            .seal(
-                "device".into(),
-                vec![RecordDraft {
-                    record_type: "device.battery".into(),
-                    source_id: "synthetic-1".into(),
-                    start_ms: 1,
-                    end_ms: None,
-                    data_json: r#"{"level":0.5}"#.into(),
-                }],
-            )
-            .unwrap();
-        assert!(name.ends_with(".sealed"));
-        let batch = inbox::read(&kp.private, &dir.path().join(&name)).unwrap();
-        assert_eq!(batch.collector, "device");
-        assert_eq!(batch.records[0].data["level"], 0.5);
-    }
-
-    #[test]
-    fn sealer_rejects_bad_input() {
+    fn sealer_needs_a_vault() {
         let dir = tempfile::tempdir().unwrap();
         assert!(matches!(
-            IngestSealer::new(dir.path().to_string_lossy().into(), vec![0; 5]),
-            Err(AtlysError::InvalidInput { .. })
+            IngestSealer::open(dir.path().to_string_lossy().into()),
+            Err(AtlysError::NoVault)
         ));
-        let kp = IngestKeyPair::generate();
-        let sealer = IngestSealer::new(
-            dir.path().to_string_lossy().into(),
-            kp.public.to_bytes().to_vec(),
-        )
-        .unwrap();
-        let bad = |record_type: &str, json: &str| RecordDraft {
-            record_type: record_type.into(),
-            source_id: "s".into(),
-            start_ms: 0,
-            end_ms: None,
-            data_json: json.into(),
-        };
-        for draft in [
-            bad("health.steps", "not json"),
-            bad("health.steps", "[1]"),
-            bad("Steps", "{}"),
-        ] {
-            assert!(matches!(
-                sealer.seal("health".into(), vec![draft]),
-                Err(AtlysError::InvalidInput { .. })
-            ));
-        }
     }
 }

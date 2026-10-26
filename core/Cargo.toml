@@ -34,6 +34,7 @@ sha2 = { version = "0.11", default-features = false }
 subtle = "2.6"
 thiserror = "2"
 uniffi = "0.32"
+zxcvbn = { version = "3.1", default-features = false }
 zeroize = { version = "1.9", features = ["derive"] }
 
 hex = "0.4"

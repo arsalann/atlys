@@ -24,7 +24,7 @@ struct SealedInboxTests {
     func swiftSealsRustOpens() throws {
         try inbox.prepare()
         let vault = try SpikeVault.create(dir: vaultDir)
-        let sealer = try inbox.sealer(ingestPublicKey: vault.ingestPublicKey())
+        let sealer = try inbox.spikeSealer(ingestPublicKey: vault.ingestPublicKey())
         _ = try sealer.seal(collector: "health", records: syntheticSteps(3))
         _ = try sealer.seal(collector: "health", records: syntheticSteps(1))
         #expect(inbox.pendingCount() == 2)
@@ -42,7 +42,7 @@ struct SealedInboxTests {
         try inbox.prepare()
         let vault = try SpikeVault.create(dir: vaultDir)
         let other = try SpikeVault.create(dir: root.appending(path: "other").path(percentEncoded: false))
-        let sealer = try inbox.sealer(ingestPublicKey: vault.ingestPublicKey())
+        let sealer = try inbox.spikeSealer(ingestPublicKey: vault.ingestPublicKey())
 
         let name = try sealer.seal(collector: "health", records: syntheticSteps(1))
         let file = inbox.url.appending(path: name)
@@ -51,7 +51,7 @@ struct SealedInboxTests {
         try bytes.write(to: file)
 
         // A batch sealed to a different vault's key.
-        _ = try inbox.sealer(ingestPublicKey: other.ingestPublicKey()).seal(collector: "health", records: syntheticSteps(1))
+        _ = try inbox.spikeSealer(ingestPublicKey: other.ingestPublicKey()).seal(collector: "health", records: syntheticSteps(1))
 
         let report = try vault.openInbox(inboxDir: inbox.url.path(percentEncoded: false), deleteOpened: true)
         #expect(report.opened == 0)
@@ -63,7 +63,7 @@ struct SealedInboxTests {
     func invalidRecordsRejected() throws {
         try inbox.prepare()
         let vault = try SpikeVault.create(dir: vaultDir)
-        let sealer = try inbox.sealer(ingestPublicKey: vault.ingestPublicKey())
+        let sealer = try inbox.spikeSealer(ingestPublicKey: vault.ingestPublicKey())
         let bad = RecordDraft(recordType: "Steps", sourceId: "x", startMs: 0, endMs: nil, dataJson: "{}")
         #expect(throws: AtlysError.self) { try sealer.seal(collector: "health", records: [bad]) }
         #expect(inbox.pendingCount() == 0)
@@ -75,7 +75,7 @@ struct SealedInboxTests {
     func filesInheritProtection() throws {
         try inbox.prepare()
         let vault = try SpikeVault.create(dir: vaultDir)
-        let name = try inbox.sealer(ingestPublicKey: vault.ingestPublicKey()).seal(collector: "health", records: syntheticSteps(1))
+        let name = try inbox.spikeSealer(ingestPublicKey: vault.ingestPublicKey()).seal(collector: "health", records: syntheticSteps(1))
         let protection = try FileManager.default.attributesOfItem(
             atPath: inbox.url.appending(path: name).path(percentEncoded: false))[.protectionKey] as? FileProtectionType
         #if targetEnvironment(simulator)
@@ -114,5 +114,12 @@ struct SealedInboxTests {
         #expect(report.rejected == 1)
         #expect(report.batches.first?.collector == "cryptokit")
         #expect(report.batches.first?.recordTypes == ["health.steps"])
+    }
+}
+
+private extension InboxLocation {
+    /// M0 (version 1) sealer for the spike vault.
+    func spikeSealer(ingestPublicKey: Data) throws -> SpikeSealer {
+        try SpikeSealer(inboxDir: url.path(percentEncoded: false), ingestPublicKey: ingestPublicKey)
     }
 }

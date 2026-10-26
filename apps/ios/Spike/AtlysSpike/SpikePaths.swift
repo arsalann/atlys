@@ -1,4 +1,5 @@
 import AtlysCollectors
+import AtlysCore
 import Foundation
 
 /// File locations for the spike app, with their file protection classes.
@@ -33,4 +34,12 @@ enum SpikePaths {
     }
 
     static func path(_ url: URL) -> String { url.path(percentEncoded: false) }
+}
+
+extension InboxLocation {
+    /// A sealer for the spike's M0 (version 1) inbox format. The product uses
+    /// `IngestSealer.open(vaultRoot:)`, which needs a real vault.
+    func spikeSealer(ingestPublicKey: Data) throws -> SpikeSealer {
+        try SpikeSealer(inboxDir: url.path(percentEncoded: false), ingestPublicKey: ingestPublicKey)
+    }
 }

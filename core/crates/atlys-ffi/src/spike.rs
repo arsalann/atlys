@@ -3,22 +3,23 @@
 //! These exports exist to measure and verify things on the simulator and on
 //! devices (M0 tasks 0.3, 0.5, 0.6, 0.7, 0.8). They take shortcuts that are
 //! not acceptable in the product, most importantly [`SpikeVault`], which
-//! stores its private keys **unencrypted** on disk. Delete this module before
-//! M1 feature work; the real `Vault` / `VaultSession` API replaces it.
+//! stores its private keys **unencrypted** on disk. The product API is in
+//! `vault.rs`. This module stays only as the device test tool until the M0
+//! device phase is done, then it is deleted with `atlys_vault::m0`.
 
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Instant;
 
-use atlys_crypto::hpke::{IngestKeyPair, IngestPrivateKey};
+use atlys_crypto::hpke::{IngestKeyPair, IngestPrivateKey, IngestPublicKey};
 use atlys_crypto::kdf::{Argon2Params, derive_key_unchecked};
 use atlys_crypto::{SecretKey, random_bytes};
 use atlys_vault::m0::{envelope, inbox};
 use atlys_vault::store::Store;
 use zeroize::Zeroizing;
 
-use crate::AtlysError;
+use crate::{AtlysError, RecordDraft, drafts, now_ms};
 
 // ---------------------------------------------------------------------------
 // 0.3 SQLCipher self-test
@@ -287,6 +288,31 @@ pub fn spike_secure_enclave_ephemeral_key(envelope: Vec<u8>) -> Result<Vec<u8>, 
     Ok(envelope::secure_enclave_ephemeral_key(&envelope)?.to_vec())
 }
 
+/// Seals batches in the **M0 version 1** inbox format for [`SpikeVault`].
+/// The product uses `IngestSealer` (version 2), which needs a real vault.
+#[derive(Debug, uniffi::Object)]
+pub struct SpikeSealer {
+    writer: inbox::InboxWriter,
+}
+
+#[uniffi::export]
+impl SpikeSealer {
+    /// Creates a sealer that writes into `inbox_dir`.
+    #[uniffi::constructor]
+    pub fn new(inbox_dir: String, ingest_public_key: Vec<u8>) -> Result<Arc<Self>, AtlysError> {
+        let public_key = IngestPublicKey::from_bytes(&ingest_public_key)?;
+        Ok(Arc::new(Self {
+            writer: inbox::InboxWriter::new(inbox_dir, public_key)?,
+        }))
+    }
+
+    /// Validates and seals one batch. Returns the new file's name.
+    pub fn seal(&self, collector: String, records: Vec<RecordDraft>) -> Result<String, AtlysError> {
+        let batch = atlys_adm::Batch::new(collector, now_ms(), drafts(records)?)?;
+        Ok(file_name(&self.writer.write(&batch)?))
+    }
+}
+
 fn file_name(path: &Path) -> String {
     path.file_name()
         .map(|n| n.to_string_lossy().into_owned())
@@ -302,7 +328,6 @@ fn io(err: std::io::Error) -> AtlysError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{IngestSealer, RecordDraft};
 
     #[test]
     fn sqlcipher_self_test_passes() {
@@ -322,7 +347,7 @@ mod tests {
         let vault_dir = dir.path().join("vault").to_string_lossy().into_owned();
         let inbox_dir = dir.path().join("inbox").to_string_lossy().into_owned();
         let created = SpikeVault::create(vault_dir.clone()).unwrap();
-        let sealer = IngestSealer::new(inbox_dir.clone(), created.ingest_public_key()).unwrap();
+        let sealer = SpikeSealer::new(inbox_dir.clone(), created.ingest_public_key()).unwrap();
         sealer
             .seal(
                 "health".into(),

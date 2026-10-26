@@ -3,7 +3,7 @@ import Foundation
 
 /// Access to the spike's stand-in vault.
 ///
-/// Background code only ever reads `ingest.pub` and builds an `IngestSealer`
+/// Background code only ever reads `ingest.pub` and builds a `SpikeSealer`
 /// from it, exactly like the product will. The private keys are loaded only
 /// from the foreground, to open the inbox.
 enum SpikeVaultStore {
@@ -23,8 +23,8 @@ enum SpikeVaultStore {
     }
 
     /// Builds a sealer from the public key alone. Safe while the device is locked.
-    static func sealer() throws -> IngestSealer {
+    static func sealer() throws -> SpikeSealer {
         let publicKey = try Data(contentsOf: SpikePaths.vaultDir.appending(path: "ingest.pub"))
-        return try SpikePaths.inbox.sealer(ingestPublicKey: publicKey)
+        return try SpikePaths.inbox.spikeSealer(ingestPublicKey: publicKey)
     }
 }

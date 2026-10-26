@@ -43,8 +43,9 @@ This pattern carries over to Android, desktop, and connectors: anything that pro
 ## Rust ↔ Swift boundary (UniFFI)
 
 ```text
-// Sketch of the FFI. The Rust side exists in atlys_vault::vault (M1.3);
-// the UniFFI export arrives in M1.3b. Merge, query, and export are M2/M3.
+// Implemented in M1 (core/crates/atlys-ffi/src/vault.rs) as free functions
+// (createVault, unlockWithPassword, unlockWithDevice, recoverVault, ...)
+// plus the VaultSession object. Merge, query, and export are M2/M3.
 object Vault {
   create(dir, password) -> (VaultSession, RecoveryPhrase)
   unlockWithPassword(dir, password) -> VaultSession

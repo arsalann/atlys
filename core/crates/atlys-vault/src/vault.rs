@@ -29,12 +29,9 @@ use crate::envelope::{self, DEVICE_ENVELOPE_LEN};
 use crate::fsutil::{random_suffix, read_regular_bounded, sync_dir, write_atomic};
 use crate::header::{self, Header, KdfParams, UnverifiedHeader, VaultId};
 use crate::inbox::InboxWriter;
+use crate::recovery::RecoverySecret;
 use crate::store::Store;
-use crate::{Result, VaultError};
-
-/// Minimum length of a new password, in Unicode scalar values. Strength
-/// scoring (zxcvbn) is added in M1.4. Unlocking never applies this policy.
-pub const MIN_PASSWORD_CHARS: usize = 12;
+use crate::{Result, VaultError, password};
 
 const CREATE_PREFIX: &str = ".vault-create-";
 
@@ -84,32 +81,6 @@ impl VaultPaths {
     }
 }
 
-/// The 256-bit recovery secret behind the 24-word phrase. Zeroized on drop.
-/// Phrase encoding (BIP-39 wordlist and checksum) arrives in M1.4.
-#[derive(Debug)]
-pub struct RecoverySecret(SecretKey);
-
-impl RecoverySecret {
-    /// Generates fresh recovery entropy.
-    pub fn generate() -> Result<Self> {
-        Ok(Self(SecretKey::generate()?))
-    }
-
-    /// Wraps decoded recovery entropy.
-    pub fn from_bytes(bytes: [u8; 32]) -> Self {
-        Self(SecretKey::from_bytes(bytes))
-    }
-
-    /// The raw entropy, for phrase encoding.
-    pub fn expose_secret(&self) -> &[u8; 32] {
-        self.0.expose_secret()
-    }
-
-    fn kek(&self) -> SecretKey {
-        derive_subkey(&self.0, labels::RECOVERY)
-    }
-}
-
 /// Entry points that do not need an unlocked vault.
 #[derive(Debug)]
 pub struct Vault;
@@ -128,7 +99,7 @@ impl Vault {
         password: &[u8],
         params: Argon2Params,
     ) -> Result<(UnlockedVault, RecoverySecret)> {
-        check_new_password(password)?;
+        password::check_new(password)?;
         params.validate()?;
         if paths.vault_dir().symlink_metadata().is_ok() {
             return Err(VaultError::VaultExists);
@@ -146,7 +117,7 @@ impl Vault {
             kdf,
             password_envelope: password_envelope(&vault_id, &vault_key, password, &kdf)?,
             recovery_envelope: envelope::wrap(
-                &recovery.kek(),
+                &recovery_kek(&recovery),
                 vault_key.expose_secret(),
                 &envelope::recovery_aad(&vault_id),
             )?,
@@ -265,12 +236,12 @@ impl Vault {
         new_password: &[u8],
         params: Argon2Params,
     ) -> Result<UnlockedVault> {
-        check_new_password(new_password)?;
+        password::check_new(new_password)?;
         params.validate()?;
         let unverified = Self::read_header(paths)?;
         let h = unverified.unverified();
         let vault_key = envelope::unwrap(
-            &recovery.kek(),
+            &recovery_kek(recovery),
             &h.recovery_envelope,
             &envelope::recovery_aad(&h.vault_id),
         )?;
@@ -332,10 +303,17 @@ impl UnlockedVault {
         new_password: &[u8],
         params: Argon2Params,
     ) -> Result<()> {
-        check_new_password(new_password)?;
+        password::check_new(new_password)?;
         params.validate()?;
+        self.verify_password(current)?;
+        self.set_password(new_password, params)
+    }
+
+    /// Checks the master password afresh (Argon2id), for actions that need
+    /// recent authentication such as deleting the vault.
+    pub fn verify_password(&self, password: &[u8]) -> Result<()> {
         let h = &self.header;
-        let kek = derive_password_kek(current, &h.kdf)?;
+        let kek = derive_password_kek(password, &h.kdf)?;
         let key = envelope::unwrap(
             &kek,
             &h.password_envelope,
@@ -344,7 +322,7 @@ impl UnlockedVault {
         if !key.ct_eq(&self.vault_key) {
             return Err(VaultError::WrongCredentials);
         }
-        self.set_password(new_password, params)
+        Ok(())
     }
 
     /// Replaces the recovery envelope. The old phrase stops working.
@@ -352,7 +330,7 @@ impl UnlockedVault {
         let recovery = RecoverySecret::generate()?;
         let mut header = self.header.clone();
         header.recovery_envelope = envelope::wrap(
-            &recovery.kek(),
+            &recovery_kek(&recovery),
             self.vault_key.expose_secret(),
             &envelope::recovery_aad(&header.vault_id),
         )?;
@@ -492,17 +470,12 @@ fn password_envelope(
     )
 }
 
-fn sqlcipher_key(vault_key: &SecretKey) -> SecretKey {
-    derive_subkey(vault_key, labels::SQLCIPHER)
+fn recovery_kek(recovery: &RecoverySecret) -> SecretKey {
+    derive_subkey(recovery.key(), labels::RECOVERY)
 }
 
-/// Passwords are exact UTF-8 bytes: no trimming or normalization.
-fn check_new_password(password: &[u8]) -> Result<()> {
-    let text = std::str::from_utf8(password).map_err(|_| VaultError::WeakPassword("not UTF-8"))?;
-    if text.chars().count() < MIN_PASSWORD_CHARS {
-        return Err(VaultError::WeakPassword("shorter than 12 characters"));
-    }
-    Ok(())
+fn sqlcipher_key(vault_key: &SecretKey) -> SecretKey {
+    derive_subkey(vault_key, labels::SQLCIPHER)
 }
 
 fn remove_interrupted_creations(paths: &VaultPaths) -> io::Result<()> {
