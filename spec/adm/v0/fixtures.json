@@ -30,7 +30,10 @@
         "status": "satisfied",
         "interface": "wifi",
         "expensive": false,
-        "constrained": false
+        "constrained": false,
+        "supports_ipv4": true,
+        "supports_ipv6": true,
+        "supports_dns": true
       }
     },
     {
@@ -43,161 +46,176 @@
         "model": "iPhone17,1",
         "app_version": "0.2.0 (1)",
         "free_storage_bytes": 64000000000,
+        "total_storage_bytes": 256000000000,
         "locale": "fr_FR",
-        "time_zone": "Europe/Paris"
+        "time_zone": "Europe/Paris",
+        "thermal_state": "nominal",
+        "uptime_s": 86400.5,
+        "physical_memory_bytes": 8000000000
       }
     },
     {
       "type": "device.motion_activity",
       "source_id": "motion-1761115680000",
       "start_ms": 1761115680000,
-      "end_ms": 1761116580000,
       "data": {
-        "activity": "walking",
-        "confidence": "high"
+        "stationary": false,
+        "walking": true,
+        "running": false,
+        "cycling": false,
+        "automotive": false,
+        "unknown": false,
+        "confidence": 2
       }
     },
     {
-      "type": "health.body_mass",
-      "source_id": "00000000-0000-4000-8000-000000000001",
-      "start_ms": 1761115680000,
-      "source": {
-        "name": "Health",
-        "bundle_id": "com.apple.health",
-        "device": "iPhone"
-      },
-      "data": {
-        "kg": 70.5
-      }
-    },
-    {
-      "type": "health.distance",
-      "source_id": "00000000-0000-4000-8000-000000000002",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "source": {
-        "name": "Synthetic Watch App",
-        "device": "Apple Watch"
-      },
-      "data": {
-        "meters": 812.4,
-        "activity": "walking_running"
-      }
-    },
-    {
-      "type": "health.energy",
-      "source_id": "00000000-0000-4000-8000-000000000003",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "data": {
-        "kcal": 12.5,
-        "kind": "active"
-      }
-    },
-    {
-      "type": "health.energy",
-      "source_id": "00000000-0000-4000-8000-000000000004",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "data": {
-        "kcal": 1.1,
-        "kind": "basal"
-      }
-    },
-    {
-      "type": "health.exercise_time",
-      "source_id": "00000000-0000-4000-8000-000000000005",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "data": {
-        "seconds": 60
-      }
-    },
-    {
-      "type": "health.floors",
-      "source_id": "00000000-0000-4000-8000-000000000006",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "data": {
-        "count": 2
-      }
-    },
-    {
-      "type": "health.heart_rate",
-      "source_id": "00000000-0000-4000-8000-000000000007",
-      "start_ms": 1761115680000,
-      "source": {
-        "name": "Synthetic Watch App",
-        "device": "Apple Watch"
-      },
-      "data": {
-        "bpm": 64
-      }
-    },
-    {
-      "type": "health.heart_rate",
-      "source_id": "00000000-0000-4000-8000-000000000008",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115680000,
-      "data": {
-        "bpm": 71.5
-      }
-    },
-    {
-      "type": "health.height",
-      "source_id": "00000000-0000-4000-8000-000000000009",
-      "start_ms": 1761115680000,
-      "data": {
-        "m": 1.75
-      }
-    },
-    {
-      "type": "health.hrv",
-      "source_id": "00000000-0000-4000-8000-00000000000a",
-      "start_ms": 1761115680000,
-      "end_ms": 1761115740000,
-      "data": {
-        "sdnn_ms": 48.2
-      }
-    },
-    {
-      "type": "health.mindful_session",
-      "source_id": "00000000-0000-4000-8000-00000000000b",
-      "start_ms": 1761115680000,
-      "end_ms": 1761116280000,
-      "data": {}
-    },
-    {
-      "type": "health.resting_heart_rate",
-      "source_id": "00000000-0000-4000-8000-00000000000c",
-      "start_ms": 1761115680000,
-      "end_ms": 1761202080000,
-      "data": {
-        "bpm": 58
-      }
-    },
-    {
-      "type": "health.sleep_stage",
-      "source_id": "00000000-0000-4000-8000-00000000000d",
-      "start_ms": 1761115680000,
-      "end_ms": 1761118200000,
-      "tz": "Europe/Berlin",
-      "data": {
-        "stage": "asleep_deep"
-      }
-    },
-    {
-      "type": "health.stand_hour",
-      "source_id": "00000000-0000-4000-8000-00000000000e",
+      "type": "device.pedometer",
+      "source_id": "pedometer-1761112800000",
       "start_ms": 1761115680000,
       "end_ms": 1761119280000,
       "data": {
-        "stood": true
+        "steps": 512,
+        "distance_m": 380.2,
+        "floors_ascended": 1,
+        "floors_descended": 0,
+        "average_active_pace_s_per_m": 0.74
       }
     },
     {
-      "type": "health.steps",
-      "source_id": "00000000-0000-4000-8000-00000000000f",
+      "type": "health.audiogram",
+      "source_id": "00000000-0000-4000-8000-000000000001",
+      "start_ms": 1761115680000,
+      "data": {
+        "sensitivity_points": [
+          {
+            "frequency_hz": 1000,
+            "left_db_hl": 10,
+            "right_db_hl": 15
+          }
+        ]
+      }
+    },
+    {
+      "type": "health.category",
+      "source_id": "00000000-0000-4000-8000-000000000002",
+      "start_ms": 1761115680000,
+      "end_ms": 1761118200000,
+      "tz": "Europe/Berlin",
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "identifier": "HKCategoryTypeIdentifierSleepAnalysis",
+        "value": 3,
+        "value_name": "asleepCore",
+        "metadata": {
+          "HKTimeZone": "Europe/Berlin"
+        }
+      }
+    },
+    {
+      "type": "health.category",
+      "source_id": "00000000-0000-4000-8000-000000000003",
+      "start_ms": 1761115680000,
+      "end_ms": 1761119280000,
+      "data": {
+        "identifier": "HKCategoryTypeIdentifierAppleStandHour",
+        "value": 0,
+        "value_name": "stood"
+      }
+    },
+    {
+      "type": "health.characteristic",
+      "source_id": "HKCharacteristicTypeIdentifierDateOfBirth",
+      "start_ms": 1761115680000,
+      "data": {
+        "identifier": "HKCharacteristicTypeIdentifierDateOfBirth",
+        "value": {
+          "year": 1990,
+          "month": 1,
+          "day": 1
+        }
+      }
+    },
+    {
+      "type": "health.characteristic",
+      "source_id": "HKCharacteristicTypeIdentifierBloodType",
+      "start_ms": 1761115680000,
+      "data": {
+        "identifier": "HKCharacteristicTypeIdentifierBloodType",
+        "value": 1,
+        "value_name": "aPositive"
+      }
+    },
+    {
+      "type": "health.clinical_record",
+      "source_id": "00000000-0000-4000-8000-000000000004",
+      "start_ms": 1761115680000,
+      "data": {
+        "identifier": "HKClinicalTypeIdentifierLabResultRecord",
+        "display_name": "Synthetic panel",
+        "fhir_version": "4.0.1",
+        "fhir_resource_type": "Observation",
+        "fhir_resource": {
+          "resourceType": "Observation",
+          "id": "synthetic-1",
+          "status": "final"
+        }
+      }
+    },
+    {
+      "type": "health.electrocardiogram",
+      "source_id": "00000000-0000-4000-8000-000000000005",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115710000,
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "classification": 1,
+        "classification_name": "sinusRhythm",
+        "symptoms_status": 1,
+        "average_heart_rate_bpm": 64,
+        "sampling_frequency_hz": 512.0,
+        "voltages": [
+          [
+            0.0,
+            12.5
+          ],
+          [
+            0.001953125,
+            14.0
+          ]
+        ]
+      }
+    },
+    {
+      "type": "health.heartbeat_series",
+      "source_id": "00000000-0000-4000-8000-000000000006",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115682000,
+      "data": {
+        "beats": [
+          [
+            0.0,
+            false
+          ],
+          [
+            0.92,
+            false
+          ],
+          [
+            1.85,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "type": "health.quantity",
+      "source_id": "00000000-0000-4000-8000-000000000007",
       "start_ms": 1761115680000,
       "end_ms": 1761115740000,
       "source": {
@@ -206,38 +224,134 @@
         "device": "iPhone"
       },
       "data": {
-        "count": 42
+        "identifier": "HKQuantityTypeIdentifierStepCount",
+        "value": 42,
+        "unit": "count"
       }
     },
     {
-      "type": "health.walking_heart_rate",
-      "source_id": "00000000-0000-4000-8000-000000000010",
+      "type": "health.quantity",
+      "source_id": "00000000-0000-4000-8000-000000000008",
+      "start_ms": 1761115680000,
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "identifier": "HKQuantityTypeIdentifierHeartRate",
+        "value": 64,
+        "unit": "count/min",
+        "metadata": {
+          "HKHeartRateMotionContext": 1
+        }
+      }
+    },
+    {
+      "type": "health.quantity",
+      "source_id": "00000000-0000-4000-8000-000000000009",
       "start_ms": 1761115680000,
       "end_ms": 1761115740000,
       "data": {
-        "bpm": 96
+        "identifier": "HKQuantityTypeIdentifierDistanceWalkingRunning",
+        "value": 0.5,
+        "unit": "mi"
       }
     },
     {
-      "type": "health.workout",
-      "source_id": "00000000-0000-4000-8000-000000000011",
+      "type": "health.quantity",
+      "source_id": "00000000-0000-4000-8000-00000000000a",
       "start_ms": 1761115680000,
-      "end_ms": 1761118680000,
       "data": {
-        "activity": "traditional_strength_training",
-        "duration_s": 2700
+        "identifier": "HKQuantityTypeIdentifierBodyTemperature",
+        "value": -0.2,
+        "unit": "degC"
+      }
+    },
+    {
+      "type": "health.sample",
+      "source_id": "00000000-0000-4000-8000-00000000000b",
+      "start_ms": 1761115680000,
+      "data": {
+        "identifier": "HKDataTypeIdentifierVisionPrescription",
+        "details": {
+          "prescription_type": 1
+        }
+      }
+    },
+    {
+      "type": "health.state_of_mind",
+      "source_id": "00000000-0000-4000-8000-00000000000c",
+      "start_ms": 1761115680000,
+      "data": {
+        "kind": 1,
+        "valence": 0.4,
+        "labels": [
+          3,
+          7
+        ],
+        "associations": [
+          2
+        ]
       }
     },
     {
       "type": "health.workout",
-      "source_id": "00000000-0000-4000-8000-000000000012",
+      "source_id": "00000000-0000-4000-8000-00000000000d",
+      "start_ms": 1761115680000,
+      "end_ms": 1761117480000,
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "activity_type": 37,
+        "activity_name": "running",
+        "duration_s": 1800,
+        "statistics": {
+          "HKQuantityTypeIdentifierActiveEnergyBurned": {
+            "sum": 310.5,
+            "unit": "kcal"
+          },
+          "HKQuantityTypeIdentifierHeartRate": {
+            "average": 152,
+            "minimum": 120,
+            "maximum": 171,
+            "unit": "count/min"
+          }
+        },
+        "events": [
+          {
+            "type": 1,
+            "start_ms": 1761116280000,
+            "end_ms": 1761116280000
+          }
+        ],
+        "metadata": {
+          "HKIndoorWorkout": false
+        }
+      }
+    },
+    {
+      "type": "health.workout_route",
+      "source_id": "00000000-0000-4000-8000-00000000000e",
       "start_ms": 1761115680000,
       "end_ms": 1761117480000,
       "data": {
-        "activity": "running",
-        "duration_s": 1800,
-        "kcal": 310.5,
-        "meters": 5012.3
+        "workout_id": "00000000-0000-4000-8000-00000000000d",
+        "points": [
+          {
+            "t_ms": 1761115680000,
+            "latitude": 48.8584,
+            "longitude": 2.2945,
+            "horizontal_accuracy_m": 5
+          },
+          {
+            "t_ms": 1761115681000,
+            "latitude": 48.8585,
+            "longitude": 2.2946,
+            "horizontal_accuracy_m": 5
+          }
+        ]
       }
     },
     {
@@ -247,7 +361,8 @@
       "data": {
         "latitude": 48.8584,
         "longitude": 2.2945,
-        "horizontal_accuracy_m": 65
+        "horizontal_accuracy_m": 65,
+        "trigger": "significant_change"
       }
     },
     {
@@ -259,9 +374,16 @@
         "longitude": 151.2093,
         "horizontal_accuracy_m": 10,
         "altitude_m": 12.5,
+        "ellipsoidal_altitude_m": 34.1,
         "vertical_accuracy_m": 8,
         "speed_mps": 1.4,
-        "course_deg": 270
+        "speed_accuracy_mps": 0.5,
+        "course_deg": 270,
+        "course_accuracy_deg": 12,
+        "floor": 2,
+        "simulated": false,
+        "from_accessory": false,
+        "trigger": "foreground"
       }
     },
     {
@@ -298,7 +420,7 @@
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "mg_dl": 90
+          "value": 90
         }
       }
     },
@@ -307,12 +429,14 @@
       "error": "unknown_type",
       "path": "type",
       "record": {
-        "type": "Health.Steps",
-        "source_id": "s-1",
+        "type": "Health.Quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -321,11 +445,13 @@
       "error": "missing_field",
       "path": "source_id",
       "record": {
-        "type": "health.steps",
+        "type": "health.quantity",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -334,12 +460,14 @@
       "error": "invalid_value",
       "path": "source_id",
       "record": {
-        "type": "health.steps",
+        "type": "health.quantity",
         "source_id": "",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -348,12 +476,14 @@
       "error": "invalid_value",
       "path": "source_id",
       "record": {
-        "type": "health.steps",
+        "type": "health.quantity",
         "source_id": "a\nb",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -362,12 +492,14 @@
       "error": "out_of_range",
       "path": "start_ms",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": -1,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -376,12 +508,14 @@
       "error": "out_of_range",
       "path": "start_ms",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 253402300800000,
         "end_ms": 253402300800000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -390,12 +524,14 @@
       "error": "wrong_type",
       "path": "start_ms",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": "1761115680000",
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       }
     },
@@ -404,12 +540,14 @@
       "error": "invalid_time",
       "path": "end_ms",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115679999,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       },
       "json_schema": false
@@ -419,11 +557,11 @@
       "error": "missing_field",
       "path": "end_ms",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "device.pedometer",
+        "source_id": "p",
         "start_ms": 1761115680000,
         "data": {
-          "count": 42
+          "steps": 1
         }
       }
     },
@@ -447,12 +585,14 @@
       "error": "invalid_value",
       "path": "tz",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         },
         "tz": "Europe/Berlin Time"
       }
@@ -462,12 +602,14 @@
       "error": "unknown_field",
       "path": "summary",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         },
         "summary": "42 steps"
       }
@@ -477,12 +619,14 @@
       "error": "unknown_field",
       "path": "source.app",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         },
         "source": {
           "app": "Health"
@@ -494,12 +638,14 @@
       "error": "invalid_value",
       "path": "source.name",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         },
         "source": {
           "name": ""
@@ -511,23 +657,26 @@
       "error": "wrong_type",
       "path": "data",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": null
       }
     },
     {
-      "name": "missing data field",
+      "name": "missing unit",
       "error": "missing_field",
-      "path": "data.count",
+      "path": "data.unit",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
-        "data": {}
+        "data": {
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 1
+        }
       }
     },
     {
@@ -535,83 +684,109 @@
       "error": "unknown_field",
       "path": "data.calories",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "health.quantity",
+        "source_id": "q-1",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 1,
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 1,
+          "unit": "count",
           "calories": 2
+        }
+      }
+    },
+    {
+      "name": "identifier with a space",
+      "error": "invalid_value",
+      "path": "data.identifier",
+      "record": {
+        "type": "health.quantity",
+        "source_id": "q-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "identifier": "Step Count",
+          "value": 1,
+          "unit": "count"
+        }
+      }
+    },
+    {
+      "name": "value as string",
+      "error": "wrong_type",
+      "path": "data.value",
+      "record": {
+        "type": "health.quantity",
+        "source_id": "q-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": "42",
+          "unit": "count"
+        }
+      }
+    },
+    {
+      "name": "metadata not an object",
+      "error": "wrong_type",
+      "path": "data.metadata",
+      "record": {
+        "type": "health.quantity",
+        "source_id": "q-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 1,
+          "unit": "count",
+          "metadata": [
+            1
+          ]
         }
       }
     },
     {
       "name": "integer with fraction",
       "error": "wrong_type",
-      "path": "data.count",
+      "path": "data.steps",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "device.pedometer",
+        "source_id": "p",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 1.5
+          "steps": 1.5
         }
       }
     },
     {
       "name": "integer written as 3.0",
       "error": "wrong_type",
-      "path": "data.count",
+      "path": "data.steps",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "device.pedometer",
+        "source_id": "p",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": 3.0
+          "steps": 3.0
         }
       },
       "json_schema": false
     },
     {
-      "name": "integer as string",
-      "error": "wrong_type",
-      "path": "data.count",
+      "name": "negative steps",
+      "error": "out_of_range",
+      "path": "data.steps",
       "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
+        "type": "device.pedometer",
+        "source_id": "p",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "data": {
-          "count": "42"
-        }
-      }
-    },
-    {
-      "name": "negative count",
-      "error": "out_of_range",
-      "path": "data.count",
-      "record": {
-        "type": "health.steps",
-        "source_id": "s-1",
-        "start_ms": 1761115680000,
-        "end_ms": 1761115740000,
-        "data": {
-          "count": -1
-        }
-      }
-    },
-    {
-      "name": "zero heart rate",
-      "error": "out_of_range",
-      "path": "data.bpm",
-      "record": {
-        "type": "health.heart_rate",
-        "source_id": "h",
-        "start_ms": 1761115680000,
-        "data": {
-          "bpm": 0
+          "steps": -1
         }
       }
     },
@@ -631,45 +806,56 @@
       }
     },
     {
-      "name": "unknown sleep stage",
+      "name": "unknown location trigger",
       "error": "invalid_value",
-      "path": "data.stage",
+      "path": "data.trigger",
       "record": {
-        "type": "health.sleep_stage",
-        "source_id": "z",
+        "type": "location.point",
+        "source_id": "p",
         "start_ms": 1761115680000,
-        "end_ms": 1761115740000,
         "data": {
-          "stage": "asleep"
+          "latitude": 1,
+          "longitude": 0,
+          "horizontal_accuracy_m": 5,
+          "trigger": "gps"
         }
       }
     },
     {
-      "name": "workout activity not snake_case",
-      "error": "invalid_value",
-      "path": "data.activity",
+      "name": "confidence above 2",
+      "error": "out_of_range",
+      "path": "data.confidence",
       "record": {
-        "type": "health.workout",
-        "source_id": "w",
+        "type": "device.motion_activity",
+        "source_id": "m",
         "start_ms": 1761115680000,
-        "end_ms": 1761115740000,
         "data": {
-          "activity": "Running",
-          "duration_s": 60
+          "stationary": true,
+          "walking": false,
+          "running": false,
+          "cycling": false,
+          "automotive": false,
+          "unknown": false,
+          "confidence": 3
         }
       }
     },
     {
       "name": "boolean as string",
       "error": "wrong_type",
-      "path": "data.stood",
+      "path": "data.walking",
       "record": {
-        "type": "health.stand_hour",
-        "source_id": "st",
+        "type": "device.motion_activity",
+        "source_id": "m",
         "start_ms": 1761115680000,
-        "end_ms": 1761115740000,
         "data": {
-          "stood": "yes"
+          "stationary": true,
+          "walking": "no",
+          "running": false,
+          "cycling": false,
+          "automotive": false,
+          "unknown": false,
+          "confidence": 1
         }
       }
     },
@@ -703,6 +889,20 @@
           "low_power_mode": false
         }
       }
+    },
+    {
+      "name": "valence below -1",
+      "error": "out_of_range",
+      "path": "data.valence",
+      "record": {
+        "type": "health.state_of_mind",
+        "source_id": "s",
+        "start_ms": 1761115680000,
+        "data": {
+          "kind": 1,
+          "valence": -1.5
+        }
+      }
     }
   ],
   "valid_batches": [
@@ -712,18 +912,20 @@
       "created_ms": 1761115980000,
       "records": [
         {
-          "type": "health.steps",
-          "source_id": "s-1",
+          "type": "health.quantity",
+          "source_id": "q-1",
           "start_ms": 1761115680000,
           "end_ms": 1761115740000,
           "data": {
-            "count": 42
+            "identifier": "HKQuantityTypeIdentifierStepCount",
+            "value": 42,
+            "unit": "count"
           }
         }
       ],
       "deletions": [
         {
-          "type": "health.steps",
+          "type": "health.quantity",
           "source_id": "00000000-0000-4000-8000-0000000000ff"
         }
       ]
@@ -752,7 +954,10 @@
             "status": "satisfied",
             "interface": "wifi",
             "expensive": false,
-            "constrained": false
+            "constrained": false,
+            "supports_ipv4": true,
+            "supports_ipv6": true,
+            "supports_dns": true
           }
         },
         {
@@ -765,8 +970,12 @@
             "model": "iPhone17,1",
             "app_version": "0.2.0 (1)",
             "free_storage_bytes": 64000000000,
+            "total_storage_bytes": 256000000000,
             "locale": "fr_FR",
-            "time_zone": "Europe/Paris"
+            "time_zone": "Europe/Paris",
+            "thermal_state": "nominal",
+            "uptime_s": 86400.5,
+            "physical_memory_bytes": 8000000000
           }
         }
       ]
@@ -778,8 +987,8 @@
       "records": [],
       "deletions": [
         {
-          "type": "health.heart_rate",
-          "source_id": "00000000-0000-4000-8000-000000000007"
+          "type": "health.quantity",
+          "source_id": "00000000-0000-4000-8000-000000000008"
         }
       ]
     }
@@ -795,12 +1004,14 @@
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "health.quantity",
+            "source_id": "q-1",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": 42
+              "identifier": "HKQuantityTypeIdentifierStepCount",
+              "value": 42,
+              "unit": "count"
             }
           }
         ],
@@ -817,12 +1028,14 @@
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "health.quantity",
+            "source_id": "q-1",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": 42
+              "identifier": "HKQuantityTypeIdentifierStepCount",
+              "value": 42,
+              "unit": "count"
             }
           }
         ]
@@ -849,12 +1062,14 @@
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "health.quantity",
+            "source_id": "q-1",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": 42
+              "identifier": "HKQuantityTypeIdentifierStepCount",
+              "value": 42,
+              "unit": "count"
             }
           }
         ]
@@ -870,12 +1085,14 @@
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "health.quantity",
+            "source_id": "q-1",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": 42
+              "identifier": "HKQuantityTypeIdentifierStepCount",
+              "value": 42,
+              "unit": "count"
             }
           }
         ],
@@ -885,19 +1102,19 @@
     {
       "name": "invalid record",
       "error": "out_of_range",
-      "path": "records[0].data.count",
+      "path": "records[0].data.steps",
       "batch": {
         "adm_version": "0.1",
         "collector": "health",
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "device.pedometer",
+            "source_id": "p",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": -5
+              "steps": -5
             }
           }
         ]
@@ -913,12 +1130,14 @@
         "created_ms": 1761115980000,
         "records": [
           {
-            "type": "health.steps",
-            "source_id": "s-1",
+            "type": "health.quantity",
+            "source_id": "q-1",
             "start_ms": 1761115680000,
             "end_ms": 1761115740000,
             "data": {
-              "count": 42
+              "identifier": "HKQuantityTypeIdentifierStepCount",
+              "value": 42,
+              "unit": "count"
             }
           }
         ],
@@ -938,8 +1157,8 @@
       "collector": "health",
       "ingested_ms": 1761115980123,
       "draft": {
-        "type": "health.steps",
-        "source_id": "00000000-0000-4000-8000-00000000000f",
+        "type": "health.quantity",
+        "source_id": "00000000-0000-4000-8000-000000000007",
         "start_ms": 1761115680000,
         "end_ms": 1761115740000,
         "source": {
@@ -948,23 +1167,27 @@
           "device": "iPhone"
         },
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         }
       },
       "json": {
         "id": "01K86H3X00ABCDEFGHJKMN0001",
-        "type": "health.steps",
+        "type": "health.quantity",
         "schema_version": "0.1",
         "time": {
           "start": "2025-10-22T06:48:00.000Z",
           "end": "2025-10-22T06:49:00.000Z"
         },
         "data": {
-          "count": 42
+          "identifier": "HKQuantityTypeIdentifierStepCount",
+          "value": 42,
+          "unit": "count"
         },
         "provenance": {
           "collector": "health",
-          "source_id": "00000000-0000-4000-8000-00000000000f",
+          "source_id": "00000000-0000-4000-8000-000000000007",
           "source": {
             "name": "Health",
             "bundle_id": "com.apple.health",
@@ -1015,38 +1238,52 @@
     },
     {
       "id": "01K86H3X00ABCDEFGHJKMN0003",
-      "collector": "device",
+      "collector": "health",
       "ingested_ms": 1761115680000,
+      "deleted_at_source_ms": 1761202080000,
       "draft": {
-        "type": "device.battery",
-        "source_id": "battery-1",
+        "type": "health.quantity",
+        "source_id": "00000000-0000-4000-8000-000000000008",
         "start_ms": 1761115680000,
-        "tz": "Europe/Berlin",
+        "source": {
+          "name": "Synthetic Watch App",
+          "device": "Apple Watch"
+        },
         "data": {
-          "level": 0.42,
-          "state": "unplugged",
-          "low_power_mode": false
+          "identifier": "HKQuantityTypeIdentifierHeartRate",
+          "value": 64,
+          "unit": "count/min",
+          "metadata": {
+            "HKHeartRateMotionContext": 1
+          }
         }
       },
       "json": {
         "id": "01K86H3X00ABCDEFGHJKMN0003",
-        "type": "device.battery",
+        "type": "health.quantity",
         "schema_version": "0.1",
         "time": {
-          "start": "2025-10-22T06:48:00.000Z",
-          "tz": "Europe/Berlin"
+          "start": "2025-10-22T06:48:00.000Z"
         },
         "data": {
-          "level": 0.42,
-          "state": "unplugged",
-          "low_power_mode": false
+          "identifier": "HKQuantityTypeIdentifierHeartRate",
+          "value": 64,
+          "unit": "count/min",
+          "metadata": {
+            "HKHeartRateMotionContext": 1
+          }
         },
         "provenance": {
-          "collector": "device",
-          "source_id": "battery-1",
-          "ingested_at": "2025-10-22T06:48:00.000Z"
+          "collector": "health",
+          "source_id": "00000000-0000-4000-8000-000000000008",
+          "source": {
+            "name": "Synthetic Watch App",
+            "device": "Apple Watch"
+          },
+          "ingested_at": "2025-10-22T06:48:00.000Z",
+          "deleted_at_source": "2025-10-23T06:48:00.000Z"
         },
-        "sensitivity": "low"
+        "sensitivity": "high"
       }
     }
   ]

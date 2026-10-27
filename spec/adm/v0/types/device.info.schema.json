@@ -17,45 +17,68 @@
       "properties": {
         "app_version": {
           "description": "Atlys app version and build.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
         },
         "free_storage_bytes": {
           "description": "Free storage available to the app, in bytes.",
-          "maximum": 9223372036854775807,
           "minimum": 0,
           "type": "integer"
         },
         "locale": {
           "description": "Current locale identifier.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
         },
         "model": {
           "description": "Hardware model identifier.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
         },
         "os_name": {
           "description": "Operating system name, for example iOS.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
         },
         "os_version": {
           "description": "Operating system version.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
         },
+        "physical_memory_bytes": {
+          "description": "Installed memory, in bytes.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "thermal_state": {
+          "description": "System thermal state.",
+          "enum": [
+            "nominal",
+            "fair",
+            "serious",
+            "critical"
+          ]
+        },
         "time_zone": {
           "description": "Current IANA time zone.",
-          "maxLength": 128,
+          "maxLength": 256,
           "minLength": 1,
           "type": "string"
+        },
+        "total_storage_bytes": {
+          "description": "Total storage capacity, in bytes.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "uptime_s": {
+          "description": "Seconds since the device booted.",
+          "minimum": 0,
+          "type": "number"
         }
       },
       "required": [

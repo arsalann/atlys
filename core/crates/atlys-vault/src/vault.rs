@@ -294,6 +294,22 @@ impl UnlockedVault {
         self.store.as_ref().expect("store is open until lock")
     }
 
+    /// Merges pending inbox files into the database until `deadline`
+    /// (RFC-0001 "Merge"). Call again while `files_remaining > 0`.
+    pub fn merge_inbox(
+        &self,
+        deadline: Option<std::time::Instant>,
+    ) -> Result<crate::records::MergeReport> {
+        crate::records::merge_inbox(
+            self.store(),
+            &self.header.vault_id,
+            &self.ingest_private,
+            &self.paths.inbox(),
+            &self.paths.quarantine(),
+            deadline,
+        )
+    }
+
     /// Changes the master password. Requires the current password, checked
     /// afresh, and generates a new salt. Only the password envelope, KDF
     /// fields, and MAC change.

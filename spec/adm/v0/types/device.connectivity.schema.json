@@ -41,6 +41,18 @@
             "unsatisfied",
             "requires_connection"
           ]
+        },
+        "supports_dns": {
+          "description": "The path has a DNS server.",
+          "type": "boolean"
+        },
+        "supports_ipv4": {
+          "description": "The path can route IPv4.",
+          "type": "boolean"
+        },
+        "supports_ipv6": {
+          "description": "The path can route IPv6.",
+          "type": "boolean"
         }
       },
       "required": [

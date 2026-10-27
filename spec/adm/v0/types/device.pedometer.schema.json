@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Pedometer totals from Core Motion for the interval.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "average_active_pace_s_per_m": {
+          "description": "Average pace while moving, in seconds per meter.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "distance_m": {
+          "description": "Estimated distance in meters.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "floors_ascended": {
+          "description": "Floors ascended.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "floors_descended": {
+          "description": "Floors descended.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "steps": {
+          "description": "Steps taken.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "device.pedometer"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "device.pedometer",
+  "x-sensitivity": "medium"
+}

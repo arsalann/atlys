@@ -12,10 +12,12 @@ use atlys_adm::Batch;
 use atlys_vault::inbox::InboxWriter;
 use atlys_vault::{Vault, VaultError, VaultPaths};
 
+mod records;
 #[cfg(feature = "spike")]
 pub mod spike;
 mod vault;
 
+pub use records::*;
 pub use vault::*;
 
 uniffi::setup_scaffolding!();

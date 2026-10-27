@@ -183,7 +183,7 @@ impl VaultSession {
         })
     }
 
-    fn with<T>(
+    pub(crate) fn with<T>(
         &self,
         f: impl FnOnce(&mut UnlockedVault) -> Result<T, AtlysError>,
     ) -> Result<T, AtlysError> {
@@ -355,6 +355,29 @@ mod tests {
             Err(AtlysError::WrongCredentials)
         ));
         session.verify_password(PASSWORD.to_vec()).unwrap();
+
+        // The unlocked session merges what was sealed while locked.
+        assert_eq!(session.inbox_status().unwrap().pending_files, 1);
+        let report = session.merge_inbox(10.0).unwrap();
+        assert_eq!((report.files_merged, report.records_added), (1, 1));
+        assert_eq!(session.inbox_status().unwrap().pending_files, 0);
+        assert_eq!(session.record_count().unwrap(), 1);
+        let types = session.record_types().unwrap();
+        assert_eq!(
+            (types[0].record_type.as_str(), types[0].count),
+            ("device.battery", 1)
+        );
+        assert_eq!(
+            session.collector_summaries().unwrap()[0].collector,
+            "device"
+        );
+        let rows = session
+            .records("device.battery".into(), None, None, 50)
+            .unwrap();
+        assert_eq!(rows[0].tz.as_deref(), Some("Europe/Paris"));
+        let json = session.record_json(rows[0].id.clone()).unwrap().unwrap();
+        assert!(json.contains("\"low_power_mode\": false"), "{json}");
+        assert!(session.record_json("missing".into()).unwrap().is_none());
         session
             .change_password(PASSWORD.to_vec(), NEW_PASSWORD.to_vec())
             .unwrap();

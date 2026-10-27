@@ -1,6 +1,6 @@
 # RFC-0001: Atlys Data Model v0
 
-Status: **Accepted** (2026-10-27, PR #10). This is the design step for M2.1. It is
+Status: **Accepted** (2026-10-27, PR #10). Revised before v0 shipped (PR #11): raw data, all accessible types, deletions kept as flags. This is the design step for M2.1. It is
 implemented by `core/crates/atlys-adm`, with JSON Schemas and synthetic
 fixtures in [`spec/adm/v0/`](../adm/v0/).
 
@@ -29,7 +29,15 @@ readers (the vault). Every example and fixture is synthetic.
 - Integers are JSON numbers without a fraction or exponent. `3.0` is not an integer, even though plain JSON Schema would accept it.
 - Times are Unix epoch milliseconds (UTC), from `0` to `253402300799999` (9999-12-31T23:59:59.999Z).
 - String lengths count Unicode scalar values.
-- Units are part of field names (`meters`, `kcal`, `bpm`, `sdnn_ms`, `duration_s`), so a value never needs a separate unit field. Values are not localized.
+- Units: values are stored as the source reports them. If the source attaches a unit, the record stores the unit string next to the value (for example `{"value": 0.5, "unit": "mi"}`). Fixed units appear in field names (`distance_m`, `duration_s`). Atlys never converts or localizes values when storing them.
+
+## Principles
+
+These come from the maintainer:
+
+1. **Collect everything that is accessible.** Each collector reads every type and field its framework exposes, not a curated subset.
+2. **Keep it raw.** Store source values, units, codes, and identifiers as-is. Names Atlys adds (such as `value_name`) sit next to the raw value and never replace it.
+3. **Never lose data because the source did.** When the source deletes an item, the vault keeps the record and flags it as deleted at the source.
 
 ## Record drafts
 
@@ -57,41 +65,46 @@ unique ID.
 ## Record types
 
 Each type has a time shape (instant, interval, or either) and a default
-sensitivity tier. The generated schema in [`spec/adm/v0/types/`](../adm/v0/types/)
-is normative for the `data` fields, their ranges, and their descriptions. The
-crate's type table is the source those schemas are generated from.
+sensitivity tier. The generated schemas in [`spec/adm/v0/types/`](../adm/v0/types/)
+are normative for the `data` fields, their ranges, and their descriptions. They
+are generated from the crate's type table.
+
+Apple Health uses **generic families** keyed by the HealthKit identifier, so
+every readable type is covered. This includes types added in later iOS
+releases, with no change to this RFC.
 
 | Type | Time | Sensitivity | `data` |
 | --- | --- | --- | --- |
-| `device.battery` | instant | low | `level` 0–1 (optional), `state` unknown/unplugged/charging/full, `low_power_mode` |
-| `device.connectivity` | instant | low | `status` satisfied/unsatisfied/requires_connection, `interface` wifi/cellular/wired/loopback/other/none, `expensive`, `constrained` |
-| `device.info` | instant | low | `os_name`, `os_version`, `model`, `app_version`, optional `free_storage_bytes`, `locale`, `time_zone` |
-| `device.motion_activity` | interval | medium | `activity` stationary/walking/running/cycling/automotive/unknown, `confidence` low/medium/high |
-| `health.body_mass` | instant | high | `kg` |
-| `health.distance` | interval | high | `meters`, `activity` walking_running/cycling/swimming/wheelchair/downhill_snow_sports |
-| `health.energy` | interval | high | `kcal`, `kind` active/basal |
-| `health.exercise_time` | interval | high | `seconds` |
-| `health.floors` | interval | high | `count` |
-| `health.heart_rate` | either | high | `bpm` |
-| `health.height` | instant | high | `m` |
-| `health.hrv` | either | high | `sdnn_ms` |
-| `health.mindful_session` | interval | high | none |
-| `health.resting_heart_rate` | either | high | `bpm` |
-| `health.sleep_stage` | interval | high | `stage` in_bed/asleep_unspecified/asleep_core/asleep_deep/asleep_rem/awake |
-| `health.stand_hour` | interval | high | `stood` |
-| `health.steps` | interval | high | `count` |
-| `health.walking_heart_rate` | either | high | `bpm` |
-| `health.workout` | interval | high | `activity` (snake_case HealthKit activity name), `duration_s`, optional `kcal`, `meters` |
-| `location.point` | instant | high | `latitude`, `longitude`, `horizontal_accuracy_m`, optional `altitude_m`, `vertical_accuracy_m`, `speed_mps`, `course_deg` |
+| `health.quantity` | either | high | `identifier` (for example `HKQuantityTypeIdentifierStepCount`), `value`, `unit` (the unit Apple Health uses for the type, for example `count/min` or `mi`), `metadata` |
+| `health.category` | either | high | `identifier`, raw integer `value`, optional `value_name` (for example `asleepCore`), `metadata` |
+| `health.workout` | interval | high | raw `activity_type`, `activity_name`, `duration_s`, `statistics` (per quantity type: sum, average, minimum, maximum, unit), `events`, `activities`, `metadata` |
+| `health.workout_route` | interval | high | `workout_id` (the workout's source ID), `points` |
+| `health.electrocardiogram` | interval | high | raw `classification` and `symptoms_status`, `average_heart_rate_bpm`, `sampling_frequency_hz`, `voltages` |
+| `health.heartbeat_series` | interval | high | `beats` |
+| `health.audiogram` | either | high | `sensitivity_points` |
+| `health.state_of_mind` | either | high | raw `kind`, `valence`, `labels`, `associations` |
+| `health.clinical_record` | either | high | `identifier`, `display_name`, and the FHIR resource as-is |
+| `health.characteristic` | instant | high | `identifier` (for example date of birth or blood type), raw `value` |
+| `health.sample` | either | high | `identifier` and `details` for any other HealthKit sample type |
+| `location.point` | instant | high | `latitude`, `longitude`, `horizontal_accuracy_m`, plus every optional Core Location field (altitudes, accuracies, speed, course, floor, simulated, from accessory) and the `trigger` that delivered it |
 | `location.visit` | either | high | `latitude`, `longitude`, `horizontal_accuracy_m`. `end_ms` is absent until the departure is known. |
+| `device.motion_activity` | instant | medium | Every Core Motion flag (stationary, walking, running, cycling, automotive, unknown; several can be true) and raw `confidence` 0–2. Each update holds until the next. |
+| `device.pedometer` | interval | medium | `steps`, `distance_m`, `floors_ascended`, `floors_descended`, `average_active_pace_s_per_m` |
+| `device.battery` | instant | low | `level` 0–1 (optional), `state`, `low_power_mode` |
+| `device.connectivity` | instant | low | `status`, `interface`, `expensive`, `constrained`, IPv4/IPv6/DNS support |
+| `device.info` | instant | low | OS, model, app version, storage, locale, time zone, thermal state, uptime, memory |
 
 Coordinates are WGS84 degrees.
 
-**Mapping to standards.** Health types follow the HealthKit identifiers listed
-in [plan/v0/02-data-sources.md](../../plan/v0/02-data-sources.md#1-health-healthkit)
-and use Open mHealth's unit choices where one exists: `bpm`, `kcal`, meters,
-and seconds. Sleep sessions, daily totals, and places are **derived** records.
-They are computed from these types later and are not part of v0.
+**Metadata.** `metadata` holds HealthKit metadata as-is. Dates become epoch
+milliseconds, quantities become `{value, unit}`, and other values keep their
+JSON form.
+
+**Subtype.** A record's `data.identifier`, when present, is its subtype. The
+app groups records by type and subtype for browsing.
+
+Derived records (sleep sessions, daily totals, places) are computed later from
+these records and are not part of v0.
 
 ## Batches
 
@@ -118,8 +131,8 @@ order. File names are ULIDs, so this is write order. For each file:
    - A batch whose `adm_version` is a well-formed `major.minor` later than the reader's stays pending, and the app reports that an update is needed. The reader checks this before anything else in the batch.
    - Any other invalid batch is quarantined with the reason code `invalid-batch` (RFC-0002). The whole file is quarantined, never only part of it, so nothing is silently dropped.
 2. **Apply, in one database transaction:**
-   - **Records, in order.** If `(type, source_id)` is tombstoned, skip the record. Otherwise insert it with a new ULID `id`. If the key already exists, replace its time, `tz`, `source`, and `data`, and keep its `id`. The last write in merge order wins. Replacement is how a visit gains its departure time and how a motion segment grows.
-   - **Deletions.** Delete the record with that key, if present, and record a tombstone for the key so a re-read sample cannot return.
+   - **Records, in order.** Insert each record with a new ULID `id`. If `(type, source_id)` already exists, replace its time, `tz`, `source`, and `data`, keep its `id`, and clear any deleted-at-source flag, since the source has the item again. The last write in merge order wins. Replacement is how a visit gains its departure time and how the current pedometer hour grows.
+   - **Deletions.** Set `deleted_at_source` on the record with that key, if present and not already flagged. **The record is never removed.** A deletion for a key the vault has never seen is ignored.
    - **Merge log.** Record the SHA-256 of the sealed file in the merge log.
 3. **Delete** the file only after the transaction commits.
 
@@ -136,13 +149,13 @@ exports write it ([`record.schema.json`](../adm/v0/record.schema.json)):
 ```json
 {
   "id": "01K86H3X00ABCDEFGHJKMN0001",
-  "type": "health.steps",
+  "type": "health.quantity",
   "schema_version": "0.1",
   "time": { "start": "2025-10-22T06:48:00.000Z", "end": "2025-10-22T06:49:00.000Z" },
-  "data": { "count": 42 },
+  "data": { "identifier": "HKQuantityTypeIdentifierStepCount", "value": 42, "unit": "count" },
   "provenance": {
     "collector": "health",
-    "source_id": "00000000-0000-4000-8000-00000000000f",
+    "source_id": "00000000-0000-4000-8000-000000000007",
     "source": { "name": "Health", "bundle_id": "com.apple.health", "device": "iPhone" },
     "ingested_at": "2025-10-22T06:53:00.123Z"
   },
@@ -151,7 +164,7 @@ exports write it ([`record.schema.json`](../adm/v0/record.schema.json)):
 ```
 
 - Times are RFC 3339 UTC with millisecond precision.
-- `time.end`, `time.tz`, and `provenance.source` appear only when present.
+- `time.end`, `time.tz`, `provenance.source`, and `provenance.deleted_at_source` appear only when present. `deleted_at_source` is when the vault learned that the source deleted the item.
 - `id` is vault-local and is not a global identifier.
 
 Reserved for later versions:

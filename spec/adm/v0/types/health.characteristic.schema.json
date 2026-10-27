@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A HealthKit characteristic (for example date of birth or blood type), as read at the record time.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "description": "HealthKit type identifier, as-is.",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+          "type": "string"
+        },
+        "value": {
+          "description": "Raw value: an integer code, or a date as {year, month, day}."
+        },
+        "value_name": {
+          "description": "Name of the value, when Atlys knows it.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "value"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.characteristic"
+    }
+  },
+  "title": "health.characteristic",
+  "x-sensitivity": "high"
+}

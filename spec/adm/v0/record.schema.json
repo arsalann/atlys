@@ -32,7 +32,11 @@
         "collector": { "$ref": "batch.schema.json#/properties/collector" },
         "source_id": { "$ref": "record-draft.schema.json#/$defs/source_id" },
         "source": { "$ref": "record-draft.schema.json#/properties/source" },
-        "ingested_at": { "$ref": "#/$defs/timestamp" }
+        "ingested_at": { "$ref": "#/$defs/timestamp" },
+        "deleted_at_source": {
+          "description": "When the vault learned that the source deleted the item. The record is kept.",
+          "$ref": "#/$defs/timestamp"
+        }
       }
     },
     "sensitivity": { "enum": ["low", "medium", "high"] }

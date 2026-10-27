@@ -101,6 +101,7 @@ fn stored_records_render_the_listed_json() {
             id: case["id"].as_str().unwrap().into(),
             collector: case["collector"].as_str().unwrap().into(),
             ingested_ms: case["ingested_ms"].as_i64().unwrap(),
+            deleted_at_source_ms: case["deleted_at_source_ms"].as_i64(),
             draft: RecordDraft::from_value(&case["draft"]).unwrap(),
         };
         assert_eq!(record.to_json(), case["json"]);

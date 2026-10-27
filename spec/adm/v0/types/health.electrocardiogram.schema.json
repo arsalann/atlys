@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "An ECG recording with its voltage samples.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "average_heart_rate_bpm": {
+          "description": "Average heart rate in count/min.",
+          "type": "number"
+        },
+        "classification": {
+          "description": "Raw HealthKit classification.",
+          "type": "integer"
+        },
+        "classification_name": {
+          "description": "Name of the classification.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "sampling_frequency_hz": {
+          "description": "Sampling frequency in hertz.",
+          "type": "number"
+        },
+        "symptoms_status": {
+          "description": "Raw HealthKit symptoms status.",
+          "type": "integer"
+        },
+        "voltages": {
+          "description": "Samples as [seconds since start, microvolts] for lead I."
+        }
+      },
+      "required": [
+        "classification"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.electrocardiogram"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.electrocardiogram",
+  "x-sensitivity": "high"
+}

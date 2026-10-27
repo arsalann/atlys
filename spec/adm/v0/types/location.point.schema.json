@@ -17,8 +17,11 @@
       "properties": {
         "altitude_m": {
           "description": "Altitude above sea level in meters.",
-          "maximum": 100000,
-          "minimum": -10000,
+          "type": "number"
+        },
+        "course_accuracy_deg": {
+          "description": "Course uncertainty in degrees.",
+          "minimum": 0,
           "type": "number"
         },
         "course_deg": {
@@ -27,9 +30,20 @@
           "minimum": 0,
           "type": "number"
         },
+        "ellipsoidal_altitude_m": {
+          "description": "Altitude above the WGS84 ellipsoid in meters.",
+          "type": "number"
+        },
+        "floor": {
+          "description": "Building floor, when known.",
+          "type": "integer"
+        },
+        "from_accessory": {
+          "description": "The location came from an external accessory.",
+          "type": "boolean"
+        },
         "horizontal_accuracy_m": {
           "description": "Radius of uncertainty in meters.",
-          "maximum": 1000000,
           "minimum": 0,
           "type": "number"
         },
@@ -45,15 +59,31 @@
           "minimum": -180,
           "type": "number"
         },
-        "speed_mps": {
-          "description": "Speed in meters per second.",
-          "maximum": 1000,
+        "simulated": {
+          "description": "The location was simulated by software.",
+          "type": "boolean"
+        },
+        "speed_accuracy_mps": {
+          "description": "Speed uncertainty in meters per second.",
           "minimum": 0,
           "type": "number"
         },
+        "speed_mps": {
+          "description": "Speed in meters per second.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "trigger": {
+          "description": "What delivered the fix.",
+          "enum": [
+            "significant_change",
+            "foreground",
+            "detailed",
+            "visit"
+          ]
+        },
         "vertical_accuracy_m": {
           "description": "Altitude uncertainty in meters.",
-          "maximum": 1000000,
           "minimum": 0,
           "type": "number"
         }

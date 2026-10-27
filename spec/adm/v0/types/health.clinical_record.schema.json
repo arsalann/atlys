@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A health record from a connected provider, with its FHIR resource.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "description": "Name shown in Apple Health.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "fhir_resource": {
+          "description": "The FHIR resource JSON, as-is."
+        },
+        "fhir_resource_type": {
+          "description": "FHIR resource type, for example Observation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "fhir_version": {
+          "description": "FHIR release of the resource.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "identifier": {
+          "description": "HealthKit type identifier, as-is.",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "display_name"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.clinical_record"
+    }
+  },
+  "title": "health.clinical_record",
+  "x-sensitivity": "high"
+}

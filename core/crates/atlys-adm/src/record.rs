@@ -242,8 +242,20 @@ pub struct Record {
     pub collector: String,
     /// When the vault merged the record, Unix epoch milliseconds.
     pub ingested_ms: i64,
+    /// When the vault learned that the source deleted the item, Unix epoch
+    /// milliseconds. The record is kept; see RFC-0001 "Deletions".
+    pub deleted_at_source_ms: Option<i64>,
     /// The validated draft.
     pub draft: RecordDraft,
+}
+
+impl RecordDraft {
+    /// The source's own type name inside a generic record type, for example
+    /// `HKQuantityTypeIdentifierStepCount` in a `health.quantity` record.
+    /// Used to group records for browsing.
+    pub fn subtype(&self) -> Option<&str> {
+        self.data.get("identifier").and_then(Value::as_str)
+    }
 }
 
 impl Record {
@@ -271,6 +283,9 @@ impl Record {
             provenance.insert("source".into(), source.to_value());
         }
         provenance.insert("ingested_at".into(), rfc3339(self.ingested_ms).into());
+        if let Some(deleted) = self.deleted_at_source_ms {
+            provenance.insert("deleted_at_source".into(), rfc3339(deleted).into());
+        }
         json!({
             "id": self.id,
             "type": d.record_type,
@@ -342,13 +357,28 @@ fn check_kind(kind: FieldKind, value: &Value) -> Result<(), ErrorKind> {
             value.as_str().ok_or(ErrorKind::WrongType("string"))?,
             max_len,
         ),
-        FieldKind::Ident { max_len } => {
+        FieldKind::AnyNum => value
+            .is_number()
+            .then_some(())
+            .ok_or(ErrorKind::WrongType("number")),
+        FieldKind::Name => {
             let v = value.as_str().ok_or(ErrorKind::WrongType("string"))?;
-            is_ident(v, max_len)
-                .then_some(())
-                .ok_or(ErrorKind::InvalidValue)
+            is_name(v).then_some(()).ok_or(ErrorKind::InvalidValue)
         }
+        FieldKind::Object => value
+            .is_object()
+            .then_some(())
+            .ok_or(ErrorKind::WrongType("object")),
+        FieldKind::Any => Ok(()),
     }
+}
+
+/// `[A-Za-z][A-Za-z0-9_.]*`, at most [`types::NAME_MAX`] characters.
+fn is_name(v: &str) -> bool {
+    let mut bytes = v.bytes();
+    v.len() <= types::NAME_MAX
+        && bytes.next().is_some_and(|b| b.is_ascii_alphabetic())
+        && bytes.all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'.')
 }
 
 fn check_text(v: &str, max_len: usize) -> Result<(), ErrorKind> {

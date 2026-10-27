@@ -15,7 +15,7 @@ use zeroize::Zeroizing;
 use crate::{Result, VaultError};
 
 /// Schema version written to `PRAGMA user_version`.
-const SCHEMA_VERSION: i64 = 1;
+const SCHEMA_VERSION: i64 = 2;
 
 /// Details of the linked SQLCipher build, for diagnostics and the spike report.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -94,6 +94,10 @@ impl Store {
         Ok(store)
     }
 
+    pub(crate) fn conn(&self) -> &Connection {
+        &self.conn
+    }
+
     /// Reports the SQLCipher build and crypto provider.
     pub fn cipher_info(&self) -> Result<CipherInfo> {
         let pragma = |name: &str| -> Result<String> {
@@ -161,13 +165,21 @@ impl Store {
             return Err(VaultError::UnsupportedSchema);
         }
         if version < 1 {
-            // Placeholder schema. The record tables arrive with RFC-0001/0002.
             self.conn
-                .execute_batch(&format!(
+                .execute_batch(
                     "BEGIN;
                      CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value BLOB NOT NULL) STRICT;
-                     PRAGMA user_version = {SCHEMA_VERSION};
-                     COMMIT;"
+                     PRAGMA user_version = 1;
+                     COMMIT;",
+                )
+                .map_err(storage)?;
+        }
+        if version < 2 {
+            // RFC-0001 records, deletions at source, and the merge log.
+            self.conn
+                .execute_batch(&format!(
+                    "BEGIN; {} PRAGMA user_version = 2; COMMIT;",
+                    crate::records::SCHEMA_V2
                 ))
                 .map_err(storage)?;
         }
@@ -196,7 +208,7 @@ fn map_open_error(err: rusqlite::Error) -> VaultError {
     }
 }
 
-fn storage(err: rusqlite::Error) -> VaultError {
+pub(crate) fn storage(err: rusqlite::Error) -> VaultError {
     VaultError::Storage(err.to_string())
 }
 

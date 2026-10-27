@@ -181,11 +181,11 @@ mod tests {
 
     fn steps(source_id: &str) -> RecordDraft {
         RecordDraft::from_value(&json!({
-            "type": "health.steps",
+            "type": "device.pedometer",
             "source_id": source_id,
             "start_ms": 1_700_000_000_000_i64,
             "end_ms": 1_700_000_060_000_i64,
-            "data": { "count": 42 }
+            "data": { "steps": 42 }
         }))
         .unwrap()
     }
@@ -193,7 +193,7 @@ mod tests {
     #[test]
     fn round_trip() {
         let deletion = Deletion {
-            record_type: "health.steps".into(),
+            record_type: "device.pedometer".into(),
             source_id: "gone".into(),
         };
         let batch = Batch::new(
@@ -215,11 +215,11 @@ mod tests {
     #[test]
     fn errors_carry_the_record_path() {
         let mut bad = steps("a");
-        bad.data.insert("count".into(), json!(-1));
+        bad.data.insert("steps".into(), json!(-1));
         let err = Batch::new("health".into(), 1, vec![steps("a"), bad], vec![]).unwrap_err();
         assert_eq!(err.code(), "out_of_range");
-        assert_eq!(err.path, "records[1].data.count");
-        assert_eq!(err.to_string(), "records[1].data.count: value out of range");
+        assert_eq!(err.path, "records[1].data.steps");
+        assert_eq!(err.to_string(), "records[1].data.steps: value out of range");
     }
 
     #[test]
