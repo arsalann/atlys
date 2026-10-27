@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Heart rate variability (SDNN).",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "sdnn_ms": {
+          "description": "Standard deviation of NN intervals in milliseconds.",
+          "maximum": 5000,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "sdnn_ms"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.hrv"
+    }
+  },
+  "title": "health.hrv",
+  "x-sensitivity": "high"
+}

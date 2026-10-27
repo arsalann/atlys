@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A workout.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "activity": {
+          "description": "Activity type in snake_case, for example running or traditional_strength_training.",
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "duration_s": {
+          "description": "Active duration in seconds, excluding pauses.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "type": "number"
+        },
+        "kcal": {
+          "description": "Active energy in kilocalories.",
+          "maximum": 100000,
+          "minimum": 0,
+          "type": "number"
+        },
+        "meters": {
+          "description": "Distance in meters.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "activity",
+        "duration_s"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.workout"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.workout",
+  "x-sensitivity": "high"
+}

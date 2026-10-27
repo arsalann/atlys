@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Whether the user stood during an hour.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "stood": {
+          "description": "Stood for at least a minute during the hour.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "stood"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.stand_hour"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.stand_hour",
+  "x-sensitivity": "high"
+}

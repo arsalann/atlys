@@ -19,7 +19,7 @@ use atlys_vault::m0::{envelope, inbox};
 use atlys_vault::store::Store;
 use zeroize::Zeroizing;
 
-use crate::{AtlysError, RecordDraft, drafts, now_ms};
+use crate::{AtlysError, RecordDraft, now_ms};
 
 // ---------------------------------------------------------------------------
 // 0.3 SQLCipher self-test
@@ -308,7 +308,19 @@ impl SpikeSealer {
 
     /// Validates and seals one batch. Returns the new file's name.
     pub fn seal(&self, collector: String, records: Vec<RecordDraft>) -> Result<String, AtlysError> {
-        let batch = atlys_adm::Batch::new(collector, now_ms(), drafts(records)?)?;
+        let records = records
+            .into_iter()
+            .map(|r| {
+                Ok(atlys_adm::draft::RecordDraft {
+                    data: serde_json::Value::Object(r.data()?),
+                    record_type: r.record_type,
+                    source_id: r.source_id,
+                    start_ms: r.start_ms,
+                    end_ms: r.end_ms,
+                })
+            })
+            .collect::<Result<_, AtlysError>>()?;
+        let batch = atlys_adm::draft::Batch::new(collector, now_ms(), records)?;
         Ok(file_name(&self.writer.write(&batch)?))
     }
 }
@@ -357,6 +369,7 @@ mod tests {
                     start_ms: 0,
                     end_ms: Some(60_000),
                     data_json: r#"{"count":10}"#.into(),
+                    ..Default::default()
                 }],
             )
             .unwrap();

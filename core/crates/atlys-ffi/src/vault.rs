@@ -337,7 +337,9 @@ mod tests {
                     source_id: "synthetic-1".into(),
                     start_ms: 1,
                     end_ms: None,
-                    data_json: r#"{"level":0.5}"#.into(),
+                    data_json: r#"{"level":0.5,"state":"unplugged","low_power_mode":false}"#.into(),
+                    tz: Some("Europe/Paris".into()),
+                    ..Default::default()
                 }],
             )
             .unwrap();

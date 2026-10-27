@@ -1,0 +1,1053 @@
+{
+  "description": "Synthetic RFC-0001 fixtures. Every value is invented; none comes from a real person or device.",
+  "adm_version": "0.1",
+  "valid_records": [
+    {
+      "type": "device.battery",
+      "source_id": "battery-1",
+      "start_ms": 1761115680000,
+      "tz": "Europe/Berlin",
+      "data": {
+        "level": 0.42,
+        "state": "unplugged",
+        "low_power_mode": false
+      }
+    },
+    {
+      "type": "device.battery",
+      "source_id": "battery-2",
+      "start_ms": 1761115680000,
+      "data": {
+        "state": "unknown",
+        "low_power_mode": true
+      }
+    },
+    {
+      "type": "device.connectivity",
+      "source_id": "net-1",
+      "start_ms": 1761115680000,
+      "data": {
+        "status": "satisfied",
+        "interface": "wifi",
+        "expensive": false,
+        "constrained": false
+      }
+    },
+    {
+      "type": "device.info",
+      "source_id": "info-1",
+      "start_ms": 1761115680000,
+      "data": {
+        "os_name": "iOS",
+        "os_version": "26.1",
+        "model": "iPhone17,1",
+        "app_version": "0.2.0 (1)",
+        "free_storage_bytes": 64000000000,
+        "locale": "fr_FR",
+        "time_zone": "Europe/Paris"
+      }
+    },
+    {
+      "type": "device.motion_activity",
+      "source_id": "motion-1761115680000",
+      "start_ms": 1761115680000,
+      "end_ms": 1761116580000,
+      "data": {
+        "activity": "walking",
+        "confidence": "high"
+      }
+    },
+    {
+      "type": "health.body_mass",
+      "source_id": "00000000-0000-4000-8000-000000000001",
+      "start_ms": 1761115680000,
+      "source": {
+        "name": "Health",
+        "bundle_id": "com.apple.health",
+        "device": "iPhone"
+      },
+      "data": {
+        "kg": 70.5
+      }
+    },
+    {
+      "type": "health.distance",
+      "source_id": "00000000-0000-4000-8000-000000000002",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "meters": 812.4,
+        "activity": "walking_running"
+      }
+    },
+    {
+      "type": "health.energy",
+      "source_id": "00000000-0000-4000-8000-000000000003",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "kcal": 12.5,
+        "kind": "active"
+      }
+    },
+    {
+      "type": "health.energy",
+      "source_id": "00000000-0000-4000-8000-000000000004",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "kcal": 1.1,
+        "kind": "basal"
+      }
+    },
+    {
+      "type": "health.exercise_time",
+      "source_id": "00000000-0000-4000-8000-000000000005",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "seconds": 60
+      }
+    },
+    {
+      "type": "health.floors",
+      "source_id": "00000000-0000-4000-8000-000000000006",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "count": 2
+      }
+    },
+    {
+      "type": "health.heart_rate",
+      "source_id": "00000000-0000-4000-8000-000000000007",
+      "start_ms": 1761115680000,
+      "source": {
+        "name": "Synthetic Watch App",
+        "device": "Apple Watch"
+      },
+      "data": {
+        "bpm": 64
+      }
+    },
+    {
+      "type": "health.heart_rate",
+      "source_id": "00000000-0000-4000-8000-000000000008",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115680000,
+      "data": {
+        "bpm": 71.5
+      }
+    },
+    {
+      "type": "health.height",
+      "source_id": "00000000-0000-4000-8000-000000000009",
+      "start_ms": 1761115680000,
+      "data": {
+        "m": 1.75
+      }
+    },
+    {
+      "type": "health.hrv",
+      "source_id": "00000000-0000-4000-8000-00000000000a",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "sdnn_ms": 48.2
+      }
+    },
+    {
+      "type": "health.mindful_session",
+      "source_id": "00000000-0000-4000-8000-00000000000b",
+      "start_ms": 1761115680000,
+      "end_ms": 1761116280000,
+      "data": {}
+    },
+    {
+      "type": "health.resting_heart_rate",
+      "source_id": "00000000-0000-4000-8000-00000000000c",
+      "start_ms": 1761115680000,
+      "end_ms": 1761202080000,
+      "data": {
+        "bpm": 58
+      }
+    },
+    {
+      "type": "health.sleep_stage",
+      "source_id": "00000000-0000-4000-8000-00000000000d",
+      "start_ms": 1761115680000,
+      "end_ms": 1761118200000,
+      "tz": "Europe/Berlin",
+      "data": {
+        "stage": "asleep_deep"
+      }
+    },
+    {
+      "type": "health.stand_hour",
+      "source_id": "00000000-0000-4000-8000-00000000000e",
+      "start_ms": 1761115680000,
+      "end_ms": 1761119280000,
+      "data": {
+        "stood": true
+      }
+    },
+    {
+      "type": "health.steps",
+      "source_id": "00000000-0000-4000-8000-00000000000f",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "source": {
+        "name": "Health",
+        "bundle_id": "com.apple.health",
+        "device": "iPhone"
+      },
+      "data": {
+        "count": 42
+      }
+    },
+    {
+      "type": "health.walking_heart_rate",
+      "source_id": "00000000-0000-4000-8000-000000000010",
+      "start_ms": 1761115680000,
+      "end_ms": 1761115740000,
+      "data": {
+        "bpm": 96
+      }
+    },
+    {
+      "type": "health.workout",
+      "source_id": "00000000-0000-4000-8000-000000000011",
+      "start_ms": 1761115680000,
+      "end_ms": 1761118680000,
+      "data": {
+        "activity": "traditional_strength_training",
+        "duration_s": 2700
+      }
+    },
+    {
+      "type": "health.workout",
+      "source_id": "00000000-0000-4000-8000-000000000012",
+      "start_ms": 1761115680000,
+      "end_ms": 1761117480000,
+      "data": {
+        "activity": "running",
+        "duration_s": 1800,
+        "kcal": 310.5,
+        "meters": 5012.3
+      }
+    },
+    {
+      "type": "location.point",
+      "source_id": "point-1",
+      "start_ms": 1761115680000,
+      "data": {
+        "latitude": 48.8584,
+        "longitude": 2.2945,
+        "horizontal_accuracy_m": 65
+      }
+    },
+    {
+      "type": "location.point",
+      "source_id": "point-2",
+      "start_ms": 1761115680000,
+      "data": {
+        "latitude": -33.8688,
+        "longitude": 151.2093,
+        "horizontal_accuracy_m": 10,
+        "altitude_m": 12.5,
+        "vertical_accuracy_m": 8,
+        "speed_mps": 1.4,
+        "course_deg": 270
+      }
+    },
+    {
+      "type": "location.visit",
+      "source_id": "visit-1761115680000",
+      "start_ms": 1761115680000,
+      "data": {
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "horizontal_accuracy_m": 35.2
+      }
+    },
+    {
+      "type": "location.visit",
+      "source_id": "visit-1761115680001",
+      "start_ms": 1761115680000,
+      "end_ms": 1761121080000,
+      "tz": "Europe/Berlin",
+      "data": {
+        "latitude": 52.52,
+        "longitude": 13.405,
+        "horizontal_accuracy_m": 35.2
+      }
+    }
+  ],
+  "invalid_records": [
+    {
+      "name": "unknown type",
+      "error": "unknown_type",
+      "path": "type",
+      "record": {
+        "type": "health.blood_glucose",
+        "source_id": "x",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "mg_dl": 90
+        }
+      }
+    },
+    {
+      "name": "type not lowercase",
+      "error": "unknown_type",
+      "path": "type",
+      "record": {
+        "type": "Health.Steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "missing source_id",
+      "error": "missing_field",
+      "path": "source_id",
+      "record": {
+        "type": "health.steps",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "empty source_id",
+      "error": "invalid_value",
+      "path": "source_id",
+      "record": {
+        "type": "health.steps",
+        "source_id": "",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "control character in source_id",
+      "error": "invalid_value",
+      "path": "source_id",
+      "record": {
+        "type": "health.steps",
+        "source_id": "a\nb",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "negative start",
+      "error": "out_of_range",
+      "path": "start_ms",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": -1,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "start after year 9999",
+      "error": "out_of_range",
+      "path": "start_ms",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 253402300800000,
+        "end_ms": 253402300800000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "start as string",
+      "error": "wrong_type",
+      "path": "start_ms",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": "1761115680000",
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "ends before it starts",
+      "error": "invalid_time",
+      "path": "end_ms",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115679999,
+        "data": {
+          "count": 42
+        }
+      },
+      "json_schema": false
+    },
+    {
+      "name": "interval type without end",
+      "error": "missing_field",
+      "path": "end_ms",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "data": {
+          "count": 42
+        }
+      }
+    },
+    {
+      "name": "instant type with end",
+      "error": "unknown_field",
+      "path": "end_ms",
+      "record": {
+        "type": "device.battery",
+        "source_id": "b",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "state": "full",
+          "low_power_mode": false
+        }
+      }
+    },
+    {
+      "name": "time zone with a space",
+      "error": "invalid_value",
+      "path": "tz",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        },
+        "tz": "Europe/Berlin Time"
+      }
+    },
+    {
+      "name": "unknown envelope field",
+      "error": "unknown_field",
+      "path": "summary",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        },
+        "summary": "42 steps"
+      }
+    },
+    {
+      "name": "unknown source field",
+      "error": "unknown_field",
+      "path": "source.app",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        },
+        "source": {
+          "app": "Health"
+        }
+      }
+    },
+    {
+      "name": "empty source name",
+      "error": "invalid_value",
+      "path": "source.name",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 42
+        },
+        "source": {
+          "name": ""
+        }
+      }
+    },
+    {
+      "name": "data is null",
+      "error": "wrong_type",
+      "path": "data",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": null
+      }
+    },
+    {
+      "name": "missing data field",
+      "error": "missing_field",
+      "path": "data.count",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {}
+      }
+    },
+    {
+      "name": "unknown data field",
+      "error": "unknown_field",
+      "path": "data.calories",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 1,
+          "calories": 2
+        }
+      }
+    },
+    {
+      "name": "integer with fraction",
+      "error": "wrong_type",
+      "path": "data.count",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 1.5
+        }
+      }
+    },
+    {
+      "name": "integer written as 3.0",
+      "error": "wrong_type",
+      "path": "data.count",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": 3.0
+        }
+      },
+      "json_schema": false
+    },
+    {
+      "name": "integer as string",
+      "error": "wrong_type",
+      "path": "data.count",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": "42"
+        }
+      }
+    },
+    {
+      "name": "negative count",
+      "error": "out_of_range",
+      "path": "data.count",
+      "record": {
+        "type": "health.steps",
+        "source_id": "s-1",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "count": -1
+        }
+      }
+    },
+    {
+      "name": "zero heart rate",
+      "error": "out_of_range",
+      "path": "data.bpm",
+      "record": {
+        "type": "health.heart_rate",
+        "source_id": "h",
+        "start_ms": 1761115680000,
+        "data": {
+          "bpm": 0
+        }
+      }
+    },
+    {
+      "name": "latitude above 90",
+      "error": "out_of_range",
+      "path": "data.latitude",
+      "record": {
+        "type": "location.point",
+        "source_id": "p",
+        "start_ms": 1761115680000,
+        "data": {
+          "latitude": 90.5,
+          "longitude": 0,
+          "horizontal_accuracy_m": 5
+        }
+      }
+    },
+    {
+      "name": "unknown sleep stage",
+      "error": "invalid_value",
+      "path": "data.stage",
+      "record": {
+        "type": "health.sleep_stage",
+        "source_id": "z",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "stage": "asleep"
+        }
+      }
+    },
+    {
+      "name": "workout activity not snake_case",
+      "error": "invalid_value",
+      "path": "data.activity",
+      "record": {
+        "type": "health.workout",
+        "source_id": "w",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "activity": "Running",
+          "duration_s": 60
+        }
+      }
+    },
+    {
+      "name": "boolean as string",
+      "error": "wrong_type",
+      "path": "data.stood",
+      "record": {
+        "type": "health.stand_hour",
+        "source_id": "st",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "data": {
+          "stood": "yes"
+        }
+      }
+    },
+    {
+      "name": "empty text",
+      "error": "invalid_value",
+      "path": "data.os_name",
+      "record": {
+        "type": "device.info",
+        "source_id": "i",
+        "start_ms": 1761115680000,
+        "data": {
+          "os_name": "",
+          "os_version": "26.1",
+          "model": "iPhone17,1",
+          "app_version": "0.2.0"
+        }
+      }
+    },
+    {
+      "name": "battery level above 1",
+      "error": "out_of_range",
+      "path": "data.level",
+      "record": {
+        "type": "device.battery",
+        "source_id": "b",
+        "start_ms": 1761115680000,
+        "data": {
+          "level": 1.5,
+          "state": "full",
+          "low_power_mode": false
+        }
+      }
+    }
+  ],
+  "valid_batches": [
+    {
+      "adm_version": "0.1",
+      "collector": "health",
+      "created_ms": 1761115980000,
+      "records": [
+        {
+          "type": "health.steps",
+          "source_id": "s-1",
+          "start_ms": 1761115680000,
+          "end_ms": 1761115740000,
+          "data": {
+            "count": 42
+          }
+        }
+      ],
+      "deletions": [
+        {
+          "type": "health.steps",
+          "source_id": "00000000-0000-4000-8000-0000000000ff"
+        }
+      ]
+    },
+    {
+      "adm_version": "0.1",
+      "collector": "device",
+      "created_ms": 1761115980000,
+      "records": [
+        {
+          "type": "device.battery",
+          "source_id": "battery-1",
+          "start_ms": 1761115680000,
+          "tz": "Europe/Berlin",
+          "data": {
+            "level": 0.42,
+            "state": "unplugged",
+            "low_power_mode": false
+          }
+        },
+        {
+          "type": "device.connectivity",
+          "source_id": "net-1",
+          "start_ms": 1761115680000,
+          "data": {
+            "status": "satisfied",
+            "interface": "wifi",
+            "expensive": false,
+            "constrained": false
+          }
+        },
+        {
+          "type": "device.info",
+          "source_id": "info-1",
+          "start_ms": 1761115680000,
+          "data": {
+            "os_name": "iOS",
+            "os_version": "26.1",
+            "model": "iPhone17,1",
+            "app_version": "0.2.0 (1)",
+            "free_storage_bytes": 64000000000,
+            "locale": "fr_FR",
+            "time_zone": "Europe/Paris"
+          }
+        }
+      ]
+    },
+    {
+      "adm_version": "0.1",
+      "collector": "health",
+      "created_ms": 1761115980000,
+      "records": [],
+      "deletions": [
+        {
+          "type": "health.heart_rate",
+          "source_id": "00000000-0000-4000-8000-000000000007"
+        }
+      ]
+    }
+  ],
+  "invalid_batches": [
+    {
+      "name": "newer ADM version",
+      "error": "unsupported_version",
+      "path": "adm_version",
+      "batch": {
+        "adm_version": "0.2",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": 42
+            }
+          }
+        ],
+        "future_field": true
+      }
+    },
+    {
+      "name": "M0 draft version",
+      "error": "invalid_value",
+      "path": "adm_version",
+      "batch": {
+        "adm_version": "0-draft",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": 42
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nothing to merge",
+      "error": "invalid_value",
+      "path": "records",
+      "batch": {
+        "adm_version": "0.1",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": []
+      }
+    },
+    {
+      "name": "collector not lowercase",
+      "error": "invalid_value",
+      "path": "collector",
+      "batch": {
+        "adm_version": "0.1",
+        "collector": "Health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": 42
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown batch field",
+      "error": "unknown_field",
+      "path": "note",
+      "batch": {
+        "adm_version": "0.1",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": 42
+            }
+          }
+        ],
+        "note": "x"
+      }
+    },
+    {
+      "name": "invalid record",
+      "error": "out_of_range",
+      "path": "records[0].data.count",
+      "batch": {
+        "adm_version": "0.1",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": -5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "deletion of unknown type",
+      "error": "unknown_type",
+      "path": "deletions[0].type",
+      "batch": {
+        "adm_version": "0.1",
+        "collector": "health",
+        "created_ms": 1761115980000,
+        "records": [
+          {
+            "type": "health.steps",
+            "source_id": "s-1",
+            "start_ms": 1761115680000,
+            "end_ms": 1761115740000,
+            "data": {
+              "count": 42
+            }
+          }
+        ],
+        "deletions": [
+          {
+            "type": "health.nope",
+            "source_id": "x"
+          }
+        ]
+      }
+    }
+  ],
+  "duplicate_key_batch_text": "{\"adm_version\":\"0.1\",\"collector\":\"health\",\"collector\":\"device\",\"created_ms\":0,\"records\":[]}",
+  "stored_records": [
+    {
+      "id": "01K86H3X00ABCDEFGHJKMN0001",
+      "collector": "health",
+      "ingested_ms": 1761115980123,
+      "draft": {
+        "type": "health.steps",
+        "source_id": "00000000-0000-4000-8000-00000000000f",
+        "start_ms": 1761115680000,
+        "end_ms": 1761115740000,
+        "source": {
+          "name": "Health",
+          "bundle_id": "com.apple.health",
+          "device": "iPhone"
+        },
+        "data": {
+          "count": 42
+        }
+      },
+      "json": {
+        "id": "01K86H3X00ABCDEFGHJKMN0001",
+        "type": "health.steps",
+        "schema_version": "0.1",
+        "time": {
+          "start": "2025-10-22T06:48:00.000Z",
+          "end": "2025-10-22T06:49:00.000Z"
+        },
+        "data": {
+          "count": 42
+        },
+        "provenance": {
+          "collector": "health",
+          "source_id": "00000000-0000-4000-8000-00000000000f",
+          "source": {
+            "name": "Health",
+            "bundle_id": "com.apple.health",
+            "device": "iPhone"
+          },
+          "ingested_at": "2025-10-22T06:53:00.123Z"
+        },
+        "sensitivity": "high"
+      }
+    },
+    {
+      "id": "01K86H3X00ABCDEFGHJKMN0002",
+      "collector": "location",
+      "ingested_ms": 1761121680000,
+      "draft": {
+        "type": "location.visit",
+        "source_id": "visit-1761115680001",
+        "start_ms": 1761115680000,
+        "end_ms": 1761121080000,
+        "tz": "Europe/Berlin",
+        "data": {
+          "latitude": 52.52,
+          "longitude": 13.405,
+          "horizontal_accuracy_m": 35.2
+        }
+      },
+      "json": {
+        "id": "01K86H3X00ABCDEFGHJKMN0002",
+        "type": "location.visit",
+        "schema_version": "0.1",
+        "time": {
+          "start": "2025-10-22T06:48:00.000Z",
+          "end": "2025-10-22T08:18:00.000Z",
+          "tz": "Europe/Berlin"
+        },
+        "data": {
+          "latitude": 52.52,
+          "longitude": 13.405,
+          "horizontal_accuracy_m": 35.2
+        },
+        "provenance": {
+          "collector": "location",
+          "source_id": "visit-1761115680001",
+          "ingested_at": "2025-10-22T08:28:00.000Z"
+        },
+        "sensitivity": "high"
+      }
+    },
+    {
+      "id": "01K86H3X00ABCDEFGHJKMN0003",
+      "collector": "device",
+      "ingested_ms": 1761115680000,
+      "draft": {
+        "type": "device.battery",
+        "source_id": "battery-1",
+        "start_ms": 1761115680000,
+        "tz": "Europe/Berlin",
+        "data": {
+          "level": 0.42,
+          "state": "unplugged",
+          "low_power_mode": false
+        }
+      },
+      "json": {
+        "id": "01K86H3X00ABCDEFGHJKMN0003",
+        "type": "device.battery",
+        "schema_version": "0.1",
+        "time": {
+          "start": "2025-10-22T06:48:00.000Z",
+          "tz": "Europe/Berlin"
+        },
+        "data": {
+          "level": 0.42,
+          "state": "unplugged",
+          "low_power_mode": false
+        },
+        "provenance": {
+          "collector": "device",
+          "source_id": "battery-1",
+          "ingested_at": "2025-10-22T06:48:00.000Z"
+        },
+        "sensitivity": "low"
+      }
+    }
+  ]
+}

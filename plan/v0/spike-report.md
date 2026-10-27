@@ -261,7 +261,7 @@ Record results in a follow-up PR to this report, as summaries. Do not commit exp
 | Rust MSRV | 1.89 (toolchain pinned to 1.99.1) | `rusqlite` 0.41 needs 1.89. A lower MSRV made Cargo's resolver hold back a security fix (RUSTSEC-2026-0385). |
 | Ignored advisory | RUSTSEC-2026-0374 (`basic-toml` unmaintained) | Reaches us only through uniffi's build-time templating; not linked into the app |
 | Placeholder bundle ID | `org.example.atlys` + `Local.xcconfig` override | No identifier is chosen yet; `example` makes the placeholder obvious |
-| Draft ADM shapes | Minimal `RecordDraft` / `Batch` in `atlys-adm` | Enough for the inbox; RFC-0001 replaces them in M2 |
+| Draft ADM shapes | Minimal `RecordDraft` / `Batch` in `atlys-adm` | Enough for the inbox. RFC-0001 replaced them in M2; the spike keeps them as `atlys_adm::draft` |
 
 ## Follow-ups
 

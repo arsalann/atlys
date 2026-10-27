@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADM v0 batch",
+  "description": "The plaintext of one sealed inbox file (RFC-0001). Each record must also match the schema of its type in types/.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["adm_version", "collector", "created_ms", "records"],
+  "properties": {
+    "adm_version": { "const": "0.1" },
+    "collector": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$" },
+    "created_ms": { "$ref": "record-draft.schema.json#/$defs/time_ms" },
+    "records": { "type": "array", "items": { "$ref": "record-draft.schema.json" } },
+    "deletions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "source_id"],
+        "properties": {
+          "type": { "$ref": "record-draft.schema.json#/properties/type" },
+          "source_id": { "$ref": "record-draft.schema.json#/$defs/source_id" }
+        }
+      }
+    }
+  },
+  "anyOf": [
+    { "properties": { "records": { "minItems": 1 } } },
+    { "required": ["deletions"], "properties": { "deletions": { "minItems": 1 } } }
+  ]
+}

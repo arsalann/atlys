@@ -143,8 +143,8 @@ pub fn core_info() -> CoreInfo {
     }
 }
 
-/// A record from a collector, as Swift builds it.
-#[derive(Debug, Clone, PartialEq, uniffi::Record)]
+/// A record from a collector, as Swift builds it (RFC-0001 record draft).
+#[derive(Debug, Clone, Default, PartialEq, uniffi::Record)]
 pub struct RecordDraft {
     /// Record type, for example `health.steps`.
     pub record_type: String,
@@ -156,28 +156,73 @@ pub struct RecordDraft {
     pub end_ms: Option<i64>,
     /// Type-specific payload as a JSON object.
     pub data_json: String,
+    /// IANA time zone where the record happened.
+    #[uniffi(default = None)]
+    pub tz: Option<String>,
+    /// Name of the app or service that produced the data.
+    #[uniffi(default = None)]
+    pub source_name: Option<String>,
+    /// Bundle identifier of that app.
+    #[uniffi(default = None)]
+    pub source_bundle_id: Option<String>,
+    /// Device that produced the data, for example `Apple Watch`.
+    #[uniffi(default = None)]
+    pub source_device: Option<String>,
+}
+
+impl RecordDraft {
+    /// Parses `data_json`, which must be a JSON object.
+    pub(crate) fn data(&self) -> Result<serde_json::Map<String, serde_json::Value>, AtlysError> {
+        match serde_json::from_str(&self.data_json) {
+            Ok(serde_json::Value::Object(map)) => Ok(map),
+            Ok(_) => Err(AtlysError::InvalidInput {
+                message: "data_json must be a JSON object".into(),
+            }),
+            Err(e) => Err(AtlysError::InvalidInput {
+                message: format!("data_json is not valid JSON: {e}"),
+            }),
+        }
+    }
 }
 
 impl TryFrom<RecordDraft> for atlys_adm::RecordDraft {
     type Error = AtlysError;
 
     fn try_from(r: RecordDraft) -> Result<Self, AtlysError> {
-        let data: serde_json::Value =
-            serde_json::from_str(&r.data_json).map_err(|e| AtlysError::InvalidInput {
-                message: format!("data_json is not valid JSON: {e}"),
-            })?;
-        if !data.is_object() {
-            return Err(AtlysError::InvalidInput {
-                message: "data_json must be a JSON object".into(),
-            });
-        }
+        let data = r.data()?;
+        let source = atlys_adm::Source {
+            name: r.source_name,
+            bundle_id: r.source_bundle_id,
+            device: r.source_device,
+        };
         Ok(Self {
             record_type: r.record_type,
             source_id: r.source_id,
             start_ms: r.start_ms,
             end_ms: r.end_ms,
+            tz: r.tz,
+            source: (source != atlys_adm::Source::default()).then_some(source),
             data,
         })
+    }
+}
+
+/// A request to delete a previously sealed record (for example a sample
+/// deleted in Apple Health).
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct RecordDeletion {
+    /// Record type of the record to delete.
+    pub record_type: String,
+    /// Source ID of the record to delete.
+    pub source_id: String,
+}
+
+impl From<RecordDeletion> for atlys_adm::Deletion {
+    fn from(d: RecordDeletion) -> Self {
+        Self {
+            record_type: d.record_type,
+            source_id: d.source_id,
+        }
     }
 }
 
@@ -208,7 +253,19 @@ impl IngestSealer {
 
     /// Validates and seals one batch. Returns the new file's name.
     pub fn seal(&self, collector: String, records: Vec<RecordDraft>) -> Result<String, AtlysError> {
-        let batch = Batch::new(collector, now_ms(), drafts(records)?)?;
+        self.seal_with_deletions(collector, records, Vec::new())
+    }
+
+    /// Validates and seals one batch of records and deletions. Deletions are
+    /// applied after the records when the vault merges the batch.
+    pub fn seal_with_deletions(
+        &self,
+        collector: String,
+        records: Vec<RecordDraft>,
+        deletions: Vec<RecordDeletion>,
+    ) -> Result<String, AtlysError> {
+        let deletions = deletions.into_iter().map(Into::into).collect();
+        let batch = Batch::new(collector, now_ms(), drafts(records)?, deletions)?;
         let path = self.writer.write(&batch)?;
         Ok(path
             .file_name()

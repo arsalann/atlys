@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A network path snapshot. No network requests are made to take it.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "constrained": {
+          "description": "The path is constrained (Low Data Mode).",
+          "type": "boolean"
+        },
+        "expensive": {
+          "description": "The path is expensive (for example cellular or a hotspot).",
+          "type": "boolean"
+        },
+        "interface": {
+          "description": "Interface type of the path.",
+          "enum": [
+            "wifi",
+            "cellular",
+            "wired",
+            "loopback",
+            "other",
+            "none"
+          ]
+        },
+        "status": {
+          "description": "Whether the path can carry traffic.",
+          "enum": [
+            "satisfied",
+            "unsatisfied",
+            "requires_connection"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "interface",
+        "expensive",
+        "constrained"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "device.connectivity"
+    }
+  },
+  "title": "device.connectivity",
+  "x-sensitivity": "low"
+}

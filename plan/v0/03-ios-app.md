@@ -30,7 +30,7 @@
 **The solution:** asymmetric "sealed box" writes.
 
 1. When the vault is created, the core generates an **X25519 ingest keypair**. The **public** key goes in the vault header in plaintext. The **private** key is stored only as an envelope in the header, wrapped by a subkey of the vault key. Formats: [RFC-0002](../../spec/rfcs/0002-vault-format.md).
-2. Collectors serialize a batch of ADM records and call `IngestSealer.seal(batch)`. The core encrypts it with **HPKE** to the public key and writes `inbox/<ulid>.sealed`. The collector can *add* data but can't *read* anything, including its own previous batches.
+2. Collectors serialize a batch of ADM records ([RFC-0001](../../spec/rfcs/0001-data-model.md)) and call `IngestSealer.seal(batch)`. The core encrypts it with **HPKE** to the public key and writes `inbox/<ulid>.sealed`. The collector can *add* data but can't *read* anything, including its own previous batches.
 3. On unlock, `VaultSession.mergeInbox()` decrypts each file with the private key, validates and dedupes the records, inserts them into SQLCipher in one transaction, then deletes the file.
 4. Inbox files use the file protection class *Complete Until First User Authentication*, so writes succeed while the phone is locked (after the first unlock since boot). `vault.db` uses *Complete* and is never touched by background code.
 
@@ -66,7 +66,8 @@ object VaultSession {               // exists only while unlocked
 }
 object IngestSealer {               // only needs the public key; safe in background
   open(dir) -> IngestSealer         // reads vault ID and ingest key from the unverified header
-  seal(collector, records: [RecordDraft]) -> fileName
+  seal(collector, records: [RecordDraft]) -> fileName   // RFC-0001 batch, validated before sealing
+  sealWithDeletions(collector, records, deletions: [RecordDeletion]) -> fileName
 }
 ```
 

@@ -7,7 +7,7 @@ struct CoreInfoTests {
     func coreInfoRoundTrip() {
         let info = coreInfo()
         #expect(!info.version.isEmpty)
-        #expect(info.admVersion == "0-draft")
+        #expect(info.admVersion == "0.1")
         #expect(info.displayVersion.hasPrefix("core "))
     }
 }

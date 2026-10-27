@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADM v0 record draft",
+  "description": "A record as a collector seals it into a batch (RFC-0001). The type-specific schemas in types/ refine `data` and `end_ms`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "source_id", "start_ms", "data"],
+  "properties": {
+    "type": {
+      "description": "Record type, for example health.steps.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+    },
+    "source_id": { "$ref": "#/$defs/source_id" },
+    "start_ms": { "$ref": "#/$defs/time_ms" },
+    "end_ms": { "$ref": "#/$defs/time_ms" },
+    "tz": {
+      "description": "IANA time zone where the record happened.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_+\\-/]{1,64}$"
+    },
+    "source": {
+      "description": "Origin inside the device, for example the app and watch that wrote a HealthKit sample.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "$ref": "#/$defs/source_text" },
+        "bundle_id": { "$ref": "#/$defs/source_text" },
+        "device": { "$ref": "#/$defs/source_text" }
+      }
+    },
+    "data": { "type": "object" }
+  },
+  "$defs": {
+    "time_ms": {
+      "description": "Unix epoch milliseconds, 1970-01-01 to 9999-12-31.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 253402300799999
+    },
+    "source_id": {
+      "description": "Stable identifier in the source system. (type, source_id) identifies the record.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+    },
+    "source_text": { "type": "string", "minLength": 1, "maxLength": 256 }
+  }
+}

@@ -24,7 +24,7 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-use atlys_adm::Batch;
+use atlys_adm::draft::Batch;
 use atlys_crypto::hpke::{
     self, ENCAPPED_KEY_LEN, IngestPrivateKey, IngestPublicKey, SealedMessage, TAG_LEN,
 };
@@ -179,7 +179,7 @@ pub fn read(private_key: &IngestPrivateKey, path: &Path) -> Result<Batch> {
 
 #[cfg(test)]
 mod tests {
-    use atlys_adm::RecordDraft;
+    use atlys_adm::draft::RecordDraft;
     use atlys_crypto::hpke::IngestKeyPair;
 
     use super::*;

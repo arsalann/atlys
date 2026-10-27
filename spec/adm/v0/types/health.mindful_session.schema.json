@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A mindfulness session.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {},
+      "required": [],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.mindful_session"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.mindful_session",
+  "x-sensitivity": "high"
+}

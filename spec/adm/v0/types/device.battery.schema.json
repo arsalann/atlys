@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A battery snapshot.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "description": "Charge level from 0 to 1. Omitted when unknown.",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "low_power_mode": {
+          "description": "Whether Low Power Mode is on.",
+          "type": "boolean"
+        },
+        "state": {
+          "description": "Charging state.",
+          "enum": [
+            "unknown",
+            "unplugged",
+            "charging",
+            "full"
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "low_power_mode"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "device.battery"
+    }
+  },
+  "title": "device.battery",
+  "x-sensitivity": "low"
+}
