@@ -69,7 +69,8 @@ One PR per step:
    - **`AtlysCollectors` framework**
      - `Collector` protocol, `CollectorState` files in `<vault root>/collectors/`, and `CollectionCoordinator`, which serializes runs and enforces a time budget.
      - `CollectionService`, started from the app delegate at launch, registers HealthKit observers, the location manager, `BGAppRefreshTask` (`<bundle id>.refresh`), and `BGProcessingTask` (`<bundle id>.processing`).
-     - Batches are sealed in chunks of at most 2000 records.
+     - Batches are sealed in chunks of at most 2000 records. If the core rejects a batch, its records are sealed one at a time and only invalid ones are skipped, so one bad sample can't stall an anchor.
+     - While the app is open, collection repeats in rounds while a backfill has more to read (up to 30 rounds), merging in between.
    - **Device:** battery, network path (`NWPathMonitor`, no requests), device info. At most one snapshot per 15 minutes, unless "Collect now".
    - **Motion:** raw activity updates and hourly pedometer totals, catching up over the 7 days iOS keeps, with a gap warning after 5 days.
    - **Location**

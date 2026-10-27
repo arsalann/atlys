@@ -118,6 +118,18 @@ struct CollectionTests {
         #expect(sealer.batches.last.map { $0.1.isEmpty && $0.2.count == 1 } == true)
     }
 
+    @Test("An invalid record is skipped without blocking the rest of its batch")
+    func invalidRecordSkipped() throws {
+        let sealer = RejectingSealer()
+        let context = CollectionContext(trigger: .manual, deadline: .distantFuture, sealer: sealer, states: states)
+        let good = makeRecord(type: "device.battery", sourceID: "ok", start: Date(),
+                              data: .object(["state": .string("full"), "low_power_mode": .bool(true)]))
+        let bad = makeRecord(type: "device.battery", sourceID: "bad", start: Date(), data: .object([:]))
+        let outcome = try context.seal(.device, records: [good, bad, good])
+        #expect(outcome.recordsSealed == 2 && outcome.recordsSkipped == 1)
+        #expect(sealer.sealed.map(\.sourceId) == ["ok", "ok"])
+    }
+
     @Test("State round-trips through its file")
     func state() throws {
         var state = CollectorState()
@@ -161,5 +173,19 @@ struct RecordBuilderTests {
         let date = Date(millis: 1_700_000_123_456)
         #expect(MotionCollector.hourStart(date).millis % 3_600_000 == 0)
         #expect(MotionCollector.hourStart(date) <= date)
+    }
+}
+
+/// Rejects any batch that contains a record with empty data, like the core would.
+final class RejectingSealer: RecordSealing, @unchecked Sendable {
+    private let lock = NSLock()
+    private var stored: [RecordDraft] = []
+    var sealed: [RecordDraft] { lock.withLock { stored } }
+
+    func seal(collector: CollectorID, records: [RecordDraft], deletions: [RecordDeletion]) throws {
+        if records.contains(where: { $0.dataJson == "{}" }) {
+            throw AtlysError.InvalidInput(message: "records[0].data.state: missing required field")
+        }
+        lock.withLock { stored.append(contentsOf: records) }
     }
 }

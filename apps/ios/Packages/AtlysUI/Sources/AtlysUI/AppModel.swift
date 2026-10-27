@@ -255,11 +255,22 @@ public final class AppModel {
         guard location.exists, !isCollecting else { return }
         isCollecting = true
         sources = await collection.statuses()
-        await collection.collect(trigger, only: ids)
+        // While the app is open and a backfill has more to read (a first
+        // Apple Health import, for example), keep going in rounds, merging
+        // between them so the data shows up as it arrives.
+        for _ in 0..<Self.maxForegroundRounds {
+            let outcomes = await collection.collect(trigger, only: ids)
+            sources = await collection.statuses()
+            await mergeInbox()
+            let more = outcomes.values.contains { $0.moreAvailable }
+            guard more, UIApplication.shared.applicationState == .active else { break }
+        }
         isCollecting = false
         sources = await collection.statuses()
-        await mergeInbox()
     }
+
+    /// Upper bound on back-to-back foreground rounds (about 20 seconds each).
+    static let maxForegroundRounds = 30
 
     public func collectNow() async {
         await collectAndMerge(.manual)

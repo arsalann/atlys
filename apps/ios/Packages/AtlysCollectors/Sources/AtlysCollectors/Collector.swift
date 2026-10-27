@@ -37,6 +37,8 @@ public enum CollectorPermission: Sendable, Equatable {
 public struct CollectionOutcome: Sendable, Equatable {
     public var recordsSealed = 0
     public var deletionsSealed = 0
+    /// Items the core rejected as invalid (kept out so the rest goes through).
+    public var recordsSkipped = 0
     /// More data is waiting (the time budget ran out mid-backfill).
     public var moreAvailable = false
     /// Data could not be read now (for example HealthKit while the phone is
@@ -49,6 +51,7 @@ public struct CollectionOutcome: Sendable, Equatable {
         var out = a
         out.recordsSealed += b.recordsSealed
         out.deletionsSealed += b.deletionsSealed
+        out.recordsSkipped += b.recordsSkipped
         out.moreAvailable = a.moreAvailable || b.moreAvailable
         out.deferred = a.deferred || b.deferred
         return out
@@ -82,9 +85,31 @@ public struct CollectionContext: Sendable {
         for (i, chunk) in chunks.enumerated() {
             let dels = i == chunks.count - 1 ? deletions : []
             guard !chunk.isEmpty || !dels.isEmpty else { continue }
-            try sealer.seal(collector: collector, records: chunk, deletions: dels)
-            outcome.recordsSealed += chunk.count
-            outcome.deletionsSealed += dels.count
+            do {
+                try sealer.seal(collector: collector, records: chunk, deletions: dels)
+                outcome.recordsSealed += chunk.count
+                outcome.deletionsSealed += dels.count
+            } catch AtlysError.InvalidInput {
+                // The core validates whole batches. One malformed item must not
+                // block the rest (or stall an anchor forever): seal one by one
+                // and skip only what the core rejects.
+                for record in chunk {
+                    do {
+                        try sealer.seal(collector: collector, records: [record], deletions: [])
+                        outcome.recordsSealed += 1
+                    } catch AtlysError.InvalidInput {
+                        outcome.recordsSkipped += 1
+                    }
+                }
+                for deletion in dels {
+                    do {
+                        try sealer.seal(collector: collector, records: [], deletions: [deletion])
+                        outcome.deletionsSealed += 1
+                    } catch AtlysError.InvalidInput {
+                        outcome.recordsSkipped += 1
+                    }
+                }
+            }
         }
         return outcome
     }
