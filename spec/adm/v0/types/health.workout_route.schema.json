@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "GPS points recorded during a workout.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "points": {
+          "description": "Locations, each with the location.point fields and t_ms."
+        },
+        "workout_id": {
+          "description": "Source ID of the workout this route belongs to.",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "workout_id",
+        "points"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.workout_route"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.workout_route",
+  "x-sensitivity": "high"
+}

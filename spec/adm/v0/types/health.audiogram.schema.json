@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A hearing test result.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "sensitivity_points": {
+          "description": "Test points as HealthKit reports them."
+        }
+      },
+      "required": [
+        "sensitivity_points"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.audiogram"
+    }
+  },
+  "title": "health.audiogram",
+  "x-sensitivity": "high"
+}

@@ -1,6 +1,13 @@
 //! The v0 record types (RFC-0001). This table is the single source of truth:
 //! the JSON Schemas in `spec/adm/v0/types/` are generated from it and a test
 //! keeps them in sync.
+//!
+//! Records keep source data raw: values stay in the unit the source reported
+//! (the unit is stored next to the value where the source has one), and
+//! source identifiers are kept as-is. Apple Health samples use generic
+//! families (`health.quantity`, `health.category`, ...) keyed by their
+//! HealthKit identifier, so every readable type is covered, including types
+//! added in future iOS releases.
 
 /// Whether a record type is a point in time, an interval, or either.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -46,15 +53,27 @@ pub enum FieldKind {
         max: f64,
         min_exclusive: bool,
     },
+    /// Any JSON number, as the source reported it.
+    AnyNum,
     /// `true` or `false`.
     Bool,
     /// One of the listed strings.
     Enum(&'static [&'static str]),
     /// A non-empty string of at most `max_len` Unicode scalar values.
     Text { max_len: usize },
-    /// A lowercase identifier (`[a-z][a-z0-9_]*`) of at most `max_len` characters.
-    Ident { max_len: usize },
+    /// A source identifier such as `HKQuantityTypeIdentifierStepCount`:
+    /// `[A-Za-z][A-Za-z0-9_.]*`, at most 128 characters.
+    Name,
+    /// A JSON object with source-defined keys (for example HealthKit metadata).
+    Object,
+    /// Any JSON value, kept as the source structured it.
+    Any,
 }
+
+/// Pattern of [`FieldKind::Name`] values.
+pub const NAME_PATTERN: &str = "^[A-Za-z][A-Za-z0-9_.]*$";
+/// Longest [`FieldKind::Name`] value.
+pub const NAME_MAX: usize = 128;
 
 /// One field of a record type's `data` object.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -101,16 +120,23 @@ const fn num(min: f64, max: f64) -> FieldKind {
     }
 }
 
-const fn positive(max: f64) -> FieldKind {
-    FieldKind::Num {
-        min: 0.0,
-        max,
-        min_exclusive: true,
-    }
-}
+const TEXT: FieldKind = FieldKind::Text { max_len: 256 };
+const NON_NEGATIVE: FieldKind = num(0.0, f64::INFINITY);
+const COUNT: FieldKind = FieldKind::Int {
+    min: 0,
+    max: i64::MAX,
+};
 
-const TEXT: FieldKind = FieldKind::Text { max_len: 128 };
-const BPM: Field = req("bpm", positive(300.0), "Beats per minute.");
+const IDENTIFIER: Field = req(
+    "identifier",
+    FieldKind::Name,
+    "HealthKit type identifier, as-is.",
+);
+const METADATA: Field = opt(
+    "metadata",
+    FieldKind::Object,
+    "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+);
 const LATITUDE: Field = req("latitude", num(-90.0, 90.0), "WGS84 latitude in degrees.");
 const LONGITUDE: Field = req(
     "longitude",
@@ -119,7 +145,7 @@ const LONGITUDE: Field = req(
 );
 const HORIZONTAL_ACCURACY: Field = req(
     "horizontal_accuracy_m",
-    num(0.0, 1.0e6),
+    NON_NEGATIVE,
     "Radius of uncertainty in meters.",
 );
 
@@ -174,6 +200,13 @@ pub static TYPES: &[RecordType] = &[
                 FieldKind::Bool,
                 "The path is constrained (Low Data Mode).",
             ),
+            opt("supports_ipv4", FieldKind::Bool, "The path can route IPv4."),
+            opt("supports_ipv6", FieldKind::Bool, "The path can route IPv6."),
+            opt(
+                "supports_dns",
+                FieldKind::Bool,
+                "The path has a DNS server.",
+            ),
         ],
     },
     RecordType {
@@ -188,191 +221,247 @@ pub static TYPES: &[RecordType] = &[
             req("app_version", TEXT, "Atlys app version and build."),
             opt(
                 "free_storage_bytes",
-                FieldKind::Int {
-                    min: 0,
-                    max: i64::MAX,
-                },
+                COUNT,
                 "Free storage available to the app, in bytes.",
+            ),
+            opt(
+                "total_storage_bytes",
+                COUNT,
+                "Total storage capacity, in bytes.",
             ),
             opt("locale", TEXT, "Current locale identifier."),
             opt("time_zone", TEXT, "Current IANA time zone."),
+            opt(
+                "thermal_state",
+                FieldKind::Enum(&["nominal", "fair", "serious", "critical"]),
+                "System thermal state.",
+            ),
+            opt("uptime_s", NON_NEGATIVE, "Seconds since the device booted."),
+            opt(
+                "physical_memory_bytes",
+                COUNT,
+                "Installed memory, in bytes.",
+            ),
         ],
     },
     RecordType {
         name: "device.motion_activity",
-        description: "A segment of one detected motion activity.",
+        description: "A motion activity update from Core Motion. It holds until the next update. Several flags can be true at once.",
+        time: TimeShape::Instant,
+        sensitivity: Sensitivity::Medium,
+        fields: &[
+            req("stationary", FieldKind::Bool, "The device is not moving."),
+            req("walking", FieldKind::Bool, "The user is walking."),
+            req("running", FieldKind::Bool, "The user is running."),
+            req("cycling", FieldKind::Bool, "The user is cycling."),
+            req("automotive", FieldKind::Bool, "The device is in a vehicle."),
+            req("unknown", FieldKind::Bool, "The activity is unknown."),
+            req(
+                "confidence",
+                FieldKind::Int { min: 0, max: 2 },
+                "Core Motion confidence: 0 low, 1 medium, 2 high.",
+            ),
+        ],
+    },
+    RecordType {
+        name: "device.pedometer",
+        description: "Pedometer totals from Core Motion for the interval.",
         time: TimeShape::Interval,
         sensitivity: Sensitivity::Medium,
         fields: &[
-            req(
-                "activity",
-                FieldKind::Enum(&[
-                    "stationary",
-                    "walking",
-                    "running",
-                    "cycling",
-                    "automotive",
-                    "unknown",
-                ]),
-                "Detected activity.",
-            ),
-            req(
-                "confidence",
-                FieldKind::Enum(&["low", "medium", "high"]),
-                "Detection confidence.",
+            req("steps", COUNT, "Steps taken."),
+            opt("distance_m", NON_NEGATIVE, "Estimated distance in meters."),
+            opt("floors_ascended", COUNT, "Floors ascended."),
+            opt("floors_descended", COUNT, "Floors descended."),
+            opt(
+                "average_active_pace_s_per_m",
+                NON_NEGATIVE,
+                "Average pace while moving, in seconds per meter.",
             ),
         ],
     },
     RecordType {
-        name: "health.body_mass",
-        description: "A body mass measurement.",
+        name: "health.audiogram",
+        description: "A hearing test result.",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            req(
+                "sensitivity_points",
+                FieldKind::Any,
+                "Test points as HealthKit reports them.",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.category",
+        description: "A HealthKit category sample (for example sleep analysis, stand hour, or a symptom).",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            IDENTIFIER,
+            req(
+                "value",
+                FieldKind::Int {
+                    min: i64::MIN,
+                    max: i64::MAX,
+                },
+                "Raw HealthKit category value.",
+            ),
+            opt(
+                "value_name",
+                TEXT,
+                "Name of the value, when Atlys knows it (for example asleepCore).",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.characteristic",
+        description: "A HealthKit characteristic (for example date of birth or blood type), as read at the record time.",
         time: TimeShape::Instant,
         sensitivity: Sensitivity::High,
-        fields: &[req("kg", positive(1000.0), "Body mass in kilograms.")],
-    },
-    RecordType {
-        name: "health.distance",
-        description: "Distance covered during the interval.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
         fields: &[
-            req("meters", num(0.0, 1.0e7), "Distance in meters."),
+            IDENTIFIER,
             req(
-                "activity",
-                FieldKind::Enum(&[
-                    "walking_running",
-                    "cycling",
-                    "swimming",
-                    "wheelchair",
-                    "downhill_snow_sports",
-                ]),
-                "How the distance was covered.",
+                "value",
+                FieldKind::Any,
+                "Raw value: an integer code, or a date as {year, month, day}.",
+            ),
+            opt(
+                "value_name",
+                TEXT,
+                "Name of the value, when Atlys knows it.",
             ),
         ],
     },
     RecordType {
-        name: "health.energy",
-        description: "Energy burned during the interval.",
+        name: "health.clinical_record",
+        description: "A health record from a connected provider, with its FHIR resource.",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            IDENTIFIER,
+            req("display_name", TEXT, "Name shown in Apple Health."),
+            opt("fhir_version", TEXT, "FHIR release of the resource."),
+            opt(
+                "fhir_resource_type",
+                TEXT,
+                "FHIR resource type, for example Observation.",
+            ),
+            opt(
+                "fhir_resource",
+                FieldKind::Any,
+                "The FHIR resource JSON, as-is.",
+            ),
+        ],
+    },
+    RecordType {
+        name: "health.electrocardiogram",
+        description: "An ECG recording with its voltage samples.",
         time: TimeShape::Interval,
         sensitivity: Sensitivity::High,
         fields: &[
-            req("kcal", num(0.0, 1.0e5), "Energy in kilocalories."),
+            req(
+                "classification",
+                FieldKind::Int {
+                    min: i64::MIN,
+                    max: i64::MAX,
+                },
+                "Raw HealthKit classification.",
+            ),
+            opt("classification_name", TEXT, "Name of the classification."),
+            opt(
+                "symptoms_status",
+                FieldKind::Int {
+                    min: i64::MIN,
+                    max: i64::MAX,
+                },
+                "Raw HealthKit symptoms status.",
+            ),
+            opt(
+                "average_heart_rate_bpm",
+                FieldKind::AnyNum,
+                "Average heart rate in count/min.",
+            ),
+            opt(
+                "sampling_frequency_hz",
+                FieldKind::AnyNum,
+                "Sampling frequency in hertz.",
+            ),
+            opt(
+                "voltages",
+                FieldKind::Any,
+                "Samples as [seconds since start, microvolts] for lead I.",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.heartbeat_series",
+        description: "Beat-to-beat timings recorded by Apple Watch.",
+        time: TimeShape::Interval,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            req(
+                "beats",
+                FieldKind::Any,
+                "Beats as [seconds since start, preceded by a gap].",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.quantity",
+        description: "A HealthKit quantity sample (for example step count or heart rate), in the unit Apple Health uses for it.",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            IDENTIFIER,
+            req("value", FieldKind::AnyNum, "The value in `unit`."),
+            req(
+                "unit",
+                FieldKind::Text { max_len: 64 },
+                "HealthKit unit string, for example count, count/min, or km.",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.sample",
+        description: "Any other HealthKit sample type, with the details Atlys can read.",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            IDENTIFIER,
+            opt("details", FieldKind::Any, "Type-specific details."),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.state_of_mind",
+        description: "A logged emotion or mood.",
+        time: TimeShape::Either,
+        sensitivity: Sensitivity::High,
+        fields: &[
             req(
                 "kind",
-                FieldKind::Enum(&["active", "basal"]),
-                "Active or basal (resting) energy.",
+                FieldKind::Int {
+                    min: i64::MIN,
+                    max: i64::MAX,
+                },
+                "Raw kind: momentary emotion or daily mood.",
             ),
+            req(
+                "valence",
+                num(-1.0, 1.0),
+                "From -1 (very unpleasant) to 1 (very pleasant).",
+            ),
+            opt("labels", FieldKind::Any, "Raw label codes."),
+            opt("associations", FieldKind::Any, "Raw association codes."),
+            METADATA,
         ],
-    },
-    RecordType {
-        name: "health.exercise_time",
-        description: "Exercise time during the interval.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[req("seconds", num(0.0, 1.0e7), "Exercise time in seconds.")],
-    },
-    RecordType {
-        name: "health.floors",
-        description: "Floors climbed during the interval.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[req(
-            "count",
-            FieldKind::Int {
-                min: 0,
-                max: 100_000,
-            },
-            "Floors climbed.",
-        )],
-    },
-    RecordType {
-        name: "health.heart_rate",
-        description: "A heart rate sample.",
-        time: TimeShape::Either,
-        sensitivity: Sensitivity::High,
-        fields: &[BPM],
-    },
-    RecordType {
-        name: "health.height",
-        description: "A height measurement.",
-        time: TimeShape::Instant,
-        sensitivity: Sensitivity::High,
-        fields: &[req("m", positive(3.0), "Height in meters.")],
-    },
-    RecordType {
-        name: "health.hrv",
-        description: "Heart rate variability (SDNN).",
-        time: TimeShape::Either,
-        sensitivity: Sensitivity::High,
-        fields: &[req(
-            "sdnn_ms",
-            num(0.0, 5000.0),
-            "Standard deviation of NN intervals in milliseconds.",
-        )],
-    },
-    RecordType {
-        name: "health.mindful_session",
-        description: "A mindfulness session.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[],
-    },
-    RecordType {
-        name: "health.resting_heart_rate",
-        description: "Resting heart rate, usually one value per day.",
-        time: TimeShape::Either,
-        sensitivity: Sensitivity::High,
-        fields: &[BPM],
-    },
-    RecordType {
-        name: "health.sleep_stage",
-        description: "A segment of sleep analysis.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[req(
-            "stage",
-            FieldKind::Enum(&[
-                "in_bed",
-                "asleep_unspecified",
-                "asleep_core",
-                "asleep_deep",
-                "asleep_rem",
-                "awake",
-            ]),
-            "Sleep stage.",
-        )],
-    },
-    RecordType {
-        name: "health.stand_hour",
-        description: "Whether the user stood during an hour.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[req(
-            "stood",
-            FieldKind::Bool,
-            "Stood for at least a minute during the hour.",
-        )],
-    },
-    RecordType {
-        name: "health.steps",
-        description: "Steps taken during the interval.",
-        time: TimeShape::Interval,
-        sensitivity: Sensitivity::High,
-        fields: &[req(
-            "count",
-            FieldKind::Int {
-                min: 0,
-                max: 1_000_000,
-            },
-            "Number of steps.",
-        )],
-    },
-    RecordType {
-        name: "health.walking_heart_rate",
-        description: "Walking heart rate average, usually one value per day.",
-        time: TimeShape::Either,
-        sensitivity: Sensitivity::High,
-        fields: &[BPM],
     },
     RecordType {
         name: "health.workout",
@@ -381,17 +470,54 @@ pub static TYPES: &[RecordType] = &[
         sensitivity: Sensitivity::High,
         fields: &[
             req(
-                "activity",
-                FieldKind::Ident { max_len: 64 },
-                "Activity type in snake_case, for example running or traditional_strength_training.",
+                "activity_type",
+                FieldKind::Int {
+                    min: 0,
+                    max: i64::MAX,
+                },
+                "Raw HKWorkoutActivityType value.",
+            ),
+            opt(
+                "activity_name",
+                TEXT,
+                "Name of the activity type, when Atlys knows it.",
+            ),
+            req("duration_s", NON_NEGATIVE, "Duration in seconds."),
+            opt(
+                "statistics",
+                FieldKind::Object,
+                "Per quantity type: sum, average, minimum, maximum, and unit.",
+            ),
+            opt(
+                "events",
+                FieldKind::Any,
+                "Workout events such as pauses, laps, and segments.",
+            ),
+            opt(
+                "activities",
+                FieldKind::Any,
+                "Sub-activities of multisport workouts.",
+            ),
+            METADATA,
+        ],
+    },
+    RecordType {
+        name: "health.workout_route",
+        description: "GPS points recorded during a workout.",
+        time: TimeShape::Interval,
+        sensitivity: Sensitivity::High,
+        fields: &[
+            req(
+                "workout_id",
+                TEXT,
+                "Source ID of the workout this route belongs to.",
             ),
             req(
-                "duration_s",
-                num(0.0, 1.0e7),
-                "Active duration in seconds, excluding pauses.",
+                "points",
+                FieldKind::Any,
+                "Locations, each with the location.point fields and t_ms.",
             ),
-            opt("kcal", num(0.0, 1.0e5), "Active energy in kilocalories."),
-            opt("meters", num(0.0, 1.0e7), "Distance in meters."),
+            METADATA,
         ],
     },
     RecordType {
@@ -405,19 +531,57 @@ pub static TYPES: &[RecordType] = &[
             HORIZONTAL_ACCURACY,
             opt(
                 "altitude_m",
-                num(-1.0e4, 1.0e5),
+                FieldKind::AnyNum,
                 "Altitude above sea level in meters.",
             ),
             opt(
+                "ellipsoidal_altitude_m",
+                FieldKind::AnyNum,
+                "Altitude above the WGS84 ellipsoid in meters.",
+            ),
+            opt(
                 "vertical_accuracy_m",
-                num(0.0, 1.0e6),
+                NON_NEGATIVE,
                 "Altitude uncertainty in meters.",
             ),
-            opt("speed_mps", num(0.0, 1000.0), "Speed in meters per second."),
+            opt("speed_mps", NON_NEGATIVE, "Speed in meters per second."),
+            opt(
+                "speed_accuracy_mps",
+                NON_NEGATIVE,
+                "Speed uncertainty in meters per second.",
+            ),
             opt(
                 "course_deg",
                 num(0.0, 360.0),
                 "Direction of travel in degrees from true north.",
+            ),
+            opt(
+                "course_accuracy_deg",
+                NON_NEGATIVE,
+                "Course uncertainty in degrees.",
+            ),
+            opt(
+                "floor",
+                FieldKind::Int {
+                    min: i64::MIN,
+                    max: i64::MAX,
+                },
+                "Building floor, when known.",
+            ),
+            opt(
+                "simulated",
+                FieldKind::Bool,
+                "The location was simulated by software.",
+            ),
+            opt(
+                "from_accessory",
+                FieldKind::Bool,
+                "The location came from an external accessory.",
+            ),
+            opt(
+                "trigger",
+                FieldKind::Enum(&["significant_change", "foreground", "detailed", "visit"]),
+                "What delivered the fix.",
             ),
         ],
     },

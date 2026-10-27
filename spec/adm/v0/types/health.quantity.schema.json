@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A HealthKit quantity sample (for example step count or heart rate), in the unit Apple Health uses for it.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "description": "HealthKit type identifier, as-is.",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "unit": {
+          "description": "HealthKit unit string, for example count, count/min, or km.",
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "The value in `unit`.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "identifier",
+        "value",
+        "unit"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.quantity"
+    }
+  },
+  "title": "health.quantity",
+  "x-sensitivity": "high"
+}

@@ -2,34 +2,42 @@
 
 Four collectors ship in v0: **Health**, **Location**, **Motion & Activity**, and **Device**. All read only from the phone and all write sealed records to the inbox (see [03-ios-app.md](03-ios-app.md#the-write-only-ingest-inbox)).
 
+**Rules (maintainer, 2026-10-27):**
+
+- **Collect everything that is accessible.** Each collector reads every type and field its framework exposes; nothing is left behind.
+- **Store raw data.** Keep values in the source's units, with the unit string next to the value, and keep raw codes and identifiers.
+- **Never delete because the source did.** Data deleted at the source stays in the vault with a "deleted at source" flag.
+
+Record formats: [RFC-0001](../../spec/rfcs/0001-data-model.md).
+
 ## Summary
 
 | Collector | iOS framework | Permission | Background trigger | History available | ADM record types |
 | --- | --- | --- | --- | --- | --- |
-| Health | HealthKit | Per-type read access | HealthKit background delivery | Everything in Apple Health (often years) | `health.*` |
-| Location | Core Location | When In Use → Always | Visit monitoring + significant location change (the app is relaunched) | None (only from install onward) | `location.visit`, `location.point` |
-| Motion & Activity | Core Motion | Motion & Fitness | Catch-up on any wake | **~7 days** kept by iOS | `device.motion_activity` |
+| Health | HealthKit | Per-type read access | HealthKit background delivery | Everything in Apple Health (often years) | `health.quantity`, `health.category`, `health.workout`, and the other `health.*` families |
+| Location | Core Location | When In Use → Always | Visit monitoring + significant location change (the app is relaunched); optional detailed tracking | None (only from install onward) | `location.visit`, `location.point` |
+| Motion & Activity | Core Motion | Motion & Fitness | Catch-up on any wake | **~7 days** kept by iOS | `device.motion_activity`, `device.pedometer` |
 | Device | UIKit, Network, Foundation | None | Opportunistic on any wake | None | `device.battery`, `device.connectivity`, `device.info` |
 
 ## 1. Health (HealthKit)
 
-**v0 read types:**
+**v0 read types: every type HealthKit lets a third-party app read.**
 
-| Category | HealthKit types | ADM type |
-| --- | --- | --- |
-| Activity | step count, walking/running distance, flights climbed, active energy, basal energy, exercise minutes, stand hours | `health.steps`, `health.distance`, `health.floors`, `health.energy`, `health.exercise_time`, `health.stand_hour` |
-| Heart | heart rate, resting heart rate, heart rate variability (SDNN), walking heart rate average | `health.heart_rate`, `health.resting_heart_rate`, `health.hrv` |
-| Sleep | sleep analysis (in bed, asleep core/deep/REM, awake) | `health.sleep_session`, `health.sleep_stage` |
-| Workouts | workouts with type, duration, energy, distance | `health.workout` |
-| Body | body mass, height | `health.body_measurement` |
-| Mindfulness | mindful sessions | `health.mindful_session` |
+- All quantity types (about 100: activity, body, vitals, hearing, lab and test results, nutrition, mobility, and more).
+- All category types (sleep, stand hours, symptoms, cycle tracking, events such as high heart rate or falls).
+- Workouts, with statistics, events, sub-activities, and **routes**.
+- ECGs with voltage samples.
+- Heartbeat series, audiograms, State of Mind, and characteristics (date of birth, biological sex, blood type, skin type, wheelchair use, activity move mode).
+- **Clinical health records** (FHIR) when the user has connected a provider.
+
+Values are stored in the unit Apple Health uses for each type, with the unit string. Types needing per-item authorization (vision prescriptions, medications) are listed in the backlog.
 
 **How collection works:**
 
 - `HKAnchoredObjectQuery` per type for incremental sync, including **deletions**. Anchors are saved as collector state.
 - `HKObserverQuery` + `enableBackgroundDelivery` wake the app when new samples arrive (hourly for most types; HealthKit decides the exact timing).
 - **Initial backfill** of all history in chunks (by year), with progress shown on the Sources screen. It may take a while for long-time Apple Watch users.
-- Each sample keeps its HealthKit UUID as `source_id` (for dedupe) plus source app and device in provenance.
+- Each sample keeps its HealthKit UUID as `source_id` (for dedupe) plus source app and device in provenance. Deleted samples are flagged in the vault, not removed.
 
 **iOS constraints:**
 
@@ -51,7 +59,7 @@ Four collectors ship in v0: **Health**, **Location**, **Motion & Activity**, and
 - `location.visit`: arrival time, departure time, coordinates, horizontal accuracy
 - `location.point`: timestamp, coordinates, accuracy, speed and course when available
 
-**Later (not v0):** a "detailed tracking" mode using `CLLocationUpdate.liveUpdates` in the background for route-level data. It costs a lot of battery and draws App Review scrutiny, so it would be opt-in only. Place naming (reverse geocoding) needs the network, so v0 shows coordinates and clusters frequently visited places locally.
+**Detailed tracking (opt-in setting, off by default):** `CLLocationUpdate.liveUpdates` with a `CLBackgroundActivitySession` records route-level points in the background. It costs noticeably more battery. Points are also recorded while the app is open. Place naming (reverse geocoding) needs the network, so v0 shows coordinates and clusters frequently visited places locally.
 
 **Permissions:** "When In Use" first, then an explained upgrade to "Always". Without "Always", only foreground data is collected, and the Sources screen says so. Info.plist: `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysAndWhenInUseUsageDescription`. Background location mode only becomes needed with detailed tracking.
 
@@ -59,8 +67,8 @@ Four collectors ship in v0: **Health**, **Location**, **Motion & Activity**, and
 
 - `CMMotionActivityManager.queryActivityStarting(from:to:to:)`: stationary, walking, running, cycling, automotive, unknown, with confidence. Consecutive identical samples are compressed into segments.
 - **iOS keeps only about the last 7 days.** The collector runs on every wake (app open, background refresh, location or HealthKit wakes) to catch up, and the Sources screen warns if the gap approaches 7 days.
-- Record: `device.motion_activity`: start, end, activity, confidence.
-- The pedometer (`CMPedometer`) overlaps HealthKit step data, so it's skipped in v0.
+- Record: `device.motion_activity`: every raw activity update, with all flags and the raw confidence. Segments are derived later.
+- The pedometer (`CMPedometer`) is also collected, in hourly `device.pedometer` intervals over the same 7-day window. It overlaps HealthKit steps but is a separate raw source.
 - Permission: Motion & Fitness (`NSMotionUsageDescription`).
 
 ## 4. Device telemetry

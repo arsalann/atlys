@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A HealthKit category sample (for example sleep analysis, stand hour, or a symptom).",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "description": "HealthKit type identifier, as-is.",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "value": {
+          "description": "Raw HealthKit category value.",
+          "type": "integer"
+        },
+        "value_name": {
+          "description": "Name of the value, when Atlys knows it (for example asleepCore).",
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "value"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.category"
+    }
+  },
+  "title": "health.category",
+  "x-sensitivity": "high"
+}

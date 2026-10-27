@@ -12,7 +12,6 @@
       "properties": {
         "horizontal_accuracy_m": {
           "description": "Radius of uncertainty in meters.",
-          "maximum": 1000000,
           "minimum": 0,
           "type": "number"
         },

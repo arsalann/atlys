@@ -8,6 +8,7 @@
 //! | [`envelope`] | Password, recovery, ingest, and device (Face ID) key envelopes |
 //! | [`inbox`] | Sealed inbox version 2 and quarantine |
 //! | [`store`] | The SQLCipher database |
+//! | [`records`] | Stored records, inbox merge, and the read API (RFC-0001) |
 //! | [`vault`] | Create, unlock, recover, lock, change credentials, delete |
 //! | [`password`] | New-password policy and strength feedback (zxcvbn) |
 //! | [`recovery`] | 24-word recovery phrase (BIP-39 English wordlist) |
@@ -24,6 +25,7 @@ mod hex;
 pub mod inbox;
 pub mod m0;
 pub mod password;
+pub mod records;
 pub mod recovery;
 pub mod store;
 mod ulid;

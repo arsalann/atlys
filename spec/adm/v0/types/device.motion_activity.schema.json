@@ -5,33 +5,54 @@
       "$ref": "../record-draft.schema.json"
     }
   ],
-  "description": "A segment of one detected motion activity.",
+  "description": "A motion activity update from Core Motion. It holds until the next update. Several flags can be true at once.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
   "properties": {
     "data": {
       "additionalProperties": false,
       "properties": {
-        "activity": {
-          "description": "Detected activity.",
-          "enum": [
-            "stationary",
-            "walking",
-            "running",
-            "cycling",
-            "automotive",
-            "unknown"
-          ]
+        "automotive": {
+          "description": "The device is in a vehicle.",
+          "type": "boolean"
         },
         "confidence": {
-          "description": "Detection confidence.",
-          "enum": [
-            "low",
-            "medium",
-            "high"
-          ]
+          "description": "Core Motion confidence: 0 low, 1 medium, 2 high.",
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "cycling": {
+          "description": "The user is cycling.",
+          "type": "boolean"
+        },
+        "running": {
+          "description": "The user is running.",
+          "type": "boolean"
+        },
+        "stationary": {
+          "description": "The device is not moving.",
+          "type": "boolean"
+        },
+        "unknown": {
+          "description": "The activity is unknown.",
+          "type": "boolean"
+        },
+        "walking": {
+          "description": "The user is walking.",
+          "type": "boolean"
         }
       },
       "required": [
-        "activity",
+        "stationary",
+        "walking",
+        "running",
+        "cycling",
+        "automotive",
+        "unknown",
         "confidence"
       ],
       "type": "object"
@@ -40,9 +61,6 @@
       "const": "device.motion_activity"
     }
   },
-  "required": [
-    "end_ms"
-  ],
   "title": "device.motion_activity",
   "x-sensitivity": "medium"
 }

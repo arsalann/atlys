@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Any other HealthKit sample type, with the details Atlys can read.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "description": "Type-specific details."
+        },
+        "identifier": {
+          "description": "HealthKit type identifier, as-is.",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z][A-Za-z0-9_.]*$",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.sample"
+    }
+  },
+  "title": "health.sample",
+  "x-sensitivity": "high"
+}

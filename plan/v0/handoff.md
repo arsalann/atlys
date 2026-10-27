@@ -16,7 +16,7 @@ Last updated: 2026-10-27
 | --- | --- |
 | M0 spike | Simulator and CI phase done. Device phase still to run (the paid developer account is now available) ([spike-report.md](spike-report.md#follow-ups)). |
 | M1 vault + onboarding | **Done.** PRs #6–#9 merged. The app runs on the maintainer's iPhone; the full [device checklist](#device-checklist) is still to be recorded. |
-| M2 collectors + raw data viewer | **In progress**: step 1 of 7 done; step 2 (merge and query) is next. |
+| M2 collectors + raw data viewer | **In progress**: steps 1–2 done (step 2 in PR #11); the iOS collectors and the viewer are next. |
 
 ## In progress
 
@@ -27,6 +27,10 @@ Last updated: 2026-10-27
 - **Sources status.** Per-source status on the home screen with "Collect now".
 - **Health history.** The backfill imports all Apple Health history, chunked by year with progress.
 - **Signing.** Builds use the paid Apple Developer Program, so the HealthKit entitlements are available.
+- **Data rules** (maintainer, 2026-10-27, also in AGENTS.md):
+  - Collect everything accessible.
+  - Store raw values and units.
+  - Deletions at the source set a flag; records are never removed.
 - **Out of scope** (still M3/M4): Today and Timeline screens, place clustering, exports, the 1M-record performance target, battery profiling.
 
 One PR per step:
@@ -51,11 +55,16 @@ One PR per step:
      - `SpikeSealer` keeps the draft format.
    - [x] iOS core rebuilt. `Atlys` (unit + UI) and `AtlysSpike` tests pass in the Simulator.
    - [x] Merged; RFC-0001 accepted.
-2. [ ] **Merge and query (2.3, minimal 3.1).** Next; not started.
-   - Store schema v2: `records` (unique type + source_id), `tombstones`, and `merge_log` (sealed-file SHA-256).
-   - `UnlockedVault::merge_inbox`, per RFC-0001 "Merge", with crash tests.
-   - Read API: `record_types`, `records(type, before, limit)`, `record(id)`, and `stats`.
-   - FFI: `VaultSession.mergeInbox` plus the read functions.
+2. [x] **Data model revision + merge and query (2.3, minimal 3.1).** PR #11, branch `arsalann/m2-merge`.
+   - RFC-0001 revised for the data rules:
+     - Generic Apple Health families: `health.quantity`, `health.category`, `health.workout`, routes, ECG, heartbeat series, audiogram, State of Mind, clinical records, characteristics, and `health.sample`.
+     - Raw Core Motion updates plus `device.pedometer`.
+     - Every Core Location field.
+     - Deletions flag records (`deleted_at_source`) and never remove them.
+   - Store schema 2 (`records`, `merge_log`), migrated from schema 1.
+   - `atlys_vault::records::merge_inbox`: deadline, crash replay via the merge log, quarantine, update-needed.
+   - Read API: `record_types` (by type and subtype), `collector_summaries`, `records` (keyset pages), `record` (JSON), and previews.
+   - FFI: `VaultSession.mergeInbox(maxSeconds)`, `recordCount`, `recordTypes`, `collectorSummaries`, `records`, `recordJson`, `inboxStatus`.
 3. [ ] **Collector framework + Device collector (2.4, 2.8).**
    - `Collector` protocol, state file, `CollectionCoordinator` with a time budget.
    - Triggers: foreground, `BGAppRefreshTask`, `BGProcessingTask`.

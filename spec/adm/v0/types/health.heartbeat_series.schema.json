@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Beat-to-beat timings recorded by Apple Watch.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "beats": {
+          "description": "Beats as [seconds since start, preceded by a gap]."
+        },
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "beats"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.heartbeat_series"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.heartbeat_series",
+  "x-sensitivity": "high"
+}

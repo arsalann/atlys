@@ -10,33 +10,39 @@
     "data": {
       "additionalProperties": false,
       "properties": {
-        "activity": {
-          "description": "Activity type in snake_case, for example running or traditional_strength_training.",
-          "maxLength": 64,
-          "pattern": "^[a-z][a-z0-9_]*$",
+        "activities": {
+          "description": "Sub-activities of multisport workouts."
+        },
+        "activity_name": {
+          "description": "Name of the activity type, when Atlys knows it.",
+          "maxLength": 256,
+          "minLength": 1,
           "type": "string"
         },
+        "activity_type": {
+          "description": "Raw HKWorkoutActivityType value.",
+          "minimum": 0,
+          "type": "integer"
+        },
         "duration_s": {
-          "description": "Active duration in seconds, excluding pauses.",
-          "maximum": 10000000,
+          "description": "Duration in seconds.",
           "minimum": 0,
           "type": "number"
         },
-        "kcal": {
-          "description": "Active energy in kilocalories.",
-          "maximum": 100000,
-          "minimum": 0,
-          "type": "number"
+        "events": {
+          "description": "Workout events such as pauses, laps, and segments."
         },
-        "meters": {
-          "description": "Distance in meters.",
-          "maximum": 10000000,
-          "minimum": 0,
-          "type": "number"
+        "metadata": {
+          "description": "HealthKit metadata, as-is. Dates become epoch milliseconds and quantities `{value, unit}`.",
+          "type": "object"
+        },
+        "statistics": {
+          "description": "Per quantity type: sum, average, minimum, maximum, and unit.",
+          "type": "object"
         }
       },
       "required": [
-        "activity",
+        "activity_type",
         "duration_s"
       ],
       "type": "object"

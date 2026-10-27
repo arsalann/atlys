@@ -214,6 +214,9 @@ def main():
             failures.append(f'{where}: time or data does not match the draft')
         if out['provenance']['ingested_at'] != rfc3339(case['ingested_ms']):
             failures.append(f'{where}: ingested_at does not match ingested_ms')
+        deleted = case.get('deleted_at_source_ms')
+        if out['provenance'].get('deleted_at_source') != (rfc3339(deleted) if deleted is not None else None):
+            failures.append(f'{where}: deleted_at_source does not match deleted_at_source_ms')
         sensitivity = v.schema_file(types_dir / f'{draft["type"]}.schema.json')['x-sensitivity']
         if out['sensitivity'] != sensitivity:
             failures.append(f'{where}: sensitivity does not match the type schema')

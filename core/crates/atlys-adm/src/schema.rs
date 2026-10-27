@@ -3,7 +3,7 @@
 
 use serde_json::{Map, Value, json};
 
-use crate::types::{FieldKind, RecordType, TimeShape};
+use crate::types::{self, FieldKind, RecordType, TimeShape};
 
 /// JSON Schema dialect of the ADM schemas.
 pub const DIALECT: &str = "https://json-schema.org/draft/2020-12/schema";
@@ -69,33 +69,55 @@ pub fn to_file(schema: &Value) -> String {
 }
 
 fn kind_schema(kind: FieldKind) -> Map<String, Value> {
-    let value = match kind {
-        FieldKind::Int { min, max } => json!({ "type": "integer", "minimum": min, "maximum": max }),
+    let mut out = Map::new();
+    let mut put = |key: &str, value: Value| {
+        out.insert(key.into(), value);
+    };
+    match kind {
+        FieldKind::Int { min, max } => {
+            put("type", "integer".into());
+            if min != i64::MIN {
+                put("minimum", min.into());
+            }
+            if max != i64::MAX {
+                put("maximum", max.into());
+            }
+        }
         FieldKind::Num {
             min,
             max,
             min_exclusive,
         } => {
-            let bound = if min_exclusive {
-                "exclusiveMinimum"
-            } else {
-                "minimum"
-            };
-            json!({ "type": "number", bound: number(min), "maximum": number(max) })
+            put("type", "number".into());
+            put(
+                if min_exclusive {
+                    "exclusiveMinimum"
+                } else {
+                    "minimum"
+                },
+                number(min),
+            );
+            if max.is_finite() {
+                put("maximum", number(max));
+            }
         }
-        FieldKind::Bool => json!({ "type": "boolean" }),
-        FieldKind::Enum(values) => json!({ "enum": values }),
+        FieldKind::AnyNum => put("type", "number".into()),
+        FieldKind::Bool => put("type", "boolean".into()),
+        FieldKind::Enum(values) => put("enum", json!(values)),
         FieldKind::Text { max_len } => {
-            json!({ "type": "string", "minLength": 1, "maxLength": max_len })
+            put("type", "string".into());
+            put("minLength", 1.into());
+            put("maxLength", max_len.into());
         }
-        FieldKind::Ident { max_len } => {
-            json!({ "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": max_len })
+        FieldKind::Name => {
+            put("type", "string".into());
+            put("pattern", types::NAME_PATTERN.into());
+            put("maxLength", types::NAME_MAX.into());
         }
-    };
-    match value {
-        Value::Object(map) => map,
-        _ => unreachable!("every kind renders an object"),
+        FieldKind::Object => put("type", "object".into()),
+        FieldKind::Any => {}
     }
+    out
 }
 
 /// Whole numbers render as JSON integers (`300`, not `300.0`).
