@@ -16,7 +16,7 @@ Last updated: 2026-10-27
 | --- | --- |
 | M0 spike | Simulator and CI phase done. Device phase still to run (the paid developer account is now available) ([spike-report.md](spike-report.md#follow-ups)). |
 | M1 vault + onboarding | **Done.** PRs #6–#9 merged. The app runs on the maintainer's iPhone; the full [device checklist](#device-checklist) is still to be recorded. |
-| M2 collectors + raw data viewer | **In progress**: step 1 of 7 (below). |
+| M2 collectors + raw data viewer | **In progress**: step 1 of 7 done; step 2 (merge and query) is next. |
 
 ## In progress
 
@@ -31,7 +31,7 @@ Last updated: 2026-10-27
 
 One PR per step:
 
-1. [ ] **RFC-0001 + `atlys-adm` (2.1, 2.2).** PR #10, branch `arsalann/m2-data-model`.
+1. [x] **RFC-0001 + `atlys-adm` (2.1, 2.2).** PR #10, merged.
    - [x] `atlys-adm` rewritten:
      - Type table (`types.rs`, 21 types).
      - Strict JSON parsing (duplicate keys rejected).
@@ -43,15 +43,15 @@ One PR per step:
      - `types/` generated from the type table, with a drift test.
      - Synthetic `fixtures.json`.
      - `scripts/adm-schemas.py --check` (stdlib) and the CI job `adm-schemas`.
-   - [x] [RFC-0001](../../spec/rfcs/0001-data-model.md) (Proposed), including the merge semantics that step 2 implements.
+   - [x] [RFC-0001](../../spec/rfcs/0001-data-model.md) (Accepted), including the merge semantics that step 2 implements.
    - [x] Vault inbox: a batch from a newer ADM version stays pending (`NeedsUpdate`).
    - [x] FFI:
      - `RecordDraft` gains optional `tz` and `source_*` fields.
      - New `RecordDeletion` and `IngestSealer.sealWithDeletions`.
      - `SpikeSealer` keeps the draft format.
    - [x] iOS core rebuilt. `Atlys` (unit + UI) and `AtlysSpike` tests pass in the Simulator.
-   - [ ] PR open and in review. On merge, set RFC-0001 to Accepted and start step 2.
-2. [ ] **Merge and query (2.3, minimal 3.1).**
+   - [x] Merged; RFC-0001 accepted.
+2. [ ] **Merge and query (2.3, minimal 3.1).** Next; not started.
    - Store schema v2: `records` (unique type + source_id), `tombstones`, and `merge_log` (sealed-file SHA-256).
    - `UnlockedVault::merge_inbox`, per RFC-0001 "Merge", with crash tests.
    - Read API: `record_types`, `records(type, before, limit)`, `record(id)`, and `stats`.

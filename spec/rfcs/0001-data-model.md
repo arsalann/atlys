@@ -1,6 +1,6 @@
 # RFC-0001: Atlys Data Model v0
 
-Status: **Proposed** (2026-10-27). This is the design step for M2.1. It is
+Status: **Accepted** (2026-10-27, PR #10). This is the design step for M2.1. It is
 implemented by `core/crates/atlys-adm`, with JSON Schemas and synthetic
 fixtures in [`spec/adm/v0/`](../adm/v0/).
 
