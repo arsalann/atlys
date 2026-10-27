@@ -45,20 +45,13 @@ Simulator. The M1 exit (on a real device) needs the device checklist in
 
 ## M2: Collectors
 
-Status (2026-10-27): in progress, one PR per step. The next app version is M2
-plus a **raw data viewer** pulled forward from M3: 3.5 (browse by type and
-date, record JSON) and the status part of 3.4 (per-source state, Collect
-now). Order:
-
-1. RFC-0001 and `atlys-adm` (2.1, 2.2).
-2. Merge and query (2.3).
-3. Collector framework and Device collector (2.4, 2.8).
-4. Viewer.
-5. Motion (2.7).
-6. Location (2.6).
-7. Health (2.5).
-
-Current step: [handoff.md](handoff.md).
+Status (2026-10-28): implemented in PRs #10–#12, together with a **raw data
+viewer** pulled forward from M3: 3.5 (browse by type and date, record JSON)
+and the status part of 3.4 (per-source state, Collect now). The collectors
+follow the maintainer's data rules: collect everything accessible, keep raw
+values and units, and flag deletions at the source instead of removing
+records. The exit criterion (3+ days on a real device) and the device-only
+checks are in [handoff.md](handoff.md#m2).
 
 | # | Task | Exit criteria |
 | --- | --- | --- |

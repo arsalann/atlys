@@ -11,9 +11,11 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../AtlysCore"),
+        .package(path: "../AtlysCollectors"),
     ],
     targets: [
-        .target(name: "AtlysUI", dependencies: ["AtlysCore"]),
+        .target(name: "AtlysUI", dependencies: ["AtlysCore", "AtlysCollectors"]),
+        .testTarget(name: "AtlysUIUnitTests", dependencies: ["AtlysUI", "AtlysCore"]),
     ],
     swiftLanguageModes: [.v6]
 )

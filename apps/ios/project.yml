@@ -23,18 +23,30 @@ targets:
     type: application
     platform: iOS
     sources: [Atlys]
+    entitlements:
+      path: Atlys/Atlys.entitlements
     info:
       path: Atlys/Info.plist
       properties:
         CFBundleDisplayName: Atlys
-        CFBundleShortVersionString: "0.0.1"
-        CFBundleVersion: "1"
+        CFBundleShortVersionString: "0.2.0"
+        CFBundleVersion: "2"
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSFaceIDUsageDescription: Face ID unlocks your vault without typing your master password.
+        NSHealthShareUsageDescription: Atlys copies your Apple Health data into your encrypted vault on this iPhone. Nothing leaves the device.
+        NSHealthClinicalHealthRecordsShareUsageDescription: Atlys copies your health records into your encrypted vault on this iPhone. Nothing leaves the device.
+        NSLocationWhenInUseUsageDescription: Atlys records the places you visit into your encrypted vault on this iPhone. Nothing leaves the device.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Always access lets Atlys record visits and location changes in the background, using low-power detection. Nothing leaves the device.
+        NSMotionUsageDescription: Atlys copies your motion activity and step counts into your encrypted vault on this iPhone. Nothing leaves the device.
+        UIBackgroundModes: [fetch, processing, location]
+        BGTaskSchedulerPermittedIdentifiers:
+          - $(PRODUCT_BUNDLE_IDENTIFIER).refresh
+          - $(PRODUCT_BUNDLE_IDENTIFIER).processing
+        AtlysHealthRecords: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(ATLYS_BUNDLE_ID_PREFIX).app
@@ -127,3 +139,4 @@ schemes:
         - AtlysUITests
         - package: AtlysCore/AtlysCoreTests
         - package: AtlysCollectors/AtlysCollectorsTests
+        - package: AtlysUI/AtlysUIUnitTests

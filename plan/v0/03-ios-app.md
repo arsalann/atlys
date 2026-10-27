@@ -83,8 +83,8 @@ object IngestSealer {               // only needs the public key; safe in backgr
 | Lock | Face ID / password |
 | **Today** | Cards: steps and activity, sleep last night, places visited, heart summary, collection status. The "this is my data" moment. |
 | **Timeline** | Day-by-day list mixing visits, workouts, sleep, and activity segments. Coordinates and locally clustered "Place 1, Place 2" names, since there's no map or geocoding in v0. |
-| **Sources** | Per collector: permission state, last collected, records today and total, backfill progress, pending inbox count, "Collect now", toggle |
-| **Explorer** | Browse by record type, filter by date, and open any record to see its JSON and provenance |
+| **Sources** | Per collector: permission state, last collected, records total, backfill progress, pending inbox count, "Collect now". In v0.2 this is a section of the home screen. |
+| **Explorer** | Browse by record type, filter by date, and open any record to see its JSON and provenance. v0.2 ships it as "Browse your data" (types → days → record JSON), read-only with no copy or share. |
 | **Settings** | Auto-lock, Face ID, change password, regenerate recovery phrase, encrypted export, JSON export, storage used, delete vault, about/licenses (including the SQLCipher attribution), privacy statement |
 
 ## Project layout

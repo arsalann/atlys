@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AtlysHealthRecords</key>
+	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).refresh</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).processing</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -17,18 +24,34 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.1</string>
+	<string>0.2.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID unlocks your vault without typing your master password.</string>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>Atlys copies your health records into your encrypted vault on this iPhone. Nothing leaves the device.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Atlys copies your Apple Health data into your encrypted vault on this iPhone. Nothing leaves the device.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Always access lets Atlys record visits and location changes in the background, using low-power detection. Nothing leaves the device.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Atlys records the places you visit into your encrypted vault on this iPhone. Nothing leaves the device.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Atlys copies your motion activity and step counts into your encrypted vault on this iPhone. Nothing leaves the device.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>location</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

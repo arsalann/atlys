@@ -36,7 +36,7 @@ Values are stored in the unit Apple Health uses for each type, with the unit str
 
 - `HKAnchoredObjectQuery` per type for incremental sync, including **deletions**. Anchors are saved as collector state.
 - `HKObserverQuery` + `enableBackgroundDelivery` wake the app when new samples arrive (hourly for most types; HealthKit decides the exact timing).
-- **Initial backfill** of all history in chunks (by year), with progress shown on the Sources screen. It may take a while for long-time Apple Watch users.
+- **Initial backfill** of all history, paged 2000 samples at a time per type through the same anchored queries, so it resumes across runs. Progress ("x of y types") is shown on the Sources list, and `BGProcessingTask` continues it while charging. It may take a while for long-time Apple Watch users.
 - Each sample keeps its HealthKit UUID as `source_id` (for dedupe) plus source app and device in provenance. Deleted samples are flagged in the vault, not removed.
 
 **iOS constraints:**
