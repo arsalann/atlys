@@ -2,7 +2,7 @@
 
 This is the working state of v0 implementation, kept current so that anyone (person or agent) can resume after an interruption. Update it in the same commit as every change: what was done, what is in progress, and the exact next step.
 
-Last updated: 2026-10-27
+Last updated: 2026-10-28
 
 ## Resume here
 
@@ -16,7 +16,7 @@ Last updated: 2026-10-27
 | --- | --- |
 | M0 spike | Simulator and CI phase done. Device phase still to run (the paid developer account is now available) ([spike-report.md](spike-report.md#follow-ups)). |
 | M1 vault + onboarding | **Done.** PRs #6–#9 merged. The app runs on the maintainer's iPhone; the full [device checklist](#device-checklist) is still to be recorded. |
-| M2 collectors + raw data viewer | **In progress**: steps 1–2 done (step 2 in PR #11); the iOS collectors and the viewer are next. |
+| M2 collectors + raw data viewer | **Implemented** (PRs #10–#12). Remaining: device verification ([M2 checklist](#m2)) and the 3-day exit run. |
 
 ## In progress
 
@@ -65,31 +65,37 @@ One PR per step:
    - `atlys_vault::records::merge_inbox`: deadline, crash replay via the merge log, quarantine, update-needed.
    - Read API: `record_types` (by type and subtype), `collector_summaries`, `records` (keyset pages), `record` (JSON), and previews.
    - FFI: `VaultSession.mergeInbox(maxSeconds)`, `recordCount`, `recordTypes`, `collectorSummaries`, `records`, `recordJson`, `inboxStatus`.
-3. [ ] **Collector framework + Device collector (2.4, 2.8).**
-   - `Collector` protocol, state file, `CollectionCoordinator` with a time budget.
-   - Triggers: foreground, `BGAppRefreshTask`, `BGProcessingTask`.
-   - Merge on unlock and after foreground runs.
-   - Device collector: battery, connectivity, info.
-4. [ ] **Raw data viewer + sources status (3.5 and 3.4 slices).**
-   - Sources section on home.
-   - Types → day-grouped list → record detail (JSON + provenance).
-   - XCUITest with seeded synthetic records.
-5. [ ] **Motion collector (2.7).**
-   - 7-day catch-up and segment compression.
-   - Gap warning.
-   - `NSMotionUsageDescription`.
-6. [ ] **Location collector (2.6).**
-   - When In Use → Always.
-   - Visits + significant changes, holding a `CLServiceSession`.
-   - GPX for the Simulator.
-7. [ ] **Health collector (2.5).**
-   - Entitlements.
-   - Anchored queries with deletions.
-   - Background delivery.
-   - Full-history backfill by year.
-   - Deferral while the phone is locked.
+3. [x] **Collectors, viewer, and app wiring (2.4–2.8, 3.4 and 3.5 slices).** PR #12, branch `arsalann/m2-collectors`.
+   - **`AtlysCollectors` framework**
+     - `Collector` protocol, `CollectorState` files in `<vault root>/collectors/`, and `CollectionCoordinator`, which serializes runs and enforces a time budget.
+     - `CollectionService`, started from the app delegate at launch, registers HealthKit observers, the location manager, `BGAppRefreshTask` (`<bundle id>.refresh`), and `BGProcessingTask` (`<bundle id>.processing`).
+     - Batches are sealed in chunks of at most 2000 records.
+   - **Device:** battery, network path (`NWPathMonitor`, no requests), device info. At most one snapshot per 15 minutes, unless "Collect now".
+   - **Motion:** raw activity updates and hourly pedometer totals, catching up over the 7 days iOS keeps, with a gap warning after 5 days.
+   - **Location**
+     - Visits and significant changes are sealed as they arrive, even while the vault is locked.
+     - A fix is taken when the app opens.
+     - Optional detailed tracking (Settings) uses `CLLocationUpdate.liveUpdates` and `CLBackgroundActivitySession`.
+     - Permissions go When In Use, then Always.
+   - **Health**
+     - Every readable type: about 115 quantity types, about 70 category types, workouts (statistics, events, activities, routes), ECG voltages, heartbeat series, audiograms, State of Mind, GAD-7/PHQ-9, characteristics, and clinical records.
+     - Anchored queries with deletions, paging through all history 2000 samples at a time, so the backfill resumes across runs.
+     - Values are stored in Apple Health's preferred unit for each type.
+     - Runs while the phone is locked are deferred.
+     - One observer query covers all types, with background delivery.
+   - **App**
+     - Entitlements: HealthKit, Health Records, background delivery.
+     - Purpose strings and background modes (`fetch`, `processing`, `location`); version 0.2.0 (2).
+     - `AppModel` collects on launch and foreground, merges in 1-second slices after unlock, and exposes the browser queries.
+   - **UI**
+     - Home has "Browse your data" (record count, pending batches) and Sources (permission, last collected, count, history import progress, Turn on / Allow Always / Open Settings, Collect now, Turn on all).
+     - The browser goes from types (grouped by family and subtype) to a day-grouped list to the record JSON. It is read-only, with no copy or share.
+     - Lock moved to the toolbar.
+   - **Tests**
+     - Coordinator with fake collectors under every trigger, sealing in chunks, state, record builders, and display names.
+     - The UI test now goes onboarding → Device record collected, merged, browsed, and opened → lock and unlock → relaunch.
 
-M2 exit (device only): with the app closed, all four collectors keep filling the vault for 3+ days. Device-only checks for each step are added to the checklist below as they land.
+M2 exit (device only): with the app closed, all four collectors keep filling the vault for 3+ days. See the [M2 checklist](#m2).
 
 ## Device checklist
 
@@ -109,6 +115,25 @@ Recorded so far (2026-10-27): the maintainer installed the M1 build on an iPhone
 7. Settings → New recovery phrase: the old phrase stops working.
 8. Delete vault with the password: the app returns to the welcome screen; reinstall-free relaunch shows onboarding.
 9. Data Protection: with a development build, check that `vault/vault.db` reads back as `complete` and the container as `completeUntilFirstUserAuthentication`.
+
+### M2
+
+1. **Install.** Pull `main`, run `scripts/build-ios-core.sh`, and build the **Atlys** scheme signed with your team. If Xcode reports a missing capability, open Signing & Capabilities and let it add HealthKit (with Clinical Health Records and Background Delivery) and Background Modes.
+2. **Your existing vault.** Unlock the M1 vault. It migrates to schema 2, and "Browse your data" shows Device records within seconds.
+3. **Permissions.** Tap "Turn on all sources":
+   - Health: enable every category in the sheet. Health Records gets its own sheet if a provider is connected.
+   - Motion: allow.
+   - Location: While Using, then Change to Always Allow.
+4. **History import.** Health's history import progresses ("x of y types"). Note how long a full import takes and whether it finishes while charging overnight (`BGProcessingTask`).
+5. **Raw values.** In the browser, check Health measurements against Apple Health: values and units, a workout with its route, and sleep stages.
+6. **Deleted at source.** Delete a sample in Apple Health, then Collect now. The record stays in Atlys and shows "Deleted at source".
+7. **Locked phone.** Lock the phone, walk somewhere, and come back:
+   - Visits and location points arrive.
+   - Health runs while locked show "Waiting for the iPhone to be unlocked" and catch up after unlock.
+   - Batches sealed while the vault was locked merge on unlock.
+8. **Motion.** Activity and hourly pedometer records cover the last 7 days after the first run.
+9. **Detailed location tracking** (Settings): points arrive continuously in the background. Note the battery cost over a few hours.
+10. **3-day run.** Open the app only occasionally. All four sources keep filling the vault (the M2 exit criterion). Record battery use from Settings → Battery.
 
 ## Next steps after M2
 

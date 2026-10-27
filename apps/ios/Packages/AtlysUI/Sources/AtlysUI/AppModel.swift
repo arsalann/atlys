@@ -1,3 +1,4 @@
+import AtlysCollectors
 import AtlysCore
 import Foundation
 import Observation
@@ -31,18 +32,31 @@ public final class AppModel {
     /// True while a slow core call (Argon2id) is running.
     public private(set) var isWorking = false
 
+    /// Collector status for the Sources list.
+    public private(set) var sources: [CollectionCoordinator.Status] = []
+    /// Records and latest merge per collector.
+    public private(set) var collectorSummaries: [CollectorSummary] = []
+    public private(set) var recordCount: UInt64 = 0
+    public private(set) var inbox = InboxStatus(pendingFiles: 0, quarantinedFiles: 0)
+    public private(set) var isCollecting = false
+    public private(set) var isMerging = false
+    /// Bumped after each merge so open screens reload.
+    public private(set) var dataVersion = 0
+
     public var autoLockSeconds: Int {
         didSet { defaults.set(autoLockSeconds, forKey: Self.autoLockKey) }
     }
 
     let location: VaultLocation
+    let collection: CollectionService
     private let defaults: UserDefaults
     private var session: VaultSession?
     private var backgroundedAt: Date?
     private var protectedDataObserver: NSObjectProtocol?
 
-    public init(location: VaultLocation, defaults: UserDefaults = .standard) {
+    public init(location: VaultLocation, collection: CollectionService = .shared, defaults: UserDefaults = .standard) {
         self.location = location
+        self.collection = collection
         self.defaults = defaults
         autoLockSeconds = defaults.object(forKey: Self.autoLockKey) as? Int ?? 60
     }
@@ -82,6 +96,7 @@ public final class AppModel {
             vaultID = try? vaultIdUnverified(vaultRoot: location.path)
             refreshBiometrics()
             phase = .locked
+            Task { await collectAndMerge(.foreground) }
         } else {
             phase = .onboarding
         }
@@ -104,6 +119,7 @@ public final class AppModel {
     public func finishOnboarding() {
         guard session != nil else { return }
         phase = .unlocked
+        Task { await collectAndMerge(.foreground) }
     }
 
     // MARK: Unlock and lock
@@ -144,6 +160,7 @@ public final class AppModel {
         location.protectDatabase()
         refreshBiometrics()
         phase = .unlocked
+        Task { await collectAndMerge(.foreground) }
     }
 
     // MARK: Settings
@@ -203,6 +220,8 @@ public final class AppModel {
         self.session = nil
         vaultID = nil
         biometricsEnrolled = false
+        recordCount = 0
+        collectorSummaries = []
         phase = .onboarding
     }
 
@@ -220,10 +239,91 @@ public final class AppModel {
 
     public func sceneDidBecomeActive() {
         defer { backgroundedAt = nil }
-        guard phase == .unlocked, let since = backgroundedAt else { return }
-        if Date().timeIntervalSince(since) >= Double(autoLockSeconds) {
+        if phase == .unlocked, let since = backgroundedAt,
+           Date().timeIntervalSince(since) >= Double(autoLockSeconds) {
             lock()
         }
+        if phase == .unlocked || phase == .locked {
+            Task { await collectAndMerge(.foreground) }
+        }
+    }
+
+    // MARK: Collection and data
+
+    /// Runs the collectors, then merges the inbox if the vault is unlocked.
+    public func collectAndMerge(_ trigger: CollectionTrigger, only ids: Set<CollectorID>? = nil) async {
+        guard location.exists, !isCollecting else { return }
+        isCollecting = true
+        sources = await collection.statuses()
+        await collection.collect(trigger, only: ids)
+        isCollecting = false
+        sources = await collection.statuses()
+        await mergeInbox()
+    }
+
+    public func collectNow() async {
+        await collectAndMerge(.manual)
+    }
+
+    /// Asks iOS for a collector's permission, then collects from it.
+    public func requestPermission(_ id: CollectorID) async {
+        await collection.requestPermission(id)
+        sources = await collection.statuses()
+        await mergeInbox()
+    }
+
+    public func refreshSources() async {
+        sources = await collection.statuses()
+    }
+
+    /// Detailed (continuous) location tracking. Off by default.
+    public var detailedLocationTracking: Bool {
+        get { collection.location.detailedTracking }
+        set { collection.location.detailedTracking = newValue }
+    }
+
+    /// Merges pending batches in short slices, so other calls stay responsive.
+    public func mergeInbox() async {
+        guard let session, phase == .unlocked, !isMerging else { return }
+        isMerging = true
+        defer { isMerging = false }
+        while self.session === session {
+            let report = try? await Task.detached(priority: .utility) {
+                try session.mergeInbox(maxSeconds: 1.0)
+            }.value
+            guard let report else { break }
+            if report.filesMerged + report.filesReplayed + report.filesQuarantined > 0 { dataVersion += 1 }
+            await refreshDataSummary()
+            if report.filesRemaining == 0 { break }
+        }
+    }
+
+    func refreshDataSummary() async {
+        guard let session else { return }
+        let summary = try? await Task.detached(priority: .utility) {
+            (try session.recordCount(), try session.collectorSummaries(), try session.inboxStatus())
+        }.value
+        guard let summary else { return }
+        recordCount = summary.0
+        collectorSummaries = summary.1
+        inbox = summary.2
+    }
+
+    func recordTypes() async throws -> [RecordTypeSummary] {
+        let session = try requireSession()
+        return try await Task.detached(priority: .userInitiated) { try session.recordTypes() }.value
+    }
+
+    func records(type: String, subtype: String?, after: RecordCursor?, limit: UInt32 = 100) async throws -> [RecordRow] {
+        let session = try requireSession()
+        return try await Task.detached(priority: .userInitiated) {
+            try session.records(recordType: type, subtype: subtype, after: after, limit: limit)
+        }.value
+    }
+
+    func recordJSON(id: String) async throws -> String? {
+        let session = try requireSession()
+        return try await Task.detached(priority: .userInitiated) { try session.recordJson(id: id) }.value
     }
 
     private func observeDeviceLock() {

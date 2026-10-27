@@ -72,6 +72,7 @@
 		4E9D75AEA613463E3282514C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5B013B48C310A02F72BFDA13 /* WakeLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeLog.swift; sourceTree = "<group>"; };
 		5D8B2D997F9E0005354880E9 /* CoreSpikeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreSpikeTests.swift; sourceTree = "<group>"; };
+		64CB83AF75561418ADBDE9C0 /* Atlys.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Atlys.entitlements; sourceTree = "<group>"; };
 		69B1D946902D43F2ADF27413 /* SecureEnclaveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveTests.swift; sourceTree = "<group>"; };
 		8806E63F3A3515CCD3158E52 /* SealedInboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SealedInboxTests.swift; sourceTree = "<group>"; };
 		8906102FB7A69852F6974077 /* Argon2Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Argon2Benchmark.swift; sourceTree = "<group>"; };
@@ -139,6 +140,7 @@
 		29FCCA2CBF2CE774E695204A /* Atlys */ = {
 			isa = PBXGroup;
 			children = (
+				64CB83AF75561418ADBDE9C0 /* Atlys.entitlements */,
 				4E6B822205E90405CF9FF7D8 /* AtlysApp.swift */,
 				A8686A42D7708880BE38E015 /* Info.plist */,
 			);
@@ -542,6 +544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Atlys/Atlys.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Atlys/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -726,6 +729,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Atlys/Atlys.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Atlys/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

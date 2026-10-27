@@ -57,6 +57,25 @@ final class OnboardingUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Vault unlocked"].waitForExistence(timeout: 10))
 
+        // The Device collector needs no permission: its snapshot is sealed,
+        // merged, and browsable right away.
+        app.buttons["browse-data"].tapWhenReady()
+        let battery = app.buttons["record-type-device.battery-"]
+        XCTAssertTrue(battery.waitForExistence(timeout: 30), "device snapshot never reached the vault")
+        battery.tap()
+        app.buttons["record-row"].firstMatch.tapWhenReady()
+        let json = app.staticTexts["record-json"]
+        XCTAssertTrue(json.waitForExistence(timeout: 10))
+        XCTAssertTrue(json.label.contains("\"type\": \"device.battery\""), json.label)
+        XCTAssertTrue(json.label.contains("\"collector\": \"device\""), json.label)
+        // Back to the home screen (back buttons have no title on iOS 26).
+        for _ in 0..<3 where !app.buttons["lock-now"].exists {
+            let back = app.buttons["BackButton"].firstMatch
+            if back.waitForExistence(timeout: 5) { back.tap() }
+            _ = app.buttons["lock-now"].waitForExistence(timeout: 2)
+        }
+        XCTAssertTrue(app.buttons["lock-now"].waitForExistence(timeout: 10))
+
         // Lock, try a wrong password, then unlock.
         app.buttons["lock-now"].tapWhenReady()
         let unlockField = app.secureTextFields["unlock-password"]

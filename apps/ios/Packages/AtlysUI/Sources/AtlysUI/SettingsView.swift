@@ -1,8 +1,8 @@
 import AtlysCore
 import SwiftUI
 
-/// Security settings: Face ID, auto-lock, change password, new recovery
-/// phrase, delete vault.
+/// Settings: Face ID, auto-lock, detailed location, change password, new
+/// recovery phrase, delete vault.
 struct SettingsView: View {
     let model: AppModel
 
@@ -31,6 +31,17 @@ struct SettingsView: View {
                         }
                     }
                     .accessibilityIdentifier("auto-lock-picker")
+                }
+                Section {
+                    Toggle("Detailed location tracking", isOn: Binding(
+                        get: { model.detailedLocationTracking },
+                        set: { model.detailedLocationTracking = $0 }
+                    ))
+                    .accessibilityIdentifier("detailed-location-toggle")
+                } header: {
+                    Text("Data collection")
+                } footer: {
+                    Text("Records your route continuously, even in the background. Uses noticeably more battery. Visits and larger moves are recorded either way.")
                 }
                 Section("Master password and recovery") {
                     NavigationLink("Change master password") { ChangePasswordView(model: model) }

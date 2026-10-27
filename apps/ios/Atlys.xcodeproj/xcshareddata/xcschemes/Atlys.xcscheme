@@ -83,6 +83,17 @@
                ReferencedContainer = "container:Packages/AtlysCollectors">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AtlysUIUnitTests"
+               BuildableName = "AtlysUIUnitTests"
+               BlueprintName = "AtlysUIUnitTests"
+               ReferencedContainer = "container:Packages/AtlysUI">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
