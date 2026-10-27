@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Walking heart rate average, usually one value per day.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "bpm": {
+          "description": "Beats per minute.",
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "type": "number"
+        }
+      },
+      "required": [
+        "bpm"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.walking_heart_rate"
+    }
+  },
+  "title": "health.walking_heart_rate",
+  "x-sensitivity": "high"
+}

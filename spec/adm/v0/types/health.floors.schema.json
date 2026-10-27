@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "Floors climbed during the interval.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "description": "Floors climbed.",
+          "maximum": 100000,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.floors"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "health.floors",
+  "x-sensitivity": "high"
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A body mass measurement.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "kg": {
+          "description": "Body mass in kilograms.",
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "type": "number"
+        }
+      },
+      "required": [
+        "kg"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "health.body_mass"
+    }
+  },
+  "title": "health.body_mass",
+  "x-sensitivity": "high"
+}

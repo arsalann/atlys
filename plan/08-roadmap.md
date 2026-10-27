@@ -13,8 +13,8 @@ Milestones are scoped by outcome, not date. Each phase should be usable on its o
 - [ ] Decide relationship to PDPP (see [research/pdpp-and-dataconnect.md](research/pdpp-and-dataconnect.md))
 - [ ] Community files: CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, GOVERNANCE, issue/PR templates
 - [ ] CI skeleton: lint, secret scanning (gitleaks), CodeQL, Dependabot
-- [ ] RFC-0001: Atlys Data Model envelope and first namespaces (`location`, `health`, `device`)
-- [ ] RFC-0002: Vault format and key hierarchy
+- [x] RFC-0001: Atlys Data Model envelope and first namespaces (`location`, `health`, `device`): [spec/rfcs/0001-data-model.md](../spec/rfcs/0001-data-model.md)
+- [x] RFC-0002: Vault format and key hierarchy: [spec/rfcs/0002-vault-format.md](../spec/rfcs/0002-vault-format.md)
 - [ ] RFC-0003: Connector protocol and manifest
 
 ## Phase 1: v0, iOS app with local vault and on-device data

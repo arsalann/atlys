@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A device and app snapshot.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "app_version": {
+          "description": "Atlys app version and build.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "free_storage_bytes": {
+          "description": "Free storage available to the app, in bytes.",
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "locale": {
+          "description": "Current locale identifier.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "model": {
+          "description": "Hardware model identifier.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "os_name": {
+          "description": "Operating system name, for example iOS.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "os_version": {
+          "description": "Operating system version.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "time_zone": {
+          "description": "Current IANA time zone.",
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "os_name",
+        "os_version",
+        "model",
+        "app_version"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "device.info"
+    }
+  },
+  "title": "device.info",
+  "x-sensitivity": "low"
+}

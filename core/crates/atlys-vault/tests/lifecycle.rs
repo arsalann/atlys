@@ -405,13 +405,16 @@ fn inbox_writer_needs_no_secrets_and_unlocked_vault_reads_it() {
     let batch = Batch::new(
         "device".into(),
         1_700_000_000_000,
-        vec![RecordDraft {
-            record_type: "device.battery".into(),
-            source_id: "synthetic-1".into(),
-            start_ms: 1_700_000_000_000,
-            end_ms: None,
-            data: serde_json::json!({ "level": 0.5 }),
-        }],
+        vec![
+            RecordDraft::from_value(&serde_json::json!({
+                "type": "device.battery",
+                "source_id": "synthetic-1",
+                "start_ms": 1_700_000_000_000_i64,
+                "data": { "level": 0.5, "state": "unplugged", "low_power_mode": false },
+            }))
+            .unwrap(),
+        ],
+        vec![],
     )
     .unwrap();
     let file = writer.write(&batch).unwrap();

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADM v0 record",
+  "description": "A record as stored in the vault, shown in the app, and written by exports (RFC-0001, Record JSON).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "type", "schema_version", "time", "data", "provenance", "sensitivity"],
+  "properties": {
+    "id": {
+      "description": "Vault-local ULID.",
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "type": { "$ref": "record-draft.schema.json#/properties/type" },
+    "schema_version": { "const": "0.1" },
+    "time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start"],
+      "properties": {
+        "start": { "$ref": "#/$defs/timestamp" },
+        "end": { "$ref": "#/$defs/timestamp" },
+        "tz": { "$ref": "record-draft.schema.json#/properties/tz" }
+      }
+    },
+    "data": { "type": "object" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collector", "source_id", "ingested_at"],
+      "properties": {
+        "collector": { "$ref": "batch.schema.json#/properties/collector" },
+        "source_id": { "$ref": "record-draft.schema.json#/$defs/source_id" },
+        "source": { "$ref": "record-draft.schema.json#/properties/source" },
+        "ingested_at": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "sensitivity": { "enum": ["low", "medium", "high"] }
+  },
+  "$defs": {
+    "timestamp": {
+      "description": "RFC 3339 UTC with millisecond precision.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A segment of one detected motion activity.",
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "activity": {
+          "description": "Detected activity.",
+          "enum": [
+            "stationary",
+            "walking",
+            "running",
+            "cycling",
+            "automotive",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "description": "Detection confidence.",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      },
+      "required": [
+        "activity",
+        "confidence"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "device.motion_activity"
+    }
+  },
+  "required": [
+    "end_ms"
+  ],
+  "title": "device.motion_activity",
+  "x-sensitivity": "medium"
+}

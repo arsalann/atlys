@@ -2,7 +2,7 @@
 
 This is the working state of v0 implementation, kept current so that anyone (person or agent) can resume after an interruption. Update it in the same commit as every change: what was done, what is in progress, and the exact next step.
 
-Last updated: 2026-10-26
+Last updated: 2026-10-27
 
 ## Resume here
 
@@ -14,28 +14,82 @@ Last updated: 2026-10-26
 
 | Milestone | State |
 | --- | --- |
-| M0 spike | Simulator and CI phase done. Device phase blocked on an Apple Developer account ([spike-report.md](spike-report.md#follow-ups)). |
-| M1.1 RFC-0002 | **Done.** [RFC-0002](../../spec/rfcs/0002-vault-format.md) accepted and merged (PR #6) with synthetic vectors. |
-| M1.2 `atlys-crypto` | **Done.** PR #7 merged: RFC-0002 Argon2id range, header MAC, envelope vectors. |
-| M1.3a vault format (Rust) | **Done.** PR #8 merged. |
-| M1.3b – M1.7 first working app | **Done, in review**: PR #9. Device checklist pending. |
+| M0 spike | Simulator and CI phase done. Device phase still to run (the paid developer account is now available) ([spike-report.md](spike-report.md#follow-ups)). |
+| M1 vault + onboarding | **Done.** PRs #6–#9 merged. The app runs on the maintainer's iPhone; the full [device checklist](#device-checklist) is still to be recorded. |
+| M2 collectors + raw data viewer | **In progress**: step 1 of 7 done; step 2 (merge and query) is next. |
 
 ## In progress
 
-**First working version of the app: M1.3b – M1.7.** PR #9, branch `arsalann/m1-app`. All items below are done; awaiting review, CI, and the device checklist. Goal (M1 exit): create, lock, unlock, recover, and delete a vault on a real iPhone.
+**Next app version: data collection (M2) + raw data viewer.** Scope agreed with the maintainer on 2026-10-27:
 
-- [x] **1.4 Rust**: `atlys_vault::password` (zxcvbn score >= 3 and >= 12 characters, enforced on create, change, and recover) and `atlys_vault::recovery` (BIP-39 English 24-word phrase from 32 bytes of entropy, checksum validated, wordlist hash checked).
-- [x] **1.3b FFI**: export `VaultSession` and vault functions over UniFFI (create, unlock with password or device envelope, recover, change password, regenerate recovery, device envelope, lock, delete, password strength, phrase validation). `IngestSealer.open(vaultRoot)` writes inbox v2. The spike keeps M0 formats through a separate `SpikeSealer`; the spike app stays until the device phase is done (it is the device test tool).
-- [x] **Swift core layer** (`AtlysCore`): `VaultLocation` (container paths, file protection), `BiometricUnlock` (Secure Enclave key + device envelope in the Keychain, scoped by vault ID), `AppModel` state machine.
-- [x] **1.5 Onboarding UI**: welcome, how it works, password with strength meter, confirm, recovery phrase (show, confirm 3 words), Face ID.
-- [x] **1.6 Lock**: lock screen (password, Face ID, forgot password → recovery), auto-lock timeout, lock on device lock, app-switcher privacy cover.
-- [x] **1.7 Settings**: change password, regenerate recovery phrase, Face ID toggle, auto-lock, delete vault (fresh authentication).
-- [x] Tests: Rust unit/integration, Swift FFI round trip, XCUITest onboarding → lock → unlock in the Simulator.
-- [x] Docs (work breakdown, 03-ios-app) and this file. Open PR.
+- **Collectors.** All four v0 collectors (Device, Motion, Location, Health) seal records into the inbox, including in the background. The vault merges them on unlock.
+- **Viewer.** A raw data viewer to browse records by type and day and open any record's JSON and provenance. Browse only: no copy or share out of the app, and no inbox debugging screens.
+- **Sources status.** Per-source status on the home screen with "Collect now".
+- **Health history.** The backfill imports all Apple Health history, chunked by year with progress.
+- **Signing.** Builds use the paid Apple Developer Program, so the HealthKit entitlements are available.
+- **Out of scope** (still M3/M4): Today and Timeline screens, place clustering, exports, the 1M-record performance target, battery profiling.
 
-### Device checklist
+One PR per step:
 
-The Simulator cannot verify these (see AGENTS.md). Run them on a real iPhone with a signed build of the **Atlys** scheme (`scripts/build-ios-core.sh` first) and record results here:
+1. [x] **RFC-0001 + `atlys-adm` (2.1, 2.2).** PR #10, merged.
+   - [x] `atlys-adm` rewritten:
+     - Type table (`types.rs`, 21 types).
+     - Strict JSON parsing (duplicate keys rejected).
+     - Record drafts, deletions, batches (`adm_version` `0.1`), and record JSON with RFC 3339 times.
+     - Error codes with paths.
+     - The M0 format moved to `atlys_adm::draft` for the spike.
+   - [x] `spec/adm/v0/`:
+     - Envelope, batch, and record schemas.
+     - `types/` generated from the type table, with a drift test.
+     - Synthetic `fixtures.json`.
+     - `scripts/adm-schemas.py --check` (stdlib) and the CI job `adm-schemas`.
+   - [x] [RFC-0001](../../spec/rfcs/0001-data-model.md) (Accepted), including the merge semantics that step 2 implements.
+   - [x] Vault inbox: a batch from a newer ADM version stays pending (`NeedsUpdate`).
+   - [x] FFI:
+     - `RecordDraft` gains optional `tz` and `source_*` fields.
+     - New `RecordDeletion` and `IngestSealer.sealWithDeletions`.
+     - `SpikeSealer` keeps the draft format.
+   - [x] iOS core rebuilt. `Atlys` (unit + UI) and `AtlysSpike` tests pass in the Simulator.
+   - [x] Merged; RFC-0001 accepted.
+2. [ ] **Merge and query (2.3, minimal 3.1).** Next; not started.
+   - Store schema v2: `records` (unique type + source_id), `tombstones`, and `merge_log` (sealed-file SHA-256).
+   - `UnlockedVault::merge_inbox`, per RFC-0001 "Merge", with crash tests.
+   - Read API: `record_types`, `records(type, before, limit)`, `record(id)`, and `stats`.
+   - FFI: `VaultSession.mergeInbox` plus the read functions.
+3. [ ] **Collector framework + Device collector (2.4, 2.8).**
+   - `Collector` protocol, state file, `CollectionCoordinator` with a time budget.
+   - Triggers: foreground, `BGAppRefreshTask`, `BGProcessingTask`.
+   - Merge on unlock and after foreground runs.
+   - Device collector: battery, connectivity, info.
+4. [ ] **Raw data viewer + sources status (3.5 and 3.4 slices).**
+   - Sources section on home.
+   - Types → day-grouped list → record detail (JSON + provenance).
+   - XCUITest with seeded synthetic records.
+5. [ ] **Motion collector (2.7).**
+   - 7-day catch-up and segment compression.
+   - Gap warning.
+   - `NSMotionUsageDescription`.
+6. [ ] **Location collector (2.6).**
+   - When In Use → Always.
+   - Visits + significant changes, holding a `CLServiceSession`.
+   - GPX for the Simulator.
+7. [ ] **Health collector (2.5).**
+   - Entitlements.
+   - Anchored queries with deletions.
+   - Background delivery.
+   - Full-history backfill by year.
+   - Deferral while the phone is locked.
+
+M2 exit (device only): with the app closed, all four collectors keep filling the vault for 3+ days. Device-only checks for each step are added to the checklist below as they land.
+
+## Device checklist
+
+The Simulator cannot verify these (see AGENTS.md). Run them on a real iPhone with a signed build of the **Atlys** scheme (`scripts/build-ios-core.sh` first) and record results here.
+
+Recorded so far (2026-10-27): the maintainer installed the M1 build on an iPhone and completed onboarding (item 1 apart from the timing). Items 2–9 are not yet recorded.
+
+### M1
+
 
 1. Fresh install: complete onboarding and enable Face ID. Note how long "Create vault" takes (Argon2id, 256 MiB, t = 3).
 2. Lock, then unlock with Face ID. Cancel the Face ID prompt: the password field still works. Note password unlock time.
@@ -47,21 +101,22 @@ The Simulator cannot verify these (see AGENTS.md). Run them on a real iPhone wit
 8. Delete vault with the password: the app returns to the welcome screen; reinstall-free relaunch shows onboarding.
 9. Data Protection: with a development build, check that `vault/vault.db` reads back as `complete` and the container as `completeUntilFirstUserAuthentication`.
 
-## Next steps after M1
+## Next steps after M2
 
-1. M0 device phase on a real iPhone, then delete the spike app, the `spike` feature, and `atlys_vault::m0`.
-2. M2: RFC-0001 data model, inbox merge, collectors.
+1. M0 device phase on a real iPhone, then delete the spike app, the `spike` feature, `atlys_vault::m0`, and `atlys_adm::draft`.
+2. M3: Today, Timeline, exports.
 
 ## Blockers and open items
 
-- Apple Developer account: blocks M0 device phase, final Argon2id parameters, Face ID invalidation and Data Protection checks, and HealthKit even on the Simulator.
+- Apple Developer account: now available (paid program). The M0 device phase, final Argon2id parameters, and the Face ID invalidation and Data Protection checks still need to be run and recorded.
 - `security@` and `conduct@` contact placeholders still need a project domain.
-- Remove `apps/ios/Spike/`, the `AtlysSpike` targets, the `spike` feature, and `atlys_vault::m0` once the M0 device phase is done. Kept until then because the spike app is the device test tool.
+- Remove `apps/ios/Spike/`, the `AtlysSpike` targets, the `spike` feature, `atlys_vault::m0`, and `atlys_adm::draft` once the M0 device phase is done. Kept until then because the spike app is the device test tool.
 
 ## Checks
 
 ```sh
 python3 -I scripts/vault-format-vectors.py --check
+python3 -I scripts/adm-schemas.py --check
 cd core && cargo fmt --all --check && cargo clippy --workspace --all-targets --all-features --locked -- -D warnings && cargo test --workspace --locked
 scripts/check-no-network.sh
 scripts/build-ios-core.sh   # before building the iOS app in Xcode

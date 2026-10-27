@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "$ref": "../record-draft.schema.json"
+    }
+  ],
+  "description": "A location fix.",
+  "not": {
+    "required": [
+      "end_ms"
+    ]
+  },
+  "properties": {
+    "data": {
+      "additionalProperties": false,
+      "properties": {
+        "altitude_m": {
+          "description": "Altitude above sea level in meters.",
+          "maximum": 100000,
+          "minimum": -10000,
+          "type": "number"
+        },
+        "course_deg": {
+          "description": "Direction of travel in degrees from true north.",
+          "maximum": 360,
+          "minimum": 0,
+          "type": "number"
+        },
+        "horizontal_accuracy_m": {
+          "description": "Radius of uncertainty in meters.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "type": "number"
+        },
+        "latitude": {
+          "description": "WGS84 latitude in degrees.",
+          "maximum": 90,
+          "minimum": -90,
+          "type": "number"
+        },
+        "longitude": {
+          "description": "WGS84 longitude in degrees.",
+          "maximum": 180,
+          "minimum": -180,
+          "type": "number"
+        },
+        "speed_mps": {
+          "description": "Speed in meters per second.",
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "number"
+        },
+        "vertical_accuracy_m": {
+          "description": "Altitude uncertainty in meters.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "horizontal_accuracy_m"
+      ],
+      "type": "object"
+    },
+    "type": {
+      "const": "location.point"
+    }
+  },
+  "title": "location.point",
+  "x-sensitivity": "high"
+}

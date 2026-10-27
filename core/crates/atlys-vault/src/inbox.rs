@@ -27,7 +27,7 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use atlys_adm::Batch;
+use atlys_adm::{Batch, ErrorKind};
 use atlys_crypto::hpke::{
     self, ENCAPPED_KEY_LEN, IngestPrivateKey, IngestPublicKey, SealedMessage, TAG_LEN,
 };
@@ -151,7 +151,7 @@ pub fn seal_batch(
     public_key: &IngestPublicKey,
     batch: &Batch,
 ) -> Result<Vec<u8>> {
-    let json = Zeroizing::new(batch.to_json()?);
+    let json = Zeroizing::new(batch.to_json());
     let padded_size = padded_len(json.len());
     // Enforce the file limit before allocating the padding.
     if PREFIX_LEN + padded_size + TAG_LEN > MAX_FILE_LEN {
@@ -222,7 +222,10 @@ pub fn open_batch(
     if padded_len(len) != padded.len() || padded[LENGTH_FIELD + len..].iter().any(|b| *b != 0) {
         return reject(BadPadding);
     }
-    Batch::from_json(json).map_err(|_| InboxError::Rejected(InvalidBatch))
+    Batch::from_json(json).map_err(|e| match e.kind {
+        ErrorKind::UnsupportedVersion(_) => InboxError::NeedsUpdate,
+        _ => InboxError::Rejected(InvalidBatch),
+    })
 }
 
 /// Writes sealed batches into the inbox. Needs only the public key, so it is
@@ -374,15 +377,17 @@ mod tests {
 
     fn batch(n: usize) -> Batch {
         let records = (0..n)
-            .map(|i| RecordDraft {
-                record_type: "location.visit".into(),
-                source_id: format!("synthetic-{i}"),
-                start_ms: 1_700_000_000_000 + i as i64,
-                end_ms: None,
-                data: serde_json::json!({ "lat": 0.0, "lon": 0.0, "accuracy_m": 50.0 }),
+            .map(|i| {
+                RecordDraft::from_value(&serde_json::json!({
+                    "type": "location.visit",
+                    "source_id": format!("synthetic-{i}"),
+                    "start_ms": 1_700_000_000_000_i64 + i as i64,
+                    "data": { "latitude": 0.0, "longitude": 0.0, "horizontal_accuracy_m": 50.0 },
+                }))
+                .unwrap()
             })
             .collect();
-        Batch::new("location".into(), 1_700_000_000_000, records).unwrap()
+        Batch::new("location".into(), 1_700_000_000_000, records, vec![]).unwrap()
     }
 
     fn rejected(r: core::result::Result<Batch, InboxError>) -> RejectReason {
@@ -488,7 +493,8 @@ mod tests {
     #[test]
     fn m0_version_1_files_are_never_opened() {
         let kp = IngestKeyPair::generate();
-        let v1 = crate::m0::inbox::seal_batch(&kp.public, &batch(1)).unwrap();
+        let draft = atlys_adm::draft::Batch::new("location".into(), 1, vec![]).unwrap();
+        let v1 = crate::m0::inbox::seal_batch(&kp.public, &draft).unwrap();
         assert_eq!(
             rejected(open_batch(&ID, &kp.private, &v1)),
             RejectReason::ObsoleteVersion
@@ -498,7 +504,7 @@ mod tests {
     #[test]
     fn padding_is_validated() {
         let kp = IngestKeyPair::generate();
-        let json = batch(1).to_json().unwrap();
+        let json = batch(1).to_json();
         let mut good = vec![0u8; 1024];
         good[..4].copy_from_slice(&(json.len() as u32).to_be_bytes());
         good[4..4 + json.len()].copy_from_slice(&json);
@@ -531,6 +537,19 @@ mod tests {
             rejected(open_batch(&ID, &kp.private, &seal_raw(&kp, &bad_json))),
             RejectReason::InvalidBatch
         );
+    }
+
+    #[test]
+    fn newer_adm_version_waits_for_an_update() {
+        let kp = IngestKeyPair::generate();
+        let json = br#"{"adm_version":"9.0","collector":"health","created_ms":0,"records":[]}"#;
+        let mut plain = vec![0u8; 1024];
+        plain[..4].copy_from_slice(&(json.len() as u32).to_be_bytes());
+        plain[4..4 + json.len()].copy_from_slice(json);
+        assert!(matches!(
+            open_batch(&ID, &kp.private, &seal_raw(&kp, &plain)),
+            Err(InboxError::NeedsUpdate)
+        ));
     }
 
     #[test]
