@@ -31,7 +31,7 @@ Last updated: 2026-10-27
 
 One PR per step:
 
-1. [ ] **RFC-0001 + `atlys-adm` (2.1, 2.2).** Branch `arsalann/m2-data-model`.
+1. [ ] **RFC-0001 + `atlys-adm` (2.1, 2.2).** PR #10, branch `arsalann/m2-data-model`.
    - [x] `atlys-adm` rewritten:
      - Type table (`types.rs`, 21 types).
      - Strict JSON parsing (duplicate keys rejected).
