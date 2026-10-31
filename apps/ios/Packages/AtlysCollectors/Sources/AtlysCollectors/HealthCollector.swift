@@ -23,6 +23,9 @@ public final class HealthCollector: Collector, @unchecked Sendable {
 
     public var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
+    // Clinical records are region-dependent, even in an entitled build.
+    private var canReadClinicalRecords: Bool { clinical && store.supportsHealthRecords() }
+
     public func permission() async -> CollectorPermission {
         guard isAvailable else { return .unavailable }
         // Apps can't see whether read access was granted; "asked" is the
@@ -35,8 +38,15 @@ public final class HealthCollector: Collector, @unchecked Sendable {
 
     public func requestPermission() async {
         guard isAvailable else { return }
-        try? await store.requestAuthorization(toShare: [], read: HealthTypes.readTypes(clinical: false))
-        if clinical {
+        do {
+            try await store.requestAuthorization(toShare: [], read: HealthTypes.readTypes(clinical: false))
+        } catch {
+            // Do not follow a failed request (including a missing HealthKit
+            // entitlement) with clinical authorization. HealthKit can raise an
+            // Objective-C exception there, which Swift try? cannot catch.
+            return
+        }
+        if canReadClinicalRecords {
             try? await store.requestAuthorization(
                 toShare: [], read: Set(HealthTypes.clinicalTypes as [HKObjectType])
             )
@@ -91,7 +101,7 @@ public final class HealthCollector: Collector, @unchecked Sendable {
             try context.saveState(state, for: id)
         }
 
-        let types = HealthTypes.sampleTypes(clinical: clinical)
+        let types = HealthTypes.sampleTypes(clinical: canReadClinicalRecords)
         var complete = 0
         for type in types {
             if context.timeIsUp {

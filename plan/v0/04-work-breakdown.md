@@ -64,6 +64,8 @@ checks are in [handoff.md](handoff.md#m2).
 | 2.7 | Motion collector: 7-day catch-up, segment compression, gap warning | Segments match Core Motion output; warning appears when the gap nears 7 days |
 | 2.8 | Device collector: battery, connectivity, device info snapshots | Snapshots recorded on each wake, no permission prompt |
 
+**2.5 follow-up (2026-10-31):** Restored HealthKit, Health Records, and background-delivery entitlements in the XcodeGen source and added a CI check of the generated plists. Authorization now stops after a failed base request; clinical authorization and queries check device support. Signed-device activation and the 3-day run remain to be verified.
+
 **Exit:** with the app closed, all four collectors keep filling the vault on a real device for 3+ days.
 
 ## M3: App UI

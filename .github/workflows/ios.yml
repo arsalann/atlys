@@ -58,6 +58,9 @@ jobs:
             exit 1
           }
 
+      - name: Check generated HealthKit capabilities
+        run: python3 -I scripts/check-ios-health-entitlements.py
+
       - name: Build for device (unsigned)
         working-directory: apps/ios
         run: |
