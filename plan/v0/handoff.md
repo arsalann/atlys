@@ -2,7 +2,7 @@
 
 This is the working state of v0 implementation, kept current so that anyone (person or agent) can resume after an interruption. Update it in the same commit as every change: what was done, what is in progress, and the exact next step.
 
-Last updated: 2026-10-28
+Last updated: 2026-10-31
 
 ## Resume here
 
@@ -17,6 +17,14 @@ Last updated: 2026-10-28
 | M0 spike | Simulator and CI phase done. Device phase still to run (the paid developer account is now available) ([spike-report.md](spike-report.md#follow-ups)). |
 | M1 vault + onboarding | **Done.** PRs #6–#9 merged. The app runs on the maintainer's iPhone; the full [device checklist](#device-checklist) is still to be recorded. |
 | M2 collectors + raw data viewer | **Implemented** (PRs #10–#12). Remaining: device verification ([M2 checklist](#m2)) and the 3-day exit run. |
+
+## Apple Health activation fix (2026-10-31)
+
+- Crash evidence: base authorization failed with a missing HealthKit entitlement, then clinical authorization raised an uncaught Objective-C exception. The generated app entitlement plist was empty.
+- Added HealthKit, Health Records, and background-delivery properties to `project.yml` and regenerated the plist. CI checks the generated capabilities and purpose strings with `scripts/check-ios-health-entitlements.py`.
+- The collector stops after base authorization fails and checks `supportsHealthRecords()` before clinical authorization or collection.
+- Validation: Rust XCFramework built; unsigned iPhone build and 14 collector Simulator tests passed (Xcode 27.1); regeneration is stable; capability check passes and rejects an empty entitlement fixture; no-network and diff checks passed.
+- Signed-device verification is still required: refresh provisioning with the configured team, rebuild/reinstall, tap “Turn on Apple Health”, and verify the permission sheet and collection. Also exercise a device/region without clinical support; ordinary Health data must still collect.
 
 ## In progress
 

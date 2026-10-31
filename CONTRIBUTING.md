@@ -57,7 +57,7 @@ xcodebuild test -project Atlys.xcodeproj -scheme Atlys \
 
 `scripts/build-ios-core.sh` writes `AtlysCoreFFI.xcframework` and the generated `AtlysCore.swift` into `apps/ios/Packages/AtlysCore/`. Both are build outputs and are gitignored.
 
-`Atlys.xcodeproj` is generated from `apps/ios/project.yml`. Edit the YAML, run `xcodegen generate` in `apps/ios/`, and commit both. CI fails if they drift.
+`Atlys.xcodeproj` is generated from `apps/ios/project.yml`. Edit the YAML, run `xcodegen generate` in `apps/ios/`, and commit both. CI fails if they drift. Declare entitlements under the target’s `entitlements.properties` in the YAML; XcodeGen rewrites the entitlement plist. Run `python3 -I scripts/check-ios-health-entitlements.py` after regeneration.
 
 ### Running on a device
 
@@ -67,6 +67,8 @@ Device builds need your own Apple Developer team:
 cp apps/ios/Config/Local.xcconfig.example apps/ios/Config/Local.xcconfig
 # edit DEVELOPMENT_TEAM and ATLYS_BUNDLE_ID_PREFIX
 ```
+
+The Atlys target requires HealthKit with Clinical Health Records and Background Delivery. Let Xcode refresh the provisioning profile for these capabilities, then rebuild and reinstall. Verify “Turn on Apple Health” on a signed iPhone build; an unsigned build or Simulator run does not verify the installed entitlements.
 
 `Local.xcconfig` is gitignored. Never commit it, and never commit provisioning profiles, certificates, or `.p12` files.
 
